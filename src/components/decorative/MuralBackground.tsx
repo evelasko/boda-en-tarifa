@@ -10,7 +10,6 @@ interface MuralBackgroundProps {
 }
 
 export const MuralBackground: React.FC<MuralBackgroundProps> = ({
-  layers = ['coral', 'monstera'],
   className = '',
   children,
 }) => {
