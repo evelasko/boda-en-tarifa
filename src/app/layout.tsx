@@ -24,6 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      {/* <link rel="stylesheet" href="https://use.typekit.net/tqk3qdr.css" /> */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
