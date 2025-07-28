@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { MapPin, Clock, ExternalLink, Facebook, Instagram } from 'lucide-react'
-import { FaCocktail, FaMusic, FaRing, FaGlassCheers, FaCoffee } from 'react-icons/fa'
+import { MapPin, Clock, ExternalLink, Facebook, Instagram, Map } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getWeddingContent } from '@/lib/content'
 import Typography, { combineTypographyClasses } from '@/lib/typography'
@@ -12,17 +11,6 @@ export function EventsTimelineList() {
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null)
   const content = getWeddingContent()
   const events = content.events
-  
-  const getIcon = (iconType: string) => {
-    switch (iconType) {
-      case 'cocktail': return <FaCocktail className="w-5 h-5" />
-      case 'music': return <FaMusic className="w-5 h-5" />
-      case 'rings': return <FaRing className="w-5 h-5" />
-      case 'party': return <FaGlassCheers className="w-5 h-5" />
-      case 'brunch': return <FaCoffee className="w-5 h-5" />
-      default: return <FaCocktail className="w-5 h-5" />
-    }
-  }
   
   const colorClasses = {
     coral: 'bg-coral text-cream',
@@ -40,10 +28,25 @@ export function EventsTimelineList() {
     sand: 'border-sand'
   }
 
+  // Format date responsively
+  const formatDate = (dateString: string, includeYear: boolean = true) => {
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric'
+    }
+    
+    if (includeYear) {
+      options.year = 'numeric'
+    }
+    
+    return new Date(dateString).toLocaleDateString('es-ES', options)
+  }
+
   return (
     <section id="events" className="py-20 lg:py-32 bg-[url('/textures/icons-texture.png')] bg-repeat">
       <div className="container mx-auto px-4">
-        <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal')}>
+        <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal text-center')}>
           Eventos
         </h2>
         
@@ -57,99 +60,118 @@ export function EventsTimelineList() {
                   borderColorClasses[event.color as keyof typeof borderColorClasses]
                 )}
               >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  {/* Main Event Info */}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className={cn(
-                        "w-[200px] h-[200px] rounded-lg flex items-center justify-center flex-shrink-0",
-                      )}>
-                        <Image src={`/icons/${event.icon}.png`} alt={event.icon} width={200} height={200} />
-                      </div>
-                      <h3 className={combineTypographyClasses(Typography.Heading.H2, 'text-charcoal')}>
-                        {event.title}
-                      </h3>
-                      <div className={cn(
-                        Typography.UI.Quote,
-                        "text-charcoal/80")}>
-                        {event.description}
-                      </div>
+                <div className="flex flex-col md:flex-row gap-4">
+                  {/* Column 1: Image Icon - 100px on mobile, 200px on desktop */}
+                  <div className="w-[100px] md:w-[200px] flex-shrink-0 mx-auto md:mx-0">
+                    <Image 
+                      src={`/icons/${event.icon}.png`} 
+                      alt={event.icon} 
+                      width={200} 
+                      height={200} 
+                      className="rounded-lg w-[100px] h-[100px] md:w-[200px] md:h-[200px] object-cover"
+                    />
+                  </div>
+                  
+                  {/* Column 2: Event Content - Stacked on mobile, side by side on desktop */}
+                  <div className="flex-1 space-y-3">
+                    {/* Row 1: Event Title */}
+                    <h3 className={combineTypographyClasses(Typography.Heading.H2, 'text-charcoal text-center md:text-left')}>
+                      {event.title}
+                    </h3>
+                    
+                    {/* Row 2: Event Description */}
+                    <div className={cn(Typography.UI.Quote, "text-black text-center md:text-left mb-10")}>
+                      {event.description}
                     </div>
                     
-                    <div className="flex items-center gap-4 text-charcoal/80 mb-2">
-                      <div className="flex items-center gap-2">
+                    {/* Row 3: Date and Time - Same row on all screen sizes */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-charcoal/80">
+                      <div className="flex items-center gap-2 justify-center md:justify-start">
                         <Clock className="w-4 h-4" />
                         <span className="type-ui-medium font-medium">
-                          {new Date(event.date).toLocaleDateString('es-ES', { 
-                            weekday: 'long',
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                          })}
+                          {/* Hide year on mobile screens */}
+                          <span className="md:hidden">
+                            {formatDate(event.date, false)}
+                          </span>
+                          <span className="hidden md:inline">
+                            {formatDate(event.date, true)}
+                          </span>
                         </span>
                       </div>
-                      <span className="type-ui-large font-bold text-charcoal">
+                      <span className="type-ui-large font-bold text-charcoal text-center md:text-left">
                         {event.time}
                       </span>
                     </div>
                     
-                    <div className="flex items-start gap-2 text-charcoal/60">
-                      <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                      <div className="type-body-small">
-                        <p className="font-medium">{event.venue.name}</p>
-                        <p className="text-sm">{event.venue.address}</p>
+                    {/* Row 4: Location Row - Stacked on mobile, two columns on desktop */}
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                      {/* Sub-column 1: Venue Name and Address */}
+                      <div className="flex items-start gap-2 text-charcoal/60 flex-1 justify-center md:justify-start">
+                        <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                        <div className="type-body-small text-center md:text-left">
+                          <p className="font-medium">{event.venue.name}</p>
+                          <p className="text-sm">{event.venue.address}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Sub-column 2: Social Links and Map Button - Inline on all screens */}
+                      <div className="flex items-center justify-center md:justify-end gap-3 md:flex-shrink-0">
+                        {/* Social Links */}
+                        {event.venue.social && (
+                          <div className="flex items-center gap-3">
+                            {event.venue.social.facebook && (
+                              <a
+                                href={event.venue.social.facebook}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-charcoal/50 hover:text-charcoal transition-colors"
+                              >
+                                <Facebook className="w-4 h-4" />
+                              </a>
+                            )}
+                            {event.venue.social.instagram && (
+                              <a
+                                href={event.venue.social.instagram}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-charcoal/50 hover:text-charcoal transition-colors"
+                              >
+                                <Instagram className="w-4 h-4" />
+                              </a>
+                            )}
+                            {event.venue.website && (
+                              <a
+                                href={event.venue.website}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-charcoal/50 hover:text-charcoal transition-colors"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </a>
+                            )}
+                          </div>
+                        )}
+                        
+                        {/* Map Button - Icon only on mobile, text on desktop */}
+                        <button
+                          onClick={() => setExpandedEvent(expandedEvent === event.id ? null : event.id)}
+                          className={cn(
+                            "px-4 py-2 rounded-full border transition-colors type-ui-label text-sm",
+                            borderColorClasses[event.color as keyof typeof borderColorClasses],
+                            `hover:${colorClasses[event.color as keyof typeof colorClasses]}`
+                          )}
+                        >
+                          {/* Show icon only on mobile */}
+                          <span className="md:hidden">
+                            <Map className="w-4 h-4" />
+                          </span>
+                          {/* Show text on desktop */}
+                          <span className="hidden md:inline">
+                            Ver Mapa
+                          </span>
+                        </button>
                       </div>
                     </div>
-                  </div>
-                  
-                  {/* Actions Section */}
-                  <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
-                    {/* Social Links */}
-                    {event.venue.social && (
-                      <div className="flex items-center gap-3">
-                        {event.venue.social.facebook && (
-                          <a
-                            href={event.venue.social.facebook}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-charcoal/50 hover:text-charcoal transition-colors"
-                          >
-                            <Facebook className="w-4 h-4" />
-                          </a>
-                        )}
-                        {event.venue.social.instagram && (
-                          <a
-                            href={event.venue.social.instagram}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-charcoal/50 hover:text-charcoal transition-colors"
-                          >
-                            <Instagram className="w-4 h-4" />
-                          </a>
-                        )}
-                        {event.venue.website && (
-                          <a
-                            href={event.venue.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-charcoal/50 hover:text-charcoal transition-colors"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
-                        )}
-                      </div>
-                    )}
-                    
-                    <button
-                      onClick={() => setExpandedEvent(expandedEvent === event.id ? null : event.id)}
-                      className={cn(
-                        "px-4 py-2 rounded-full border transition-colors type-ui-label text-sm",
-                        borderColorClasses[event.color as keyof typeof borderColorClasses],
-                        `hover:${colorClasses[event.color as keyof typeof colorClasses]}`
-                      )}
-                    >
-                      Ver Mapa
-                    </button>
                   </div>
                 </div>
                 
