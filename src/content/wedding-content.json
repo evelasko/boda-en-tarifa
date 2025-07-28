@@ -1,28 +1,21 @@
 {
   "meta": {
-    "title": {
-      "en": "Enrique & Manuel - May 30, 2025",
-      "es": "Enrique & Manuel - 30 de Mayo, 2025"
-    },
-    "description": {
-      "en": "Join us for our beach wedding celebration in Tarifa, Spain",
-      "es": "Únete a nuestra celebración de boda en la playa de Tarifa, España"
-    },
-    "keywords": ["wedding", "boda", "tarifa", "spain", "beach", "playa"],
+    "title": "Enrique & Manuel - 30 de Mayo, 2025",
+    "description": "Únete a nuestra celebración de boda en la playa de Tarifa, España",
+    "keywords": [
+      "boda",
+      "tarifa",
+      "españa",
+      "playa"
+    ],
     "ogImage": "/images/og-wedding.jpg"
   },
   "hero": {
     "backgroundImage": "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1920&q=80",
-    "greeting": {
-      "en": "We are getting married!",
-      "es": "¡Nos casamos!"
-    },
+    "greeting": "¡Nos casamos!",
     "names": "Enrique & Manuel",
     "date": "2025-05-30",
-    "location": {
-      "en": "Tarifa, Spain",
-      "es": "Tarifa, España"
-    }
+    "location": "Tarifa, España"
   },
   "events": [
     {
@@ -30,14 +23,8 @@
       "type": "welcome",
       "date": "2025-05-29",
       "time": "15:00",
-      "title": {
-        "en": "Early Welcome",
-        "es": "Bienvenida Anticipada"
-      },
-      "description": {
-        "en": "Join us for drinks and tapas by the beach",
-        "es": "Únete a nosotros para bebidas y tapas en la playa"
-      },
+      "title": "Bienvenida",
+      "description": "Únete a nosotros para bebidas y tapas en la playa",
       "venue": {
         "name": "Chiringuito Tumbao",
         "address": "11380 Valdevaqueros, Cádiz",
@@ -53,7 +40,7 @@
           "instagram": "https://www.instagram.com/tumbaotarifa"
         }
       },
-      "icon": "cocktail",
+      "icon": "beer",
       "color": "coral"
     },
     {
@@ -61,14 +48,8 @@
       "type": "pre-wedding",
       "date": "2025-05-30",
       "time": "21:00",
-      "title": {
-        "en": "Pre-Wedding Party",
-        "es": "Fiesta Pre-Boda"
-      },
-      "description": {
-        "en": "An evening of celebration before the big day",
-        "es": "Una noche de celebración antes del gran día"
-      },
+      "title": "Pre-Boda",
+      "description": "Una noche de celebración antes del gran día",
       "venue": {
         "name": "Casa Explora — Tarifa",
         "address": "Ctra. Cádiz-Málaga km 76,2, 11380 Tarifa, Cádiz",
@@ -84,7 +65,7 @@
           "instagram": "https://www.instagram.com/casaexplora"
         }
       },
-      "icon": "music",
+      "icon": "martini",
       "color": "sage"
     },
     {
@@ -92,14 +73,8 @@
       "type": "ceremony",
       "date": "2025-05-30",
       "time": "17:00",
-      "title": {
-        "en": "Wedding Ceremony",
-        "es": "Ceremonia de Boda"
-      },
-      "description": {
-        "en": "The moment we say 'I do' with the ocean as our witness",
-        "es": "El momento en que decimos 'Sí, quiero' con el océano como testigo"
-      },
+      "title": "Ceremonia",
+      "description": "El momento en que decimos 'Sí, quiero' con el océano como testigo",
       "venue": {
         "name": "Chiringuito BiBo",
         "address": "Playa de Valdevaqueros, 11380 Tarifa, Cádiz",
@@ -123,14 +98,8 @@
       "type": "celebration",
       "date": "2025-05-30",
       "time": "19:00",
-      "title": {
-        "en": "Wedding Celebration",
-        "es": "Celebración de Boda"
-      },
-      "description": {
-        "en": "Dinner, dancing, and memories under the stars",
-        "es": "Cena, baile y recuerdos bajo las estrellas"
-      },
+      "title": "Celebración",
+      "description": "Cocktail, cena, y recuerdos bajo las estrellas",
       "venue": {
         "name": "Chill Out Hotel Tres Mares — Tarifa",
         "address": "Playa de Los Lances, 11380 Tarifa, Cádiz",
@@ -146,7 +115,32 @@
           "instagram": "https://www.instagram.com/hoteltresmares"
         }
       },
-      "icon": "party",
+      "icon": "cloche",
+      "color": "gold"
+    },
+    {
+      "id": "party",
+      "type": "party",
+      "date": "2025-05-30",
+      "time": "19:00",
+      "title": "Fiesta",
+      "description": "Baile y jarana hasta que llegue la mañana",
+      "venue": {
+        "name": "Chill Out Hotel Tres Mares — Tarifa",
+        "address": "Playa de Los Lances, 11380 Tarifa, Cádiz",
+        "coordinates": {
+          "lat": 36.066155,
+          "lng": -5.679405
+        },
+        "mapEmbed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3745.8435276608575!2d-5.679404688116657!3d36.066155472350644!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0c8bb83029eff7%3A0x7edd4e0e58b89b2a!2sTres%20mares!5e1!3m2!1sen!2ses!4v1753564882060!5m2!1sen!2ses",
+        "mapUrl": "https://maps.app.goo.gl/Jj5r53Wb2Mt9sKbn8",
+        "website": "https://www.tresmareshotel.com",
+        "social": {
+          "facebook": "https://www.facebook.com/ChilloutHotelTresMares/",
+          "instagram": "https://www.instagram.com/hoteltresmares"
+        }
+      },
+      "icon": "hurricane",
       "color": "gold"
     },
     {
@@ -154,14 +148,8 @@
       "type": "post-wedding",
       "date": "2025-05-31",
       "time": "14:00",
-      "title": {
-        "en": "Post-Wedding Brunch",
-        "es": "Brunch Post-Boda"
-      },
-      "description": {
-        "en": "A relaxed gathering to share stories and say farewell",
-        "es": "Una reunión relajada para compartir historias y despedirnos"
-      },
+      "title": "Brunch",
+      "description": "Una reunión relajada para compartir historias y despedirnos",
       "venue": {
         "name": "Chill Out Hotel Tres Mares — Tarifa",
         "address": "Playa de Los Lances, 11380 Tarifa, Cádiz",
@@ -177,165 +165,89 @@
           "instagram": "https://www.instagram.com/hoteltresmares"
         }
       },
-      "icon": "brunch",
+      "icon": "coffee",
       "color": "sand"
     }
   ],
   "dressCode": {
-    "title": {
-      "en": "What to Wear",
-      "es": "Qué Ponerse"
-    },
-    "weather": {
-      "en": [
-        "First of all, it's a very windy beach",
-        "The night is usually chilly",
-        "If the wind comes from the west, expect cold under shade"
-      ],
-      "es": [
-        "Primero que nada, es una playa muy ventosa",
-        "La noche suele ser fría",
-        "Si el viento viene del oeste, espera frío bajo la sombra"
-      ]
-    },
-    "beReadyFor": {
-      "en": [
-        "Walking over irregular surfaces",
-        "Chilly nights, bring some cover up",
-        "It IS a beach wedding, expect naughty sand"
-      ],
-      "es": [
-        "Caminar sobre superficies irregulares",
-        "Noches frías, trae algo de abrigo",
-        "ES una boda en la playa, espera arena traviesa"
-      ]
-    },
-    "suggestions": {
-      "en": [
-        "White is perfectly allowed, no one will steal our shine",
-        "There is no need to be formal, and feel free to be as fancy as you want",
-        "Just show up in whatever floats your boat",
-        "And beware: you WILL definitely DANCE the night away"
-      ],
-      "es": [
-        "El blanco está perfectamente permitido, nadie robará nuestro brillo",
-        "No hay necesidad de ser formal, y siéntete libre de ser tan elegante como quieras",
-        "Solo ven con lo que te haga sentir bien",
-        "Y cuidado: DEFINITIVAMENTE BAILARÁS toda la noche"
-      ]
-    }
+    "title": "Qué Ponerse",
+    "weather": [
+      "Primero que nada, es una playa muy ventosa",
+      "La noche suele ser fría",
+      "Si el viento viene del oeste, espera frío bajo la sombra"
+    ],
+    "beReadyFor": [
+      "Caminar sobre superficies irregulares",
+      "Noches frías, trae algo de abrigo",
+      "ES una boda en la playa, espera arena traviesa"
+    ],
+    "suggestions": [
+      "El blanco está perfectamente permitido, nadie robará nuestro brillo",
+      "No hay necesidad de ser formal, y siéntete libre de ser tan elegante como quieras",
+      "Solo ven con lo que te haga sentir bien",
+      "Y cuidado: DEFINITIVAMENTE BAILARÁS toda la noche"
+    ]
   },
   "travel": {
-    "title": {
-      "en": "Getting to Tarifa",
-      "es": "Cómo Llegar a Tarifa"
-    },
+    "title": "Cómo Llegar a Tarifa",
     "fromMadrid": {
       "byCar": {
-        "title": {
-          "en": "By Car",
-          "es": "En Coche"
-        },
+        "title": "En Coche",
         "routes": [
           {
-            "name": {
-              "en": "Via A5: Badajoz",
-              "es": "Por A5: Badajoz"
-            },
+            "name": "Por A5: Badajoz",
             "time": "6h 30min",
             "distance": "720km",
-            "tolls": {
-              "en": "None",
-              "es": "Sin peajes"
-            },
+            "tolls": "Sin peajes",
             "mapUrl": "https://maps.app.goo.gl/o3YswB3q9V4PyK4H6"
           },
           {
-            "name": {
-              "en": "Via A4: Málaga",
-              "es": "Por A4: Málaga"
-            },
+            "name": "Por A4: Málaga",
             "time": "6h",
             "distance": "691km",
             "tolls": "~30€",
             "mapUrl": "https://maps.app.goo.gl/6ekGdAANCfxHbD296"
           }
         ],
-        "carPooling": {
-          "en": "Available car pooling upon request",
-          "es": "Compartir coche disponible bajo petición"
-        }
+        "carPooling": "Compartir coche disponible bajo petición"
       },
       "byTrain": {
-        "title": {
-          "en": "By Train",
-          "es": "En Tren"
-        },
+        "title": "En Tren",
         "options": [
           {
             "destination": "Sevilla",
-            "details": {
-              "en": "AVE to Seville (2h / ~40€) then rent a car or bus",
-              "es": "AVE a Sevilla (2h / ~40€) luego alquilar coche o bus"
-            }
+            "details": "AVE a Sevilla (2h / ~40€) luego alquilar coche o bus"
           },
           {
             "destination": "San Fernando",
-            "details": {
-              "en": "AVE to San Fernando (4h / ~30€) then rent a car or bus",
-              "es": "AVE a San Fernando (4h / ~30€) luego alquilar coche o bus"
-            }
+            "details": "AVE a San Fernando (4h / ~30€) luego alquilar coche o bus"
           },
           {
             "destination": "Algeciras",
-            "details": {
-              "en": "Train to Algeciras (6h / ~80€) then rent a car or bus",
-              "es": "Tren a Algeciras (6h / ~80€) luego alquilar coche o bus"
-            }
+            "details": "Tren a Algeciras (6h / ~80€) luego alquilar coche o bus"
           }
         ]
       },
       "byAir": {
-        "title": {
-          "en": "By Air",
-          "es": "En Avión"
-        },
+        "title": "En Avión",
         "options": [
           {
             "airport": "Jerez",
-            "details": {
-              "en": "Flights to Jerez Airport (1h 15min / ~130€) then rent a car (1h 15min)",
-              "es": "Vuelos a Aeropuerto de Jerez (1h 15min / ~130€) luego alquilar coche (1h 15min)"
-            }
+            "details": "Vuelos a Aeropuerto de Jerez (1h 15min / ~130€) luego alquilar coche (1h 15min)"
           },
           {
             "airport": "Tangier",
-            "details": {
-              "en": "Flights to Tangier (1h 30min / ~80€), Ferry to Tarifa (1h 15min / ~40€), then bus to hotel (15min)",
-              "es": "Vuelos a Tánger (1h 30min / ~80€), Ferry a Tarifa (1h 15min / ~40€), luego bus al hotel (15min)"
-            }
+            "details": "Vuelos a Tánger (1h 30min / ~80€), Ferry a Tarifa (1h 15min / ~40€), luego bus al hotel (15min)"
           }
         ]
       }
     },
     "inTarifa": {
-      "title": {
-        "en": "Getting Around",
-        "es": "Moverse por Tarifa"
-      },
-      "beachAccess": {
-        "en": "Beach & chiringitos are at walking distance",
-        "es": "La playa y los chiringuitos están a poca distancia"
-      },
-      "tourism": {
-        "en": "To explore and do tourism you'll need a car",
-        "es": "Para explorar y hacer turismo necesitarás un coche"
-      },
+      "title": "Moverse por Tarifa",
+      "beachAccess": "La playa y los chiringuitos están a poca distancia",
+      "tourism": "Para explorar y hacer turismo necesitarás un coche",
       "busSchedule": {
-        "text": {
-          "en": "There are buses to/from town, check the schedule",
-          "es": "Hay buses hacia/desde el pueblo, consulta el horario"
-        },
+        "text": "Hay buses hacia/desde el pueblo, consulta el horario",
         "link": "https://horizontesur.es/lineas-regulares/"
       }
     }
@@ -346,10 +258,7 @@
       "name": "Hotel Tres Mares",
       "type": "hotel",
       "featured": true,
-      "description": {
-        "en": "Our main wedding hotel with special rates for guests",
-        "es": "Nuestro hotel principal con tarifas especiales para invitados"
-      },
+      "description": "Nuestro hotel principal con tarifas especiales para invitados",
       "pricing": {
         "double": "100€",
         "single": "100€",
@@ -362,15 +271,9 @@
       "id": "100-fun",
       "name": "100% Fun Hotel",
       "type": "hotel",
-      "description": {
-        "en": "Modern hotel with beach access",
-        "es": "Hotel moderno con acceso a la playa"
-      },
+      "description": "Hotel moderno con acceso a la playa",
       "pricing": {
-        "status": {
-          "en": "In negotiations, subscribe for updates",
-          "es": "En negociaciones, suscríbete para actualizaciones"
-        }
+        "status": "En negociaciones, suscríbete para actualizaciones"
       },
       "website": "https://100x100fun.com",
       "bookingLinks": [
@@ -383,15 +286,9 @@
       "id": "copacabana",
       "name": "Copacabana Hotel",
       "type": "hotel",
-      "description": {
-        "en": "Beachfront hotel with ocean views",
-        "es": "Hotel frente al mar con vistas al océano"
-      },
+      "description": "Hotel frente al mar con vistas al océano",
       "pricing": {
-        "status": {
-          "en": "In negotiations, subscribe for updates",
-          "es": "En negociaciones, suscríbete para actualizaciones"
-        }
+        "status": "En negociaciones, suscríbete para actualizaciones"
       },
       "website": "https://www.copacabanatarifa.com/es/inicio",
       "bookingLinks": [
@@ -403,10 +300,7 @@
       "id": "kampaoh-paloma",
       "name": "Kampaoh Paloma",
       "type": "glamping",
-      "description": {
-        "en": "Luxury glamping experience near Punta Paloma",
-        "es": "Experiencia de glamping de lujo cerca de Punta Paloma"
-      },
+      "description": "Experiencia de glamping de lujo cerca de Punta Paloma",
       "website": "https://es.kampaoh.com/punta-paloma-playa-cadiz-andalucia/",
       "image": "https://images.unsplash.com/photo-1533873984035-25970ab07461?w=800&q=80"
     },
@@ -414,25 +308,16 @@
       "id": "kampaoh-tarifa",
       "name": "Kampaoh Tarifa",
       "type": "glamping",
-      "description": {
-        "en": "Eco-friendly glamping with nature views",
-        "es": "Glamping ecológico con vistas a la naturaleza"
-      },
+      "description": "Glamping ecológico con vistas a la naturaleza",
       "website": "https://es.kampaoh.com/tarifa-cadiz-andalucia/",
       "image": "https://images.unsplash.com/photo-1445308394109-4ec2920981b1?w=800&q=80"
     }
   ],
   "weddingParty": {
-    "title": {
-      "en": "Wedding Party",
-      "es": "Cortejo Nupcial"
-    },
+    "title": "Cortejo Nupcial",
     "officiant": {
       "name": "Rey",
-      "role": {
-        "en": "Officiant",
-        "es": "Oficiante"
-      }
+      "role": "Oficiante"
     },
     "personsOfHonor": [
       "Cristina Sanz",
@@ -448,21 +333,12 @@
     ],
     "ringBearer": {
       "name": "Thora",
-      "note": {
-        "en": "Our beloved dog",
-        "es": "Nuestra querida perrita"
-      }
+      "note": "Nuestra querida perrita"
     }
   },
   "gifts": {
-    "title": {
-      "en": "Wedding Gifts",
-      "es": "Regalos de Boda"
-    },
-    "message": {
-      "en": "Your presence is the greatest gift, but if you'd like to help us travel further, you can contribute through the following methods",
-      "es": "Lo importante es que vengan, aunque nos encanta viajar, y si quisieran que lleguemos más lejos pueden contribuir a través de los siguientes métodos"
-    },
+    "title": "Regalos de Boda",
+    "message": "Lo importante es que vengan, aunque nos encanta viajar, y si quisieran que lleguemos más lejos pueden contribuir a través de los siguientes métodos",
     "options": [
       {
         "type": "bank",
@@ -481,144 +357,75 @@
   "faq": [
     {
       "id": "plus-one",
-      "question": {
-        "en": "Can I bring someone else?",
-        "es": "¿Puedo venir con alguien más?"
-      },
-      "answer": {
-        "en": "Of course! Just let us know when you RSVP",
-        "es": "¡Claro que sí! Solo avísanos cuando confirmes tu asistencia"
-      }
+      "question": "¿Puedo venir con alguien más?",
+      "answer": "¡Claro que sí! Solo avísanos cuando confirmes tu asistencia"
     },
     {
       "id": "kids",
-      "question": {
-        "en": "Are kids welcome?",
-        "es": "¿Los niños son bienvenidos?"
-      },
-      "answer": {
-        "en": "Absolutely! But please note there's no childcare or special infant facilities",
-        "es": "¡Por supuesto! Pero ten en cuenta que no hay guardería ni instalaciones especiales para bebés"
-      }
+      "question": "¿Los niños son bienvenidos?",
+      "answer": "¡Por supuesto! Pero ten en cuenta que no hay guardería ni instalaciones especiales para bebés"
     },
     {
       "id": "pets",
-      "question": {
-        "en": "Can I bring my dog?",
-        "es": "¿Puedo traer a mi perro?"
-      },
-      "answer": {
-        "en": "Of course, but please let us know in advance",
-        "es": "Por supuesto, pero por favor avísanos con anticipación"
-      }
+      "question": "¿Puedo traer a mi perro?",
+      "answer": "Por supuesto, pero por favor avísanos con anticipación"
     },
     {
       "id": "cant-attend",
-      "question": {
-        "en": "What should I do if I can't attend?",
-        "es": "¿Qué debo hacer si no puedo asistir?"
-      },
-      "answer": {
-        "en": "We'll miss you! Please let us know through the RSVP form so we can plan accordingly",
-        "es": "¡Te echaremos de menos! Por favor, háznoslo saber a través del formulario RSVP para poder planificar"
-      }
+      "question": "¿Qué debo hacer si no puedo asistir?",
+      "answer": "¡Te echaremos de menos! Por favor, háznoslo saber a través del formulario RSVP para poder planificar"
     },
     {
       "id": "accessibility",
-      "question": {
-        "en": "The ceremony is at walking distance, what if I can't walk it?",
-        "es": "La ceremonia está a poca distancia caminando, ¿qué pasa si no puedo caminar?"
-      },
-      "answer": {
-        "en": "We'll arrange transportation for anyone who needs it. Just let us know in your RSVP",
-        "es": "Organizaremos transporte para quien lo necesite. Solo avísanos en tu RSVP"
-      }
+      "question": "La ceremonia está a poca distancia caminando, ¿qué pasa si no puedo caminar?",
+      "answer": "Organizaremos transporte para quien lo necesite. Solo avísanos en tu RSVP"
     },
     {
       "id": "other",
-      "question": {
-        "en": "Question not listed?",
-        "es": "¿Tu pregunta no está aquí?"
-      },
-      "answer": {
-        "en": "Feel free to reach out to us directly!",
-        "es": "¡No dudes en contactarnos directamente!"
-      }
+      "question": "¿Tu pregunta no está aquí?",
+      "answer": "¡No dudes en contactarnos directamente!"
     }
   ],
   "contact": {
-    "title": {
-      "en": "Contact Us",
-      "es": "Contáctanos"
-    },
-    "description": {
-      "en": "Have questions? Need help? We're here for you!",
-      "es": "¿Tienes preguntas? ¿Necesitas ayuda? ¡Estamos aquí para ti!"
-    },
+    "title": "Contáctanos",
+    "description": "¿Tienes preguntas? ¿Necesitas ayuda? ¡Estamos aquí para ti!",
     "email": "info@bodaentarifa.com",
     "phone": "+34 655 433 018",
     "whatsappGroup": {
-      "text": {
-        "en": "Join our WhatsApp group for updates",
-        "es": "Únete a nuestro grupo de WhatsApp para actualizaciones"
-      },
+      "text": "Únete a nuestro grupo de WhatsApp para actualizaciones",
       "link": "https://chat.whatsapp.com/..."
     }
   },
   "rsvp": {
-    "title": {
-      "en": "RSVP",
-      "es": "Confirmar Asistencia"
-    },
-    "description": {
-      "en": "Please let us know if you'll be joining us for our special day",
-      "es": "Por favor, háznoslo saber si nos acompañarás en nuestro día especial"
-    },
+    "title": "Confirmar Asistencia",
+    "description": "Por favor, háznoslo saber si nos acompañarás en nuestro día especial",
     "deadline": "2025-04-30",
     "questions": [
       {
         "id": "attendance",
         "type": "multiselect",
         "required": true,
-        "label": {
-          "en": "Which events will you attend?",
-          "es": "¿A qué eventos asistirás?"
-        },
+        "label": "¿A qué eventos asistirás?",
         "options": [
           {
             "value": "early-welcome",
-            "label": {
-              "en": "Early Welcome (May 29)",
-              "es": "Bienvenida Anticipada (29 de Mayo)"
-            }
+            "label": "Bienvenida Anticipada (29 de Mayo)"
           },
           {
             "value": "pre-wedding",
-            "label": {
-              "en": "Pre-Wedding Party (May 30)",
-              "es": "Fiesta Pre-Boda (30 de Mayo)"
-            }
+            "label": "Fiesta Pre-Boda (30 de Mayo)"
           },
           {
             "value": "ceremony",
-            "label": {
-              "en": "Wedding Ceremony (May 30)",
-              "es": "Ceremonia de Boda (30 de Mayo)"
-            }
+            "label": "Ceremonia de Boda (30 de Mayo)"
           },
           {
             "value": "celebration",
-            "label": {
-              "en": "Wedding Celebration (May 30)",
-              "es": "Celebración de Boda (30 de Mayo)"
-            }
+            "label": "Celebración de Boda (30 de Mayo)"
           },
           {
             "value": "post-wedding",
-            "label": {
-              "en": "Post-Wedding Brunch (May 31)",
-              "es": "Brunch Post-Boda (31 de Mayo)"
-            }
+            "label": "Brunch Post-Boda (31 de Mayo)"
           }
         ]
       },
@@ -626,10 +433,7 @@
         "id": "guestCount",
         "type": "number",
         "required": true,
-        "label": {
-          "en": "How many guests will you be bringing?",
-          "es": "¿Cuántos invitados traerás?"
-        },
+        "label": "¿Cuántos invitados traerás?",
         "min": 0,
         "max": 5
       },
@@ -637,56 +441,35 @@
         "id": "hasChildren",
         "type": "boolean",
         "required": true,
-        "label": {
-          "en": "Are you bringing children?",
-          "es": "¿Traerás niños?"
-        }
+        "label": "¿Traerás niños?"
       },
       {
         "id": "guestNames",
         "type": "text-array",
         "required": true,
-        "label": {
-          "en": "Please provide the names of all guests",
-          "es": "Por favor proporciona los nombres de todos los invitados"
-        }
+        "label": "Por favor proporciona los nombres de todos los invitados"
       },
       {
         "id": "dietary",
         "type": "multiselect",
         "required": false,
-        "label": {
-          "en": "Dietary restrictions or food allergies",
-          "es": "Restricciones dietéticas o alergias alimentarias"
-        },
+        "label": "Restricciones dietéticas o alergias alimentarias",
         "options": [
           {
             "value": "vegetarian",
-            "label": {
-              "en": "Vegetarian",
-              "es": "Vegetariano"
-            }
+            "label": "Vegetariano"
           },
           {
             "value": "vegan",
-            "label": {
-              "en": "Vegan",
-              "es": "Vegano"
-            }
+            "label": "Vegano"
           },
           {
             "value": "gluten-free",
-            "label": {
-              "en": "Gluten-free",
-              "es": "Sin gluten"
-            }
+            "label": "Sin gluten"
           },
           {
             "value": "other",
-            "label": {
-              "en": "Other (please specify)",
-              "es": "Otro (por favor especifica)"
-            }
+            "label": "Otro (por favor especifica)"
           }
         ]
       },
@@ -694,72 +477,45 @@
         "id": "transportation",
         "type": "boolean",
         "required": false,
-        "label": {
-          "en": "Will you need transportation or a shuttle to the venue?",
-          "es": "¿Necesitarás transporte o traslado al lugar?"
-        }
+        "label": "¿Necesitarás transporte o traslado al lugar?"
       },
       {
         "id": "message",
         "type": "textarea",
         "required": false,
-        "label": {
-          "en": "Share a piece of marriage advice or a favorite memory with the couple",
-          "es": "Comparte un consejo matrimonial o un recuerdo favorito con la pareja"
-        }
+        "label": "Comparte un consejo matrimonial o un recuerdo favorito con la pareja"
       },
       {
         "id": "seatingPreference",
         "type": "text",
         "required": false,
-        "label": {
-          "en": "Is there someone you'd like to be seated with?",
-          "es": "¿Hay alguien con quien te gustaría sentarte?"
-        }
+        "label": "¿Hay alguien con quien te gustaría sentarte?"
       },
       {
         "id": "relationshipStatus",
         "type": "select",
         "required": false,
-        "label": {
-          "en": "Relationship status",
-          "es": "Estado de relación"
-        },
+        "label": "Estado de relación",
         "options": [
           {
             "value": "self-love",
-            "label": {
-              "en": "In love with myself",
-              "es": "Enamorado/a de mí mismo/a"
-            }
+            "label": "Enamorado/a de mí mismo/a"
           },
           {
             "value": "market",
-            "label": {
-              "en": "Enjoying the market",
-              "es": "Disfrutando del mercado"
-            }
+            "label": "Disfrutando del mercado"
           },
           {
             "value": "open",
-            "label": {
-              "en": "Open couple",
-              "es": "Pareja abierta"
-            }
+            "label": "Pareja abierta"
           },
           {
             "value": "couple",
-            "label": {
-              "en": "Couple",
-              "es": "Pareja"
-            }
+            "label": "Pareja"
           },
           {
             "value": "family",
-            "label": {
-              "en": "Family",
-              "es": "Familia"
-            }
+            "label": "Familia"
           }
         ]
       },
@@ -767,10 +523,7 @@
         "id": "specialRequests",
         "type": "textarea",
         "required": false,
-        "label": {
-          "en": "Any other requests or special considerations?",
-          "es": "¿Alguna otra solicitud o consideración especial?"
-        }
+        "label": "¿Alguna otra solicitud o consideración especial?"
       }
     ]
   }

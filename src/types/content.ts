@@ -2,11 +2,6 @@
  * Type definitions for wedding website content
  */
 
-export interface LocalizedString {
-  en: string;
-  es: string;
-}
-
 export interface Coordinates {
   lat: number;
   lng: number;
@@ -36,81 +31,72 @@ export interface WeddingEvent {
   type: EventType;
   date: string;
   time: string;
-  title: LocalizedString;
-  description?: LocalizedString;
+  title: string;
+  description?: string;
   venue: Venue;
   icon: EventIcon;
   color: EventColor;
 }
 
 export interface MetaContent {
-  title: LocalizedString;
-  description: LocalizedString;
+  title: string;
+  description: string;
   keywords: string[];
   ogImage: string;
 }
 
 export interface HeroContent {
   backgroundImage: string;
-  greeting: LocalizedString;
+  greeting: string;
   names: string;
   date: string;
-  location: LocalizedString;
+  location: string;
 }
 
 export interface DressCodeInfo {
-  title: LocalizedString;
-  weather: {
-    en: string[];
-    es: string[];
-  };
-  beReadyFor: {
-    en: string[];
-    es: string[];
-  };
-  suggestions: {
-    en: string[];
-    es: string[];
-  };
+  title: string;
+  weather: string[];
+  beReadyFor: string[];
+  suggestions: string[];
 }
 
 export interface TravelRoute {
-  name: LocalizedString;
+  name: string;
   time: string;
   distance: string;
-  tolls: string | LocalizedString;
+  tolls: string;
   mapUrl: string;
 }
 
 export interface TravelOption {
   destination?: string;
   airport?: string;
-  details: LocalizedString;
+  details: string;
 }
 
 export interface TravelInfo {
-  title: LocalizedString;
+  title: string;
   fromMadrid: {
     byCar: {
-      title: LocalizedString;
+      title: string;
       routes: TravelRoute[];
-      carPooling: LocalizedString;
+      carPooling: string;
     };
     byTrain: {
-      title: LocalizedString;
+      title: string;
       options: TravelOption[];
     };
     byAir: {
-      title: LocalizedString;
+      title: string;
       options: TravelOption[];
     };
   };
   inTarifa: {
-    title: LocalizedString;
-    beachAccess: LocalizedString;
-    tourism: LocalizedString;
+    title: string;
+    beachAccess: string;
+    tourism: string;
     busSchedule: {
-      text: LocalizedString;
+      text: string;
       link: string;
     };
   };
@@ -123,12 +109,12 @@ export interface Accommodation {
   name: string;
   type: AccommodationType;
   featured?: boolean;
-  description: LocalizedString;
+  description: string;
   pricing?: {
     double?: string;
     single?: string;
     thirdNight?: string;
-    status?: LocalizedString;
+    status?: string;
   };
   website: string;
   bookingLinks?: string[];
@@ -136,16 +122,16 @@ export interface Accommodation {
 }
 
 export interface WeddingParty {
-  title: LocalizedString;
+  title: string;
   officiant: {
     name: string;
-    role: LocalizedString;
+    role: string;
   };
   personsOfHonor: string[];
   flowerKids: string[];
   ringBearer: {
     name: string;
-    note?: LocalizedString;
+    note?: string;
   };
 }
 
@@ -155,24 +141,24 @@ export interface GiftOption {
 }
 
 export interface Gifts {
-  title: LocalizedString;
-  message: LocalizedString;
+  title: string;
+  message: string;
   options: GiftOption[];
 }
 
 export interface FAQItem {
   id: string;
-  question: LocalizedString;
-  answer: LocalizedString;
+  question: string;
+  answer: string;
 }
 
 export interface ContactInfo {
-  title: LocalizedString;
-  description: LocalizedString;
+  title: string;
+  description: string;
   email: string;
   phone: string;
   whatsappGroup?: {
-    text: LocalizedString;
+    text: string;
     link: string;
   };
 }
@@ -188,22 +174,22 @@ export type RSVPQuestionType =
 
 export interface RSVPOption {
   value: string;
-  label: LocalizedString;
+  label: string;
 }
 
 export interface RSVPQuestion {
   id: string;
   type: RSVPQuestionType;
   required: boolean;
-  label: LocalizedString;
+  label: string;
   options?: RSVPOption[];
   min?: number;
   max?: number;
 }
 
 export interface RSVPConfig {
-  title: LocalizedString;
-  description: LocalizedString;
+  title: string;
+  description: string;
   deadline: string;
   questions: RSVPQuestion[];
 }
