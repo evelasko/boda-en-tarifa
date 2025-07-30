@@ -6,6 +6,7 @@ import { MapPin, Clock, ExternalLink, Facebook, Instagram, Map } from 'lucide-re
 import { cn } from '@/lib/utils'
 import { getWeddingContent } from '@/lib/content'
 import Typography, { combineTypographyClasses } from '@/lib/typography'
+import { SlideImage } from './SlideImage'
 
 export function EventsTimelineList() {
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null)
@@ -44,8 +45,9 @@ export function EventsTimelineList() {
   }
 
   return (
-    <section id="events" className="py-20 lg:py-32 bg-[url('/textures/icons-texture.png')] bg-repeat">
-      <div className="container mx-auto px-4">
+    <section id="events" className="bg-[url('/slides/kite-texture@large.jpg')] bg-contain bg-repeat-y">
+      <div className="w-full h-[83px] bg-[url('/illustrations/carving-1.png')] bg-repeat-x bg-contain" />
+      <div className="container mx-auto pt-20 lg:pt-32 px-4">
         <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal text-center')}>
           Eventos
         </h2>
@@ -193,6 +195,17 @@ export function EventsTimelineList() {
             ))}
           </div>
         </div>
+      </div>
+      
+      {/* Image Area - Full Width */}
+      <div className="w-full relative">
+        <SlideImage
+          src="/slides/kite@large.jpg"
+          alt="Kite slide continuation"
+          originalWidth={1921}
+          originalHeight={2490}
+          maskHeight={350}
+        />
       </div>
     </section>
   )

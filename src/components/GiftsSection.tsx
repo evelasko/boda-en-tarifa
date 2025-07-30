@@ -1,80 +1,84 @@
 'use client'
-
+import Image from 'next/image'
 import React from 'react'
-import { useLanguage } from '@/contexts/LanguageContext'
-import { Gift, CreditCard, Smartphone, Bitcoin } from 'lucide-react'
+import Typography, { combineTypographyClasses } from '@/lib/typography'
+import { SlideImage } from './SlideImage'
 
 export function GiftsSection() {
-  const { t } = useLanguage()
   
   return (
-    <section id="gifts" className="py-20 lg:py-32 bg-white">
+    <section id="gifts" className="pt-20 lg:pt-32 bg-[url('/slides/sea-texture.jpg')] bg-contain bg-repeat-y">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
           {/* Icon */}
           <div className="flex justify-center mb-8">
-            <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center">
-              <Gift className="w-8 h-8 text-gold" />
+            <div className="w-[200] h-[200] flex items-center justify-center">
+              <Image src="/icons/gift.png" alt="Gift" width={200} height={200} />
             </div>
           </div>
           
-          <h2 className="type-heading-primary text-charcoal mb-8">
-            {t('gifts.title')}
+          <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-white/70 text-center')}>
+            Regalos
           </h2>
           
-          <p className="type-body-large text-charcoal mb-12">
-            {t('gifts.content')}
+          <p className="type-body-large text-white/80 mb-12">
+            Lo importante es que vengáis, aunque nos encanta viajar, y si quisierais que lleguemos más lejos podéis contribuir a través de la siguiente cuenta, Bizum, ETH bitcoin etc.
           </p>
           
           {/* Gift Options */}
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             <div className="bg-sand/10 rounded-lg p-6">
-              <CreditCard className="w-8 h-8 text-sage mx-auto mb-4" />
-              <h3 className="type-heading-tertiary text-charcoal mb-2">
-                {t('gifts.bank')}
+            <div className="flex justify-center">
+            <Image src="/icons/card.png" alt="Card" width={100} height={100} />
+            </div>
+              <h3 className="type-heading-tertiary text-white/70 mb-2">
+                Transferencia Bancaria
               </h3>
-              <p className="type-body-small text-charcoal/70">
-                Traditional bank transfer option
+              <p className="type-body-small text-white/50">
+                Opción tradicional de transferencia bancaria
               </p>
             </div>
             
             <div className="bg-coral/10 rounded-lg p-6">
-              <Smartphone className="w-8 h-8 text-coral mx-auto mb-4" />
-              <h3 className="type-heading-tertiary text-charcoal mb-2">
-                {t('gifts.bizum')}
+            <div className="flex justify-center">
+            <Image src="/icons/smartphone.png" alt="Bizum" width={100} height={100} />
+            </div>
+              <h3 className="type-heading-tertiary text-white mb-2">
+                Bizum
               </h3>
-              <p className="type-body-small text-charcoal/70">
-                Quick mobile payment
+              <p className="type-body-small text-white/70">
+                Pago móvil rápido
               </p>
             </div>
             
             <div className="bg-ocean/10 rounded-lg p-6">
-              <Bitcoin className="w-8 h-8 text-ocean mx-auto mb-4" />
-              <h3 className="type-heading-tertiary text-charcoal mb-2">
-                {t('gifts.crypto')}
+              <div className="flex justify-center">
+                <Image src="/icons/coin.png" alt="Bitcoin" width={100} height={100} />
+              </div>
+              <h3 className="type-heading-tertiary text-white mb-2">
+                Criptomonedas
               </h3>
-              <p className="type-body-small text-charcoal/70">
-                ETH, Bitcoin & more
+              <p className="type-body-small text-white/70">
+                ETH, Bitcoin y más
               </p>
             </div>
           </div>
           
-          <p className="type-body-small text-charcoal/50">
-            Contact us for specific payment details
+          <p className="type-body-small text-white/50">
+            Contáctanos para detalles específicos de pago
           </p>
           
-          {/* Decorative element */}
-          <div className="flex justify-center mt-12">
-            <svg width="120" height="40" viewBox="0 0 120 40">
-              <g className="text-gold">
-                <path d="M10,20 Q30,10 60,20 T110,20" stroke="currentColor" strokeWidth="1" fill="none" />
-                <circle cx="30" cy="15" r="2" fill="currentColor" opacity="0.5" />
-                <circle cx="60" cy="20" r="3" fill="currentColor" />
-                <circle cx="90" cy="15" r="2" fill="currentColor" opacity="0.5" />
-              </g>
-            </svg>
-          </div>
         </div>
+      </div>
+      {/* Image Area - Full Width */}
+      <div className="w-full relative">
+        <SlideImage
+          src="/slides/sea.jpg"
+          alt="Kite slide continuation"
+          originalWidth={1920}
+          originalHeight={2033}
+          maskHeight={350}
+        />
       </div>
     </section>
   )

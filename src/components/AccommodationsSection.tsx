@@ -1,8 +1,9 @@
 'use client'
 
 import React from 'react'
-import { useLanguage } from '@/contexts/LanguageContext'
 import { ExternalLink, Star, Bell } from 'lucide-react'
+import { SlideImage } from './SlideImage'
+import Typography, { combineTypographyClasses } from '@/lib/typography'
 
 interface Accommodation {
   id: string
@@ -17,7 +18,6 @@ interface Accommodation {
 }
 
 export function AccommodationsSection() {
-  const { t } = useLanguage()
   
   const accommodations: Accommodation[] = [
     {
@@ -69,10 +69,10 @@ export function AccommodationsSection() {
   ]
   
   return (
-    <section id="accommodations" className="py-20 lg:py-32 bg-white">
+    <section id="accommodations" className="pt-20 lg:pt-32 bg-[url('/slides/monkey-texture.jpg')] bg-contain bg-repeat-y">
       <div className="container mx-auto px-4">
-        <h2 className="type-heading-primary text-charcoal text-center mb-16">
-          {t('accommodations.title')}
+      <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal text-center')}>
+          Dónde Alojarse
         </h2>
         
         <div className="max-w-6xl mx-auto">
@@ -89,7 +89,7 @@ export function AccommodationsSection() {
                   <div className="absolute top-4 left-4 z-10">
                     <div className="bg-coral text-cream px-3 py-1 rounded-full flex items-center gap-1">
                       <Star className="w-4 h-4" />
-                      <span className="type-ui-label">{t('accommodations.featured')}</span>
+                      <span className="type-ui-label">Destacado</span>
                     </div>
                   </div>
                 )}
@@ -139,7 +139,7 @@ export function AccommodationsSection() {
                       <div className="flex items-center gap-2 text-charcoal/70">
                         <Bell className="w-4 h-4" />
                         <span className="type-body-small">
-                          {t('accommodations.coming_soon')}
+                          Próximamente
                         </span>
                       </div>
                     </div>
@@ -157,19 +157,19 @@ export function AccommodationsSection() {
                           : 'border border-charcoal/20 text-charcoal hover:border-charcoal/40'
                       }`}
                     >
-                      {accommodation.pricing ? t('accommodations.book_now') : 'Visit Website'}
+                      {accommodation.pricing ? 'Reservar Ahora' : 'Visitar Web'}
                     </a>
                     
                     {accommodation.comingSoon && (
                       <button className="w-full px-4 py-2 border border-charcoal/20 rounded-full text-charcoal hover:border-charcoal/40 transition-colors type-ui-label">
-                        {t('accommodations.subscribe')}
+                        Suscribirse a Actualizaciones
                       </button>
                     )}
                     
                     {accommodation.bookingLinks && (
                       <div className="text-center">
                         <p className="type-body-small text-charcoal/50 mb-2">
-                          Quick booking:
+                          Reserva rápida:
                         </p>
                         <div className="flex items-center justify-center gap-2">
                           {accommodation.bookingLinks.map((link, index) => (
@@ -192,6 +192,15 @@ export function AccommodationsSection() {
             ))}
           </div>
         </div>
+      </div>
+      <div className="w-full relative mt-16">
+      <SlideImage
+        src="/slides/monkey@large.jpg"
+        alt="A monkey holding a martini glass"
+        originalWidth={1921}
+        originalHeight={2171}
+          maskHeight={0}
+        />
       </div>
     </section>
   )

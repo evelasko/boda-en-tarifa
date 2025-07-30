@@ -1,64 +1,32 @@
 'use client'
 
 import React from 'react'
-import { useLanguage } from '@/contexts/LanguageContext'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { HelpCircle } from 'lucide-react'
+import Typography, { combineTypographyClasses } from '@/lib/typography'
+import Image from 'next/image'
+import { SlideImage } from './SlideImage'
+import { faqs } from '@/content/faq'
 
 export function FAQSection() {
-  const { t } = useLanguage()
-  
-  const faqs = [
-    {
-      id: 'q1',
-      question: 'Puedo venir con alguien mas?',
-      answer: 'Claro que sí, pero avísanos con antelación para poder incluir a tu acompañante en la lista y asegurar que tenemos todo preparado para vuestra visita.'
-    },
-    {
-      id: 'q2', 
-      question: 'Are kids welcome?',
-      answer: 'Sure, but you handle them! We love having children at our celebration, but please note that we won&apos;t have dedicated childcare or special facilities for infants.'
-    },
-    {
-      id: 'q3',
-      question: 'Can I bring my dog?',
-      answer: 'Of course! We\'re dog lovers and welcome your furry friends, but please let us know in advance so we can ensure the venues are prepared for four-legged guests.'
-    },
-    {
-      id: 'q4',
-      question: 'What should I do if I can\'t attend?',
-      answer: 'We totally understand that life happens! Just let us know as soon as possible through your RSVP so we can adjust our planning accordingly. We\'ll miss you but there will be plenty of photos to share!'
-    },
-    {
-      id: 'q5',
-      question: 'The ceremony\'s location is at walking distance, what if I can\'t walk it?',
-      answer: 'Don&apos;t worry! While most venues are within walking distance, we can arrange transportation for guests who need assistance. Just mention this in your RSVP or contact us directly.'
-    },
-    {
-      id: 'q6',
-      question: 'Question not listed? Feel free to ask!',
-      answer: 'We&apos;re here to help! If you have any other questions or concerns, don&apos;t hesitate to reach out to us directly. You can contact us via email, phone, or join our WhatsApp group for quick answers.'
-    }
-  ]
   
   return (
-    <section id="faq" className="py-20 lg:py-32 bg-sand/10">
+    <section id="faq" className="pt-20 lg:pt-32 bg-[url('/slides/lovers-texture@small.jpg')] bg-contain bg-repeat-y">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-coral/20 rounded-full flex items-center justify-center">
-                <HelpCircle className="w-8 h-8 text-coral" />
+              <div className="w-[200px] h-[200px] flex items-center justify-center">
+                <Image src="/icons/shell.png" alt="Help" width={200} height={200} />
               </div>
             </div>
-            <h2 className="type-heading-primary text-charcoal">
-              {t('faq.title')}
+            <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal text-center')}>
+              Preguntas Frecuentes
             </h2>
           </div>
           
           {/* FAQ Accordion */}
-          <div className="bg-white rounded-lg p-6 lg:p-8 shadow-sm">
+          <div className="bg-cream/30 rounded-lg p-6 lg:p-8 shadow-sm">
             <Accordion type="single" collapsible className="w-full">
               {faqs.map((faq) => (
                 <AccordionItem key={faq.id} value={faq.id} className="border-charcoal/10">
@@ -80,6 +48,16 @@ export function FAQSection() {
             </p>
           </div>
         </div>
+      </div>
+            {/* Image Area - Full Width */}
+            <div className="w-full relative">
+        <SlideImage
+          src="/slides/lovers@large.jpg"
+          alt="Kite slide continuation"
+          originalWidth={1921}
+          originalHeight={3260}
+          maskHeight={350}
+        />
       </div>
     </section>
   )

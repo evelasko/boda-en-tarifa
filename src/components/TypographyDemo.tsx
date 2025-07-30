@@ -36,7 +36,7 @@ const TypographyDemo: React.FC<TypographyDemoProps> = ({ className = '' }) => {
         </p>
         
         <div className="space-y-8">
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="border border-gray-200 p-6 rounded-lg">
             <p className={combineTypographyClasses(Typography.UI.Overline, 'mb-2 text-gray-500')}>
               Display Large (.type-display-1)
             </p>
@@ -48,7 +48,7 @@ const TypographyDemo: React.FC<TypographyDemoProps> = ({ className = '' }) => {
             </code>
           </div>
           
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="border border-gray-200 p-6 rounded-lg">
             <p className={combineTypographyClasses(Typography.UI.Overline, 'mb-2 text-gray-500')}>
               Display Medium (.type-display-2)
             </p>
@@ -102,7 +102,7 @@ const TypographyDemo: React.FC<TypographyDemoProps> = ({ className = '' }) => {
         </p>
         
         <div className="space-y-6">
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="border border-gray-200 p-6 rounded-lg">
             <p className={combineTypographyClasses(Typography.UI.Overline, 'mb-2 text-gray-500')}>
               Body Large (.type-body-large)
             </p>
@@ -112,7 +112,7 @@ const TypographyDemo: React.FC<TypographyDemoProps> = ({ className = '' }) => {
             </p>
           </div>
           
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="border border-gray-200 p-6 rounded-lg">
             <p className={combineTypographyClasses(Typography.UI.Overline, 'mb-2 text-gray-500')}>
               Body Base (.type-body-base) - Default
             </p>
@@ -123,7 +123,7 @@ const TypographyDemo: React.FC<TypographyDemoProps> = ({ className = '' }) => {
             </p>
           </div>
           
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="border border-gray-200 p-6 rounded-lg">
             <p className={combineTypographyClasses(Typography.UI.Overline, 'mb-2 text-gray-500')}>
               Body Small (.type-body-small)
             </p>
@@ -146,7 +146,7 @@ const TypographyDemo: React.FC<TypographyDemoProps> = ({ className = '' }) => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Lead Paragraph */}
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="border border-gray-200 p-6 rounded-lg">
             <p className={combineTypographyClasses(Typography.UI.Overline, 'mb-2 text-gray-500')}>
               Lead (.type-lead)
             </p>
@@ -156,7 +156,7 @@ const TypographyDemo: React.FC<TypographyDemoProps> = ({ className = '' }) => {
           </div>
           
           {/* Quote */}
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="border border-gray-200 p-6 rounded-lg">
             <p className={combineTypographyClasses(Typography.UI.Overline, 'mb-2 text-gray-500')}>
               Quote (.type-quote)
             </p>
@@ -166,7 +166,7 @@ const TypographyDemo: React.FC<TypographyDemoProps> = ({ className = '' }) => {
           </div>
           
           {/* Button Text */}
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="border border-gray-200 p-6 rounded-lg">
             <p className={combineTypographyClasses(Typography.UI.Overline, 'mb-2 text-gray-500')}>
               Button (.type-button)
             </p>
@@ -179,7 +179,7 @@ const TypographyDemo: React.FC<TypographyDemoProps> = ({ className = '' }) => {
           </div>
           
           {/* Link */}
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="border border-gray-200 p-6 rounded-lg">
             <p className={combineTypographyClasses(Typography.UI.Overline, 'mb-2 text-gray-500')}>
               Link (.type-link)
             </p>
@@ -189,7 +189,7 @@ const TypographyDemo: React.FC<TypographyDemoProps> = ({ className = '' }) => {
           </div>
           
           {/* Label */}
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="border border-gray-200 p-6 rounded-lg">
             <p className={combineTypographyClasses(Typography.UI.Overline, 'mb-2 text-gray-500')}>
               Label (.type-label)
             </p>
@@ -204,7 +204,7 @@ const TypographyDemo: React.FC<TypographyDemoProps> = ({ className = '' }) => {
           </div>
           
           {/* Caption */}
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="border border-gray-200 p-6 rounded-lg">
             <p className={combineTypographyClasses(Typography.UI.Overline, 'mb-2 text-gray-500')}>
               Caption (.type-caption)
             </p>

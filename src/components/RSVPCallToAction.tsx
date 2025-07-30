@@ -2,13 +2,12 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { useLanguage } from '@/contexts/LanguageContext'
+import { SlideImage } from './SlideImage'
 
 export function RSVPCallToAction() {
-  const { t } = useLanguage()
   
   return (
-    <section id="rsvp-cta" className="py-20 lg:py-32 bg-gradient-to-br from-coral/10 to-sand/10">
+    <section id="rsvp-cta" className="pt-20 lg:pt-32 bg-[url('/slides/lobster-texture@large.jpg')] bg-contain bg-repeat-y">
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto text-center">
           {/* Decorative element */}
@@ -31,22 +30,22 @@ export function RSVPCallToAction() {
           </div>
           
           <h2 className="type-heading-primary text-charcoal mb-4">
-            {t('rsvp.title')}
+            Únete a Nosotros
           </h2>
           
           <p className="type-body-large text-charcoal/80 mb-8">
-            {t('rsvp.subtitle')}
+            Esperamos celebrar contigo este día tan especial
           </p>
           
           <p className="type-body-lead text-coral mb-8">
-            {t('rsvp.deadline')}
+            Por favor confirma tu asistencia antes del 15 de abril
           </p>
           
           <Link
             href="/rsvp"
             className="inline-block px-8 py-4 bg-coral text-cream rounded-full hover:bg-coral/90 transition-all transform hover:scale-105 type-ui-label shadow-lg"
           >
-            {t('rsvp.button')}
+            Confirmar Asistencia
           </Link>
           
           {/* Bottom decorative element */}
@@ -64,6 +63,11 @@ export function RSVPCallToAction() {
           </div>
         </div>
       </div>
+      <SlideImage
+        src="/slides/lobster@large.jpg"
+        alt="Lobster"
+        originalWidth={1921}
+        originalHeight={2974} maskHeight={200} />
     </section>
   )
 }

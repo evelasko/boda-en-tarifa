@@ -32,7 +32,7 @@ export function Hero() {
         
         {/* Mobile Background */}
         <div 
-          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat block md:hidden"
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-repeat-y block md:hidden"
           style={{
             backgroundImage: 'url(/images/hero-mobile.jpg)'
           }}

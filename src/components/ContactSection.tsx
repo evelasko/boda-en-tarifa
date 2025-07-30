@@ -1,23 +1,21 @@
 'use client'
 
 import React from 'react'
-import { useLanguage } from '@/contexts/LanguageContext'
 import { Mail, Phone, MessageCircle, Heart } from 'lucide-react'
 
 export function ContactSection() {
-  const { t } = useLanguage()
   
   return (
-    <section id="contact" className="py-20 lg:py-32 bg-charcoal text-cream">
+    <section id="contact" className="pt-20 lg:pt-32 bg-[url('/slides/lovers-texture@small.jpg')] bg-contain bg-repeat-y">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
           {/* Header */}
           <h2 className="type-heading-primary text-cream mb-8">
-            {t('contact.title')}
+            Contacto
           </h2>
           
           <p className="type-body-large text-cream/80 mb-12">
-            We can&apos;t wait to celebrate with you in Tarifa!
+            ¡No podemos esperar a celebrar con vosotros en Tarifa!
           </p>
           
           {/* Contact Methods */}
@@ -48,10 +46,10 @@ export function ContactSection() {
               <MessageCircle className="w-8 h-8 text-gold mx-auto mb-4" />
               <h3 className="type-heading-tertiary text-cream mb-2">WhatsApp</h3>
               <button className="type-body-base text-cream/80 hover:text-gold transition-colors">
-                {t('contact.whatsapp')}
+                Grupo de WhatsApp
               </button>
               <p className="type-body-small text-cream/50 mt-1">
-                Link coming soon
+                Enlace próximamente
               </p>
             </div>
           </div>
@@ -72,14 +70,14 @@ export function ContactSection() {
               <div className="flex items-center gap-2">
                 <span className="type-heading-ornamental text-cream">E&M</span>
                 <span className="type-body-small text-cream/50">
-                  May 30, 2025 • Tarifa, Spain
+                  30 de Mayo, 2025 • Tarifa, España
                 </span>
               </div>
               
               <div className="flex items-center gap-2 text-cream/50">
                 <Heart className="w-4 h-4 text-coral" />
                 <span className="type-body-small">
-                  Made with love for our beach wedding
+                  Hecho con amor para nuestra boda en la playa
                 </span>
               </div>
             </div>

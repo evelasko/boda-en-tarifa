@@ -1,11 +1,9 @@
 'use client'
 
 import React from 'react'
-import { useLanguage } from '@/contexts/LanguageContext'
 import { Crown, Heart, Flower, Heart as RingIcon } from 'lucide-react'
 
 export function WeddingPartySection() {
-  const { t } = useLanguage()
   
   const weddingParty = {
     officiant: "Rey",
@@ -28,7 +26,7 @@ export function WeddingPartySection() {
     <section id="wedding-party" className="py-20 lg:py-32 bg-cream">
       <div className="container mx-auto px-4">
         <h2 className="type-heading-primary text-charcoal text-center mb-16">
-          {t('party.title')}
+          Cortejo de Boda
         </h2>
         
         <div className="max-w-4xl mx-auto">
@@ -40,7 +38,7 @@ export function WeddingPartySection() {
                   <Crown className="w-8 h-8 text-gold" />
                 </div>
                 <h3 className="type-heading-secondary text-charcoal mb-4">
-                  {t('party.officiant')}
+                  Oficiante
                 </h3>
                 <div className="bg-white rounded-lg p-6 border border-gold/20">
                   <p className="type-heading-tertiary text-charcoal">
@@ -57,14 +55,14 @@ export function WeddingPartySection() {
                   <RingIcon className="w-8 h-8 text-coral" />
                 </div>
                 <h3 className="type-heading-secondary text-charcoal mb-4">
-                  {t('party.ring_bearer')}
+                  Portador de Anillos
                 </h3>
                 <div className="bg-white rounded-lg p-6 border border-coral/20">
                   <p className="type-heading-tertiary text-charcoal">
                     {weddingParty.ringBearer}
                   </p>
                   <p className="type-body-small text-charcoal/70 mt-2">
-                    Our furry family member 🐕
+                    Nuestro miembro peludo de la familia 🐕
                   </p>
                 </div>
               </div>
@@ -77,7 +75,7 @@ export function WeddingPartySection() {
                   <Heart className="w-8 h-8 text-sage" />
                 </div>
                 <h3 className="type-heading-secondary text-charcoal mb-4">
-                  {t('party.persons_of_honor')}
+                  Personas de Honor
                 </h3>
                 <div className="bg-white rounded-lg p-6 border border-sage/20">
                   <div className="space-y-3">
@@ -101,7 +99,7 @@ export function WeddingPartySection() {
                   <Flower className="w-8 h-8 text-ocean" />
                 </div>
                 <h3 className="type-heading-secondary text-charcoal mb-4">
-                  {t('party.flower_kids')}
+                  Niños de las Flores
                 </h3>
                 <div className="bg-white rounded-lg p-6 border border-ocean/20">
                   <div className="space-y-3">

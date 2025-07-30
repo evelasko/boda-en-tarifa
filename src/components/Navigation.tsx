@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Menu, X } from 'lucide-react'
+import Typography from '@/lib/typography'
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -41,7 +42,7 @@ export function Navigation() {
   return (
     <nav className={cn(
       'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-      isScrolled ? 'bg-cream/95 backdrop-blur-md shadow-sm' : 'bg-transparent'
+      isScrolled ? 'bg-cream/25 backdrop-blur-md shadow-lg' : 'bg-transparent'
     )}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 lg:h-20">
@@ -57,7 +58,11 @@ export function Navigation() {
                 key={link.href}
                 href={link.href}
                 onClick={(e) => scrollToSection(e, link.href)}
-                className="type-ui-label text-charcoal hover:text-coral transition-colors"
+                className={cn(
+                  Typography.UI.Overline,
+                  'text-white/50 hover:text-coral transition-colors',
+                  isScrolled ? 'text-charcoal/60' : 'text-white/50'
+                )}
               >
                 {link.label}
               </a>
@@ -66,7 +71,7 @@ export function Navigation() {
             {/* RSVP Button */}
             <Link
               href="/rsvp"
-              className="px-6 py-2 bg-coral text-cream rounded-full hover:bg-coral/90 transition-colors type-ui-label"
+              className="px-6 py-2 bg-coral/30 text-cream rounded-full hover:bg-coral/90 transition-colors type-ui-label"
             >
               RSVP
             </Link>

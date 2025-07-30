@@ -1,55 +1,40 @@
 'use client'
 
 import React from 'react'
-import { useLanguage } from '@/contexts/LanguageContext'
-import { Wind, Moon, Shirt, MapPin, AlertTriangle } from 'lucide-react'
+import { Wind, Moon, AlertTriangle } from 'lucide-react'
+import Typography, { combineTypographyClasses } from '@/lib/typography'
+import Image from 'next/image'
+import { SlideImage } from './SlideImage'
+import { weatherWarnings, beReadyFor, dressCode } from '@/content/practicalInfo'
 
 export function PracticalInfoSection() {
-  const { t } = useLanguage()
-  
-  const weatherWarnings = [
-    "first of all it is a very windy beach",
-    "the night is usually chilly",
-    "if the wind comes from the west, expect cold under shade"
-  ]
-  
-  const beReadyFor = [
-    "walking over irregular surfaces",
-    "chilly nights, bring some cover up",
-    "it IS a beach wedding, expect naughty sand"
-  ]
-  
-  const dressCode = [
-    "white is perfectly allowed, no one will steal our shine",
-    "there is no need to be formal, and feel free to be as fancy as you want",
-    "just show up in whatever floats your boat",
-    "and beware: you WILL definitely DANCE the night away"
-  ]
   
   return (
-    <section id="practical" className="py-20 lg:py-32 bg-sand/10">
+    <section id="practical" className="pt-20 lg:pt-32 bg-[url('/slides/canoe-texture@large.jpg')] bg-contain bg-repeat-y">
       <div className="container mx-auto px-4">
-        <h2 className="type-heading-primary text-charcoal text-center mb-16">
-          {t('practical.title')}
+      <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal text-center')}>
+          Bueno Saber
         </h2>
         
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
             {/* What to Wear */}
             <div className="space-y-6">
-              <div className="text-center">
-                <Shirt className="w-12 h-12 text-coral mx-auto mb-4" />
-                <h3 className="type-heading-secondary text-charcoal mb-6">
-                  {t('practical.dress_code')}
+            <div className="text-center">
+                <div className="flex justify-center">
+                  <Image src="/icons/flipflops.png" alt="Map" width={100} height={100} />
+                </div>
+                <h3 className={combineTypographyClasses(Typography.Heading.H4, "text-charcoal mb-6")}>
+                  Código de Vestimenta
                 </h3>
               </div>
               
               {/* Weather Warnings */}
-              <div className="bg-white rounded-lg p-6 border border-coral/20">
+              <div className="bg-cream/50 rounded-lg p-6 border border-coral/20">
                 <div className="flex items-center gap-2 mb-4">
                   <Wind className="w-5 h-5 text-coral" />
                   <h4 className="type-heading-tertiary text-charcoal">
-                    {t('practical.weather')}
+                    Tiempo
                   </h4>
                 </div>
                 <ul className="space-y-2">
@@ -65,11 +50,11 @@ export function PracticalInfoSection() {
               </div>
               
               {/* Be Ready For */}
-              <div className="bg-white rounded-lg p-6 border border-sage/20">
+              <div className="bg-cream/50 rounded-lg p-6 border border-sage/20">
                 <div className="flex items-center gap-2 mb-4">
                   <Moon className="w-5 h-5 text-sage" />
                   <h4 className="type-heading-tertiary text-charcoal">
-                    Be Ready For
+                    Prepárate Para
                   </h4>
                 </div>
                 <ul className="space-y-2">
@@ -85,9 +70,9 @@ export function PracticalInfoSection() {
               </div>
               
               {/* Dress Code */}
-              <div className="bg-white rounded-lg p-6 border border-gold/20">
+              <div className="bg-cream/50 rounded-lg p-6 border border-gold/20">
                 <h4 className="type-heading-tertiary text-charcoal mb-4">
-                  Dress Code Freedom
+                  Libertad de Vestimenta
                 </h4>
                 <ul className="space-y-2">
                   {dressCode.map((rule, index) => (
@@ -105,16 +90,18 @@ export function PracticalInfoSection() {
             {/* Getting Around */}
             <div className="space-y-6">
               <div className="text-center">
-                <MapPin className="w-12 h-12 text-ocean mx-auto mb-4" />
-                <h3 className="type-heading-secondary text-charcoal mb-6">
-                  Getting Around Tarifa
+                <div className="flex justify-center">
+                  <Image src="/icons/compass.png" alt="Map" width={100} height={100} />
+                </div>
+                <h3 className={combineTypographyClasses(Typography.Heading.H4, "text-charcoal mb-6")}>
+                  Moverse por Tarifa
                 </h3>
               </div>
               
               {/* Beach Access */}
-              <div className="bg-white rounded-lg p-6 border border-ocean/20">
+              <div className="bg-cream/50 rounded-lg p-6 border border-ocean/20">
                 <h4 className="type-heading-tertiary text-charcoal mb-4">
-                  Beach & Venues
+                  Playa y Lugares
                 </h4>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
@@ -123,10 +110,10 @@ export function PracticalInfoSection() {
                     </div>
                     <div>
                       <p className="type-body-base text-charcoal">
-                        Beach & chiringitos at walking distance
+                        Playa y chiringitos a poca distancia andando
                       </p>
                       <p className="type-body-small text-charcoal/70">
-                        All wedding venues are easily accessible on foot
+                        Todos los lugares de la boda son fácilmente accesibles a pie
                       </p>
                     </div>
                   </div>
@@ -134,9 +121,9 @@ export function PracticalInfoSection() {
               </div>
               
               {/* Tourism */}
-              <div className="bg-white rounded-lg p-6 border border-coral/20">
+              <div className="bg-cream/50 rounded-lg p-6 border border-coral/20">
                 <h4 className="type-heading-tertiary text-charcoal mb-4">
-                  For Tourism
+                  Para Turismo
                 </h4>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
@@ -145,10 +132,10 @@ export function PracticalInfoSection() {
                     </div>
                     <div>
                       <p className="type-body-base text-charcoal">
-                        Car recommended for sightseeing
+                        Se recomienda coche para hacer turismo
                       </p>
                       <p className="type-body-small text-charcoal/70">
-                        To explore the beautiful coast and inland attractions
+                        Para explorar la hermosa costa y atracciones del interior
                       </p>
                     </div>
                   </div>
@@ -156,9 +143,9 @@ export function PracticalInfoSection() {
               </div>
               
               {/* Public Transport */}
-              <div className="bg-white rounded-lg p-6 border border-sage/20">
+              <div className="bg-cream/50 rounded-lg p-6 border border-sage/20">
                 <h4 className="type-heading-tertiary text-charcoal mb-4">
-                  Public Transport
+                  Transporte Público
                 </h4>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
@@ -167,7 +154,7 @@ export function PracticalInfoSection() {
                     </div>
                     <div>
                       <p className="type-body-base text-charcoal">
-                        Buses to/from town available
+                        Autobuses hacia/desde el pueblo disponibles
                       </p>
                       <a
                         href="https://horizontesur.es/lineas-regulares/"
@@ -175,7 +162,7 @@ export function PracticalInfoSection() {
                         rel="noopener noreferrer"
                         className="type-body-small text-sage hover:text-sage/80 transition-colors underline"
                       >
-                        Check bus schedule →
+                        Ver horarios de autobús →
                       </a>
                     </div>
                   </div>
@@ -184,6 +171,16 @@ export function PracticalInfoSection() {
             </div>
           </div>
         </div>
+      </div>
+      {/* Image Area - Full Width */}
+      <div className="w-full relative">
+        <SlideImage
+          src="/slides/canoe@large.jpg"
+          alt="Kite slide continuation"
+          originalWidth={1921}
+          originalHeight={2826}
+          maskHeight={350}
+        />
       </div>
     </section>
   )
