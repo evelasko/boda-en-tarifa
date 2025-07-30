@@ -2,12 +2,10 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useLanguage } from '@/contexts/LanguageContext'
 import { cn } from '@/lib/utils'
 import { Menu, X } from 'lucide-react'
 
 export function Navigation() {
-  const { language, setLanguage, t } = useLanguage()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   
@@ -21,13 +19,13 @@ export function Navigation() {
   }, [])
   
   const navLinks = [
-    { href: '#home', label: t('nav.home') },
-    { href: '#events', label: t('nav.events') },
-    { href: '#travel', label: t('nav.travel') },
-    { href: '#accommodations', label: t('nav.accommodations') },
-    { href: '#faq', label: t('nav.faq') },
-    { href: '#gifts', label: t('nav.gifts') },
-    { href: '#contact', label: t('nav.contact') },
+    { href: '#home', label: 'Inicio' },
+    { href: '#events', label: 'Eventos' },
+    { href: '#travel', label: 'Viaje' },
+    { href: '#accommodations', label: 'Alojamiento' },
+    { href: '#faq', label: 'FAQ' },
+    { href: '#gifts', label: 'Regalos' },
+    { href: '#contact', label: 'Contacto' },
   ]
   
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -70,16 +68,8 @@ export function Navigation() {
               href="/rsvp"
               className="px-6 py-2 bg-coral text-cream rounded-full hover:bg-coral/90 transition-colors type-ui-label"
             >
-              {t('nav.rsvp')}
+              RSVP
             </Link>
-            
-            {/* Language Toggle */}
-            <button
-              onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
-              className="px-4 py-2 border border-charcoal/20 rounded-full hover:border-charcoal/40 transition-colors type-ui-label"
-            >
-              {language === 'en' ? 'ES' : 'EN'}
-            </button>
           </div>
           
           {/* Mobile Menu Button */}
@@ -119,18 +109,8 @@ export function Navigation() {
               href="/rsvp"
               className="px-6 py-3 bg-coral text-cream rounded-full hover:bg-coral/90 transition-colors type-ui-label text-center mt-4"
             >
-              {t('nav.rsvp')}
+              RSVP
             </Link>
-            
-            <button
-              onClick={() => {
-                setLanguage(language === 'en' ? 'es' : 'en')
-                setIsMobileMenuOpen(false)
-              }}
-              className="px-6 py-3 border border-charcoal/20 rounded-full hover:border-charcoal/40 transition-colors type-ui-label text-center"
-            >
-              {language === 'en' ? 'Español' : 'English'}
-            </button>
           </div>
         </div>
       </div>
