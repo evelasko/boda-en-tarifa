@@ -390,6 +390,52 @@
   }
 }
 
+/* Background Image Utilities */
+@layer utilities {
+  /* Illustration backgrounds */
+  .bg-carving-1 {
+    background-image: url('/illustrations/carving-1.png');
+  }
+  
+  .bg-hero-frame {
+    background-image: url('/illustrations/hero-frame.png');
+  }
+  
+  /* Slide texture backgrounds */
+  .bg-ski-texture {
+    background-image: url('/slides/ski-texture@large.jpg');
+  }
+  
+  .bg-kite-texture {
+    background-image: url('/slides/kite-texture@large.jpg');
+  }
+  
+  .bg-lobster-texture {
+    background-image: url('/slides/lobster-texture@large.jpg');
+  }
+  
+  .bg-monkey-texture {
+    background-image: url('/slides/monkey-texture.jpg');
+  }
+  
+  .bg-canoe-texture {
+    background-image: url('/slides/canoe-texture@large.jpg');
+  }
+  
+  .bg-sea-texture {
+    background-image: url('/slides/sea-texture.jpg');
+  }
+  
+  .bg-lovers-texture-small {
+    background-image: url('/slides/lovers-texture@small.jpg');
+  }
+  
+  /* Icon texture background */
+  .bg-icons-texture {
+    background-image: url('/textures/icons-texture.png');
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

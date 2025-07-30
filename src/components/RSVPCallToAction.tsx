@@ -7,7 +7,7 @@ import { SlideImage } from './SlideImage'
 export function RSVPCallToAction() {
   
   return (
-    <section id="rsvp-cta" className="pt-20 lg:pt-32 bg-[url('/slides/lobster-texture@large.jpg')] bg-contain bg-repeat-y">
+    <section id="rsvp-cta" className="pt-20 lg:pt-32 bg-lobster-texture bg-contain bg-repeat-y">
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto text-center">
           {/* Decorative element */}

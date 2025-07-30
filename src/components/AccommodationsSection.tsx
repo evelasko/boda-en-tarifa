@@ -69,7 +69,7 @@ export function AccommodationsSection() {
   ]
   
   return (
-    <section id="accommodations" className="pt-20 lg:pt-32 bg-[url('/slides/monkey-texture.jpg')] bg-contain bg-repeat-y">
+    <section id="accommodations" className="pt-20 lg:pt-32 bg-monkey-texture bg-contain bg-repeat-y">
       <div className="container mx-auto px-4">
       <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal text-center')}>
           Dónde Alojarse

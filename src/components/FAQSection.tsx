@@ -10,7 +10,7 @@ import { faqs } from '@/content/faq'
 export function FAQSection() {
   
   return (
-    <section id="faq" className="pt-20 lg:pt-32 bg-[url('/slides/lovers-texture@small.jpg')] bg-contain bg-repeat-y">
+    <section id="faq" className="pt-20 lg:pt-32 bg-lovers-texture-small bg-contain bg-repeat-y">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
           {/* Header */}

@@ -9,9 +9,9 @@ export function OurStory() {
   return (
     <section 
       id="story" 
-      className="relative bg-[url('/slides/ski-texture@large.jpg')] bg-contain bg-repeat-y"
+      className="relative bg-ski-texture bg-contain bg-repeat-y"
     >
-      <div className="w-full h-[68px] bg-[url('/illustrations/hero-frame.png')] bg-repeat-x bg-contain" />
+      <div className="w-full h-[68px] bg-hero-frame bg-repeat-x bg-contain" />
       <div className="container pt-20 lg:pt-32 mx-auto px-4 max-w-4xl">
         {/* Content Area */}
         <div className="text-center mb-8">

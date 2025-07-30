@@ -12,7 +12,7 @@ export function TravelSection() {
   return (
     <section 
       id="travel" 
-      className="pt-20 lg:pt-32 relative bg-[url('/textures/icons-texture.png')] bg-repeat"
+              className="pt-20 lg:pt-32 relative bg-icons-texture bg-repeat"
     >
       <div className="container mx-auto px-4">
         <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal text-center')}>

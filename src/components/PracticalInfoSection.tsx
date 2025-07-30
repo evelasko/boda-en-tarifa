@@ -10,7 +10,7 @@ import { weatherWarnings, beReadyFor, dressCode } from '@/content/practicalInfo'
 export function PracticalInfoSection() {
   
   return (
-    <section id="practical" className="pt-20 lg:pt-32 bg-[url('/slides/canoe-texture@large.jpg')] bg-contain bg-repeat-y">
+    <section id="practical" className="pt-20 lg:pt-32 bg-canoe-texture bg-contain bg-repeat-y">
       <div className="container mx-auto px-4">
       <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal text-center')}>
           Bueno Saber

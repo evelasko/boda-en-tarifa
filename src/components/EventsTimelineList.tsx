@@ -45,8 +45,8 @@ export function EventsTimelineList() {
   }
 
   return (
-    <section id="events" className="bg-[url('/slides/kite-texture@large.jpg')] bg-contain bg-repeat-y">
-      <div className="w-full h-[83px] bg-[url('/illustrations/carving-1.png')] bg-repeat-x bg-contain" />
+    <section id="events" className="bg-kite-texture bg-contain bg-repeat-y">
+      <div className="w-full h-[83px] bg-carving-1 bg-repeat-x bg-contain" />
       <div className="container mx-auto pt-20 lg:pt-32 px-4">
         <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal text-center')}>
           Eventos
@@ -200,10 +200,10 @@ export function EventsTimelineList() {
       {/* Image Area - Full Width */}
       <div className="w-full relative">
         <SlideImage
-          src="/slides/kite@large.jpg"
+          src="/slides/kite.webp"
           alt="Kite slide continuation"
-          originalWidth={1921}
-          originalHeight={2490}
+          originalWidth={1920}
+          originalHeight={2489}
           maskHeight={350}
         />
       </div>
