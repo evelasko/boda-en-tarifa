@@ -1,4 +1,5 @@
 # Typography Design System
+
 ## Elegant & Dynamic Wedding Website
 
 This documentation covers the comprehensive typography system built for the unconventional wedding website using TailwindCSS 4.
@@ -33,12 +34,14 @@ The typography system provides a complete set of text styles designed for an ele
 
 ### Aesthetic Goals
 
-**Elegant & Sophisticated**: 
+**Elegant & Sophisticated**:
+
 - Generous letter-spacing for display text
 - Classical serif font (Trajan Pro 3) for headings
 - Clean, readable sans-serif (Gotham) for body text
 
 **Vibrant & Dynamic**:
+
 - Smooth CSS transitions on hover/interaction
 - Fluid scaling that feels alive
 - Subtle animations respect user preferences
@@ -46,12 +49,14 @@ The typography system provides a complete set of text styles designed for an ele
 ### Typography Pairing
 
 **Trajan Pro 3** (Display & Headings):
+
 - Classical Roman inscriptional capitals
 - Conveys timeless elegance and ceremony
 - Used for: Display text, H1-H4 headings
 - Weights: 400 (Regular), 700 (Bold)
 
 **Gotham** (Body & UI):
+
 - Modern geometric sans-serif
 - Clean, readable, contemporary feel
 - Used for: Body text, H5-H6, UI elements
@@ -80,6 +85,7 @@ The system uses the new `@theme` directive in `globals.css`:
 ### CSS Custom Properties Structure
 
 Each typography style includes properties for:
+
 - `size`: Font size with responsive clamp()
 - `line`: Line height ratio
 - `tracking`: Letter spacing
@@ -88,6 +94,7 @@ Each typography style includes properties for:
 ### Utility Classes
 
 Generated utility classes in `@layer utilities`:
+
 ```css
 .type-display-1 {
   font-family: var(--font-display);
@@ -103,18 +110,21 @@ Generated utility classes in `@layer utilities`:
 ## Typography Hierarchy
 
 ### Display Styles
+
 **Purpose**: Hero sections, major announcements, primary focal points
 
 - `.type-display-1`: Largest impact text (3.5rem - 8rem)
 - `.type-display-2`: Secondary display text (2.5rem - 5.5rem)
 
 **Characteristics**:
+
 - Trajan Pro 3 font family
 - Uppercase transformation
 - Generous letter-spacing (0.03em - 0.05em)
 - Tight line-height (0.9 - 1.0)
 
 ### Heading Hierarchy
+
 **Purpose**: Content structure and organization
 
 - `.type-heading-1`: Main page headings (2.25rem - 4rem)
@@ -125,10 +135,12 @@ Generated utility classes in `@layer utilities`:
 - `.type-heading-6`: Smallest headings (1rem - 1.125rem)
 
 **Font Usage**:
+
 - H1-H4: Trajan Pro 3 (elegant, ceremonial)
 - H5-H6: Gotham (clean, readable)
 
 ### Body Text Styles
+
 **Purpose**: Reading content with optimal readability
 
 - `.type-body-large`: Emphasized content (1.125rem - 1.375rem)
@@ -136,11 +148,13 @@ Generated utility classes in `@layer utilities`:
 - `.type-body-small`: Secondary content (0.875rem - 1rem)
 
 **Characteristics**:
+
 - Gotham font family
 - Optimized line-heights (1.6 - 1.65)
 - Subtle letter-spacing adjustments
 
 ### UI & Utility Styles
+
 **Purpose**: Interface elements and specialized content
 
 - `.type-lead`: Introduction paragraphs
@@ -156,11 +170,13 @@ Generated utility classes in `@layer utilities`:
 ### Basic Implementation
 
 **Import the Typography Constants**:
+
 ```typescript
 import { Typography } from './typography';
 ```
 
 **Simple Usage**:
+
 ```jsx
 <h1 className={Typography.Display.Large}>
   Emma & James
@@ -172,6 +188,7 @@ import { Typography } from './typography';
 ```
 
 **With Additional Classes**:
+
 ```jsx
 <h2 className={`${Typography.Heading.H2} text-center text-gray-800 mb-8`}>
   Our Story
@@ -181,6 +198,7 @@ import { Typography } from './typography';
 ### Using Helper Functions
 
 **Combine Classes Utility**:
+
 ```jsx
 import { Typography, combineTypographyClasses } from './typography';
 
@@ -195,6 +213,7 @@ import { Typography, combineTypographyClasses } from './typography';
 ### Advanced Customization
 
 **Access CSS Variables Directly**:
+
 ```jsx
 <div style={{
   fontSize: 'var(--type-heading-1-size)',
@@ -206,6 +225,7 @@ import { Typography, combineTypographyClasses } from './typography';
 ```
 
 **Dynamic Typography Variables**:
+
 ```jsx
 import { createResponsiveTypography, TypographyVariables } from './typography';
 
@@ -223,6 +243,7 @@ const customStyle = createResponsiveTypography(
 ### Breakpoint Strategy
 
 The system uses four primary breakpoints:
+
 - **Mobile**: 320px - 768px
 - **Tablet**: 768px - 1024px
 - **Desktop**: 1024px - 1440px
@@ -289,6 +310,7 @@ All typography uses CSS `clamp()` for smooth scaling:
 ### Font Loading
 
 **Adobe Fonts Integration**:
+
 ```css
 @import url('https://use.typekit.net/tqk3qdr.css');
 ```
@@ -329,6 +351,7 @@ body {
 ### Adding New Typography Styles
 
 1. **Define CSS Variables in @theme**:
+
 ```css
 @theme {
   --type-custom-size: clamp(1rem, 2vw, 1.5rem);
@@ -339,6 +362,7 @@ body {
 ```
 
 2. **Create Utility Class**:
+
 ```css
 @layer utilities {
   .type-custom {
@@ -353,6 +377,7 @@ body {
 ```
 
 3. **Update TypeScript Constants**:
+
 ```typescript
 export const Typography = {
   // ... existing styles
@@ -363,6 +388,7 @@ export const Typography = {
 ### Customizing Existing Styles
 
 **Override CSS Variables**:
+
 ```css
 :root {
   --type-heading-1-size: clamp(2rem, 4vw, 3.5rem); /* Custom sizing */
@@ -371,6 +397,7 @@ export const Typography = {
 ```
 
 **Component-Level Overrides**:
+
 ```jsx
 <h1 
   className={Typography.Heading.H1}
@@ -383,6 +410,7 @@ export const Typography = {
 ### Adding Font Variations
 
 **Include Additional Weights**:
+
 ```css
 @theme {
   --font-display-light: "trajan-pro-3", serif;
@@ -391,6 +419,7 @@ export const Typography = {
 ```
 
 **Create Weight-Specific Classes**:
+
 ```css
 .type-heading-1-light {
   font-family: var(--font-display-light);
@@ -404,16 +433,19 @@ export const Typography = {
 ### Common Issues
 
 **Fonts Not Loading**:
+
 - Verify Adobe Fonts URL is correct
 - Check network connectivity
 - Ensure font names match exactly
 
 **Responsive Scaling Issues**:
+
 - Check clamp() syntax in CSS variables
 - Verify viewport meta tag is present
 - Test across different screen sizes
 
 **TypeScript Errors**:
+
 - Ensure all typography constants are properly exported
 - Check import paths are correct
 - Verify TypeScript types are up to date
@@ -421,6 +453,7 @@ export const Typography = {
 ### Debug Techniques
 
 **Inspect CSS Variables**:
+
 ```javascript
 // In browser console
 getComputedStyle(document.documentElement)
@@ -428,6 +461,7 @@ getComputedStyle(document.documentElement)
 ```
 
 **Test Responsive Behavior**:
+
 ```css
 /* Temporary debugging styles */
 .type-heading-1::after {
@@ -440,6 +474,7 @@ getComputedStyle(document.documentElement)
 ### Performance Monitoring
 
 **Measure Font Loading**:
+
 ```javascript
 // Check if fonts are loaded
 document.fonts.ready.then(() => {
@@ -448,6 +483,7 @@ document.fonts.ready.then(() => {
 ```
 
 **Monitor Layout Shifts**:
+
 - Use Web Vitals tools
 - Check for font swap during loading
 - Optimize font-display settings
@@ -497,4 +533,4 @@ import {
 
 ---
 
-*This typography system was designed to create a beautiful, accessible, and maintainable foundation for the wedding website, balancing elegance with modern web standards.* 
+*This typography system was designed to create a beautiful, accessible, and maintainable foundation for the wedding website, balancing elegance with modern web standards.*

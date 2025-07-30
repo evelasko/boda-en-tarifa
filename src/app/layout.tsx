@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { LanguageProvider } from "@/contexts/LanguageContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Enrique & Manuel - May 30, 2025",
-  description: "Join us for our beach wedding celebration in Tarifa, Spain",
+  title: "Enrique & Manuel - 30 de Mayo, 2025",
+  description: "Únete a nuestra celebración de boda en la playa de Tarifa, España",
 };
 
 export default function RootLayout({
@@ -24,16 +23,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/tqk3qdr.css" precedence="default" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <LanguageProvider>
-          {children}
-        </LanguageProvider>
+        {children}
       </body>
     </html>
   );
