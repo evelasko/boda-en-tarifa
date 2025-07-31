@@ -10,8 +10,9 @@ import { faqs } from '@/content/faq'
 export function FAQSection() {
   
   return (
-    <section id="faq" className="pt-20 lg:pt-32 bg-lovers-texture-small bg-contain bg-repeat-y">
-      <div className="container mx-auto px-4">
+    <section id="faq" className="bg-lovers-texture-small bg-contain bg-repeat-y">
+      <div className="w-full h-[83px] bg-divider-stick bg-repeat-x bg-contain" />
+      <div className="pt-20 lg:pt-32 container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">

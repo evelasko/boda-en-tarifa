@@ -194,6 +194,7 @@ export function AccommodationsSection() {
         </div>
       </div>
       <div className="w-full relative mt-16">
+      <div className="w-full bg-carving-1 h-[54px] bg-repeat-x drop-shadow-[0_15px_10px_rgba(0,0,0,0.3)] z-10 relative" />
       <SlideImage
         src="/slides/monkey@large.jpg"
         alt="A monkey holding a martini glass"
@@ -201,6 +202,7 @@ export function AccommodationsSection() {
         originalHeight={2171}
           maskHeight={0}
         />
+        <div className="w-full bg-carving-1 h-[54px] bg-repeat-x drop-shadow-[0_15px_20px_rgba(0,0,0,0.3)] z-10 relative" />
       </div>
     </section>
   )

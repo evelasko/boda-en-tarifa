@@ -400,6 +400,11 @@
   .bg-hero-frame {
     background-image: url('/illustrations/hero-frame.png');
   }
+
+  .bg-divider-stick {
+    background-image: url('/illustrations/divider-line-middle.png');
+  }
+  
   
   /* Slide texture backgrounds */
   .bg-ski-texture {

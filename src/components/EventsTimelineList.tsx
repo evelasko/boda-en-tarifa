@@ -46,7 +46,7 @@ export function EventsTimelineList() {
 
   return (
     <section id="events" className="bg-kite-texture bg-contain bg-repeat-y">
-      <div className="w-full h-[83px] bg-carving-1 bg-repeat-x bg-contain" />
+      <div className="w-full h-[83px] bg-divider-stick bg-repeat-x bg-contain" />
       <div className="container mx-auto pt-20 lg:pt-32 px-4">
         <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal text-center')}>
           Eventos

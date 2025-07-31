@@ -7,8 +7,9 @@ import { SlideImage } from './SlideImage'
 export function GiftsSection() {
   
   return (
-    <section id="gifts" className="pt-20 lg:pt-32 bg-sea-texture bg-contain bg-repeat-y">
-      <div className="container mx-auto px-4">
+    <section id="gifts" className="bg-sea-texture bg-contain bg-repeat-y">
+      <div className="w-full h-[83px] bg-divider-stick bg-repeat-x bg-contain" />
+      <div className="pt-20 lg:pt-32 container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
           {/* Icon */}
           <div className="flex justify-center mb-8">

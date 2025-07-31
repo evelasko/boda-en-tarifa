@@ -24,17 +24,7 @@ export function OurStory() {
           </p>
         </div>
       </div>
-      
-      {/* Image Area - Full Width */}
       <div className="w-full relative">
-        {/* <Image 
-          src="/images/ski-slide.png" 
-          alt="Ski slide continuation" 
-          width={1920}
-          height={800}
-          className="w-full h-auto object-cover"
-          priority
-        /> */}
         <SlideImage
           src="/slides/ski@large.jpg"
           alt="Ski slide continuation"

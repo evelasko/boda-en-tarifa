@@ -177,8 +177,8 @@ export function PracticalInfoSection() {
         <SlideImage
           src="/slides/canoe@large.jpg"
           alt="Kite slide continuation"
-          originalWidth={1921}
-          originalHeight={2826}
+          originalWidth={1920}
+          originalHeight={2462}
           maskHeight={350}
         />
       </div>

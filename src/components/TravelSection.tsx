@@ -10,11 +10,9 @@ import { SlideImage } from './SlideImage'
 export function TravelSection() {
   
   return (
-    <section 
-      id="travel" 
-              className="pt-20 lg:pt-32 relative bg-icons-texture bg-repeat"
-    >
-      <div className="container mx-auto px-4">
+    <section id="travel" className="relative bg-icons-texture bg-repeat">
+      <div className="w-full h-[83px] bg-divider-stick bg-repeat-x bg-contain" />
+      <div className="pt-20 lg:pt-32 container mx-auto px-4">
         <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal text-center')}>
           Cómo Llegar
         </h2>
@@ -208,12 +206,14 @@ export function TravelSection() {
           </div>
         </div>
       </div>
+      <div className="w-full bg-carving-1 h-[54px] bg-repeat-x drop-shadow-[0_15px_10px_rgba(0,0,0,0.3)] z-10 relative" />
       <SlideImage
         src="/slides/bird@large.jpg"
         alt="Bird with ring in its beak"
         originalWidth={1921}
         originalHeight={2039} maskHeight={0}
       />
+      <div className="w-full bg-carving-1 h-[54px] bg-repeat-x drop-shadow-[15px_5px_10px_rgba(0,0,0,0.3)] z-10 relative" />
     </section>
   )
 }
