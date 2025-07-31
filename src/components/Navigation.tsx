@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Menu, X } from 'lucide-react'
 import Typography from '@/lib/typography'
+import Logo from './Logo'
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -48,7 +49,11 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="type-heading-ornamental text-charcoal">
-            E&M
+            <Logo 
+              color={isScrolled ? "#3A3A3A" : "white"} 
+              size={60}
+              className="transition-colors duration-300"
+            />
           </Link>
           
           {/* Desktop Navigation */}
@@ -71,7 +76,10 @@ export function Navigation() {
             {/* RSVP Button */}
             <Link
               href="/rsvp"
-              className="px-6 py-2 bg-coral/30 text-cream rounded-full hover:bg-coral/90 transition-colors type-ui-label"
+              className={cn(
+                "px-6 py-2 mix-blend-multiply bg-coral/30 text-cream rounded-full hover:bg-coral/90 transition-colors type-ui-label",
+                isScrolled ? "text-charcoal" : "text-cream"
+              )}
             >
               RSVP
             </Link>
