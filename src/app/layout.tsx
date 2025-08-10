@@ -69,9 +69,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <head>
-        <link rel="stylesheet" href="https://use.typekit.net/tqk3qdr.css" precedence="default" />
-      </head>
       <body className={'antialiased'} suppressHydrationWarning={true}>
         {children}
       </body>
