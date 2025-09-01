@@ -26,7 +26,7 @@ export function Hero() {
         <div 
           className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat hidden md:block"
           style={{
-            backgroundImage: 'url(/images/hero-desktop.jpg)'
+            backgroundImage: 'url(/images/hero-2-desktop.jpg)'
           }}
         />
         
@@ -34,7 +34,7 @@ export function Hero() {
         <div 
           className="absolute inset-0 w-full h-full bg-cover bg-center bg-repeat-y block md:hidden"
           style={{
-            backgroundImage: 'url(/images/hero-mobile.jpg)'
+            backgroundImage: 'url(/images/hero-2-mobile.jpg)'
           }}
         />
         
