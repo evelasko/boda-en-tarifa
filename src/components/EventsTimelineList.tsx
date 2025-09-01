@@ -82,7 +82,7 @@ export function EventsTimelineList() {
                     </h3>
                     
                     {/* Row 2: Event Description */}
-                    <div className={cn(Typography.UI.Quote, "text-black text-center md:text-left mb-10")}>
+                    <div className={cn(Typography.UI.Quote, "text-black text-center pr-4 md:pl-0 md:text-left mb-10")}>
                       {event.description}
                     </div>
                     
