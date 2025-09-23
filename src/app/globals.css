@@ -9,11 +9,11 @@
 @theme {
   /* Wedding Color Palette - White Lotus Aesthetic */
   /* Primary Colors */
-  --color-coral: #E4A085;      /* Muted coral */
-  --color-sage: #9CAF88;       /* Soft sage green */
-  --color-sand: #D4C5B9;       /* Beach sand */
-  --color-ocean: #7A9E9F;      /* Muted ocean blue */
-  --color-olive: #395732;     /* High contrast olive */
+  --color-coral: #6f3721;      /* Muted coral */
+  --color-sage: #446b1b;       /* Soft sage green */
+  --color-sand: #e99855;       /* Beach sand */
+  --color-ocean: #18696c;      /* Muted ocean blue */
+  --color-olive: #2a4b23;     /* High contrast olive */
   
   /* Neutral Colors */
   --color-cream: #FAF6F2;      /* Background */
@@ -21,9 +21,9 @@
   --color-gold: #C9A961;       /* Accents */
   
   /* Muted Variations */
-  --color-pink: #DDB5A6;
-  --color-green: #A8B89C;
-  --color-blue: #8FA3A8;
+  --color-pink: #f588a3;
+  --color-green: #95d266;
+  --color-blue: #36c4e7;
   
   /* Typography Scale - Golden Ratio Based */
   --type-scale-ratio: 1.618;

@@ -19,7 +19,7 @@ export function OurStory() {
             Nuestra Historia
           </h2>
           
-          <p className="type-body-large text-charcoal/80 text-center">
+          <p className="type-body-large !font-[400] text-charcoal/80 text-center">
             Desde el primer día que nos conocimos, supimos que habíamos encontrado algo especial. Ahora, después de compartir tantos momentos maravillosos juntos, estamos listos para comenzar esta nueva aventura como esposos. Queremos celebrar este día tan importante con las personas que más queremos en un lugar que tiene un significado especial para nosotros: Tarifa.
           </p>
         </div>

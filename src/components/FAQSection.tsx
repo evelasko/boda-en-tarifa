@@ -41,13 +41,7 @@ export function FAQSection() {
               ))}
             </Accordion>
           </div>
-          
-          {/* Contact encouragement */}
-          <div className="text-center mt-8">
-            <p className="type-body-base text-charcoal/70">
-              Still have questions? We&apos;d love to help!
-            </p>
-          </div>
+      
         </div>
       </div>
             {/* Image Area - Full Width */}

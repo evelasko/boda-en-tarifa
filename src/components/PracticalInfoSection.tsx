@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Wind, Moon, AlertTriangle } from 'lucide-react'
+import { Wind, Glasses, AlertTriangle, Footprints } from 'lucide-react'
 import Typography, { combineTypographyClasses } from '@/lib/typography'
 import Image from 'next/image'
 import { SlideImage } from './SlideImage'
@@ -52,7 +52,7 @@ export function PracticalInfoSection() {
               {/* Be Ready For */}
               <div className="bg-cream/50 rounded-lg p-6 border border-sage/20">
                 <div className="flex items-center gap-2 mb-4">
-                  <Moon className="w-5 h-5 text-sage" />
+                  <Footprints className="w-5 h-5 text-sage" />
                   <h4 className="type-heading-tertiary text-charcoal">
                     Prepárate Para
                   </h4>
@@ -71,9 +71,11 @@ export function PracticalInfoSection() {
               
               {/* Dress Code */}
               <div className="bg-cream/50 rounded-lg p-6 border border-gold/20">
+              <div>
+              <Glasses className="w-5 h-5 text-gold" />
                 <h4 className="type-heading-tertiary text-charcoal mb-4">
                   Libertad de Vestimenta
-                </h4>
+                </h4></div>
                 <ul className="space-y-2">
                   {dressCode.map((rule, index) => (
                     <li key={index} className="flex items-start gap-2">

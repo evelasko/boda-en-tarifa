@@ -21,7 +21,7 @@ export function RSVPCallToAction() {
           </p>
           
           <p className={combineTypographyClasses(Typography.UI.Lead, "text-white mb-8 mix-blend-overlay")}>
-            Por favor confirma tu asistencia antes del 15 de abril
+            Por favor confirma tu asistencia lo antes posible.<br />Luego si sucediera algo, avísanos sin falta
           </p>
           
           <Link

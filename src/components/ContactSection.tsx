@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Mail, Phone, MessageCircle, Heart } from 'lucide-react'
+import { Phone, MessageCircle, Heart } from 'lucide-react'
 
 export function ContactSection() {
   
@@ -20,18 +20,7 @@ export function ContactSection() {
           
           {/* Contact Methods */}
           <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <div className="bg-charcoal/50 border border-cream/10 rounded-lg p-6">
-              <Mail className="w-8 h-8 text-coral mx-auto mb-4" />
-              <h3 className="type-heading-tertiary text-cream mb-2">Email</h3>
-              <a
-                href="mailto:info@bodaentarifa.com"
-                className="type-body-base text-cream/80 hover:text-coral transition-colors"
-              >
-                info@bodaentarifa.com
-              </a>
-            </div>
-            
-            <div className="bg-charcoal/50 border border-cream/10 rounded-lg p-6">
+          <div className="bg-charcoal/50 border border-cream/10 rounded-lg p-6">
               <Phone className="w-8 h-8 text-sage mx-auto mb-4" />
               <h3 className="type-heading-tertiary text-cream mb-2">Phone</h3>
               <a
@@ -39,6 +28,17 @@ export function ContactSection() {
                 className="type-body-base text-cream/80 hover:text-sage transition-colors"
               >
                 +34 655 433 018
+              </a>
+            </div>
+            
+            <div className="bg-charcoal/50 border border-cream/10 rounded-lg p-6">
+              <Phone className="w-8 h-8 text-coral mx-auto mb-4" />
+              <h3 className="type-heading-tertiary text-cream mb-2">Phone</h3>
+              <a
+                href="tel:+34609971307"
+                className="type-body-base text-cream/80 hover:text-sage transition-colors"
+              >
+                +34 609 971 307
               </a>
             </div>
             

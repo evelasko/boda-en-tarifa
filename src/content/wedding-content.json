@@ -21,7 +21,7 @@
     {
       "id": "early-welcome",
       "type": "welcome",
-      "date": "2025-05-29",
+      "date": "2025-05-30",
       "time": "15:00",
       "title": "Bienvenida",
       "description": "Únete a nosotros para bebidas y tapas en la playa",
@@ -72,7 +72,7 @@
       "id": "ceremony",
       "type": "ceremony",
       "date": "2025-05-30",
-      "time": "17:00",
+      "time": "18:00",
       "title": "Ceremonia",
       "description": "El momento en que decimos 'Sí, quiero' con el océano como testigo",
       "venue": {
@@ -122,7 +122,7 @@
       "id": "party",
       "type": "party",
       "date": "2025-05-30",
-      "time": "19:00",
+      "time": "23:00",
       "title": "Fiesta",
       "description": "Baile y jarana hasta que llegue la mañana",
       "venue": {
@@ -234,6 +234,14 @@
           {
             "airport": "Jerez",
             "details": "Vuelos a Aeropuerto de Jerez (1h 15min / ~130€) luego alquilar coche (1h 15min)"
+          },
+          {
+            "airport": "Malaga",
+            "details": "Vuelos a Aeropuerto de Málaga (1h 15min / ~130€) luego alquilar coche (1h 15min)"
+          },
+          {
+            "airport": "Gibraltar",
+            "details": "Vuelos a Aeropuerto de Gibraltar (1h 15min / ~130€) luego alquilar coche (1h 15min)"
           },
           {
             "airport": "Tangier",

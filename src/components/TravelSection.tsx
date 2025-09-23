@@ -128,28 +128,35 @@ export function TravelSection() {
             <TabsContent value="train" className="mt-8">
               <div className="space-y-4">
                 <div className="border border-olive/50 rounded-lg p-6">
-                  <h4 className={combineTypographyClasses(Typography.Heading.H6, "text-charcoal mb-2")}>AVE to Seville</h4>
+                  <h4 className={combineTypographyClasses(Typography.Heading.H6, "text-charcoal mb-2")}>AVE a Sevilla</h4>
                   <p className="type-body-small text-charcoal/70 mb-2">
-                    2 hours / ~40€ + Car rental or bus to Tarifa
+                    2 horas / + 2 horas 21 minutos en coche a Tarifa
                   </p>
                 </div>
                 
                 <div className="border border-olive/50 rounded-lg p-6">
-                  <h4 className={combineTypographyClasses(Typography.Heading.H6, "text-charcoal mb-2")}>AVE to San Fernando</h4>
+                  <h4 className={combineTypographyClasses(Typography.Heading.H6, "text-charcoal mb-2")}>AVE a San Fernando</h4>
                   <p className="type-body-small text-charcoal/70 mb-2">
-                    4 hours / ~30€ + Car rental or bus to Tarifa
+                    4 horas / + 1 hora 10 minutos en coche a Tarifa
                   </p>
                 </div>
                 
                 <div className="border border-olive/50 rounded-lg p-6">
-                  <h4 className={combineTypographyClasses(Typography.Heading.H6, "text-charcoal mb-2")}>Train to Algeciras</h4>
+                  <h4 className={combineTypographyClasses(Typography.Heading.H6, "text-charcoal mb-2")}>Tren a Algeciras</h4>
                   <p className="type-body-small text-charcoal/70 mb-2">
-                    6 hours / ~80€ + Car rental or bus to Tarifa
+                    6 horas / + 45 minutos en coche a Tarifa
+                  </p>
+                </div>
+
+                <div className="border border-olive/50 rounded-lg p-6">
+                  <h4 className={combineTypographyClasses(Typography.Heading.H6, "text-charcoal mb-2")}>AVE a Málaga</h4>
+                  <p className="type-body-small text-charcoal/70 mb-2">
+                    3 horas / + 1 hora 45 minutos en coche a Tarifa
                   </p>
                 </div>
                 
                 <p className="type-body-small text-charcoal/50 text-center mt-6">
-                  All train options require additional transportation to reach the venues
+                  Todas las opciones de tren requieren un transporte adicional para llegar a Tarifa
                 </p>
               </div>
             </TabsContent>
@@ -157,27 +164,48 @@ export function TravelSection() {
             {/* By Air */}
             <TabsContent value="air" className="mt-8">
               <div className="space-y-4">
-                <div className="border border-olive/50 rounded-lg p-6">
-                  <h4 className={combineTypographyClasses(Typography.Heading.H6, "text-charcoal mb-2")}>Fly to Jerez Airport</h4>
-                  <p className="type-body-small text-charcoal/70 mb-2">
-                    1h 15min flight / ~130€ + 1h 16min car rental to Tarifa
-                  </p>
-                  <p className="type-ui-label text-olive">Closest Spanish Airport</p>
-                </div>
-                
-                <div className="border border-olive/50 rounded-lg p-6">
-                  <h4 className={combineTypographyClasses(Typography.Heading.H6, "text-charcoal mb-2")}>Fly to Tangier, Morocco</h4>
-                  <p className="type-body-small text-charcoal/70 mb-2">
-                    1h 30min flight / ~80€
-                  </p>
-                  <p className="type-body-small text-charcoal/70 mb-2">
-                    + Ferry to Tarifa: 1h 15min / ~40€
-                  </p>
-                  <p className="type-body-small text-charcoal/70">
-                    + Bus to hotel: 15 minutes
-                  </p>
-                  <p className="type-ui-label text-olive">Adventure option!</p>
-                </div>
+                {[
+                  {
+                    title: "Vuelos a Jerez Airport",
+                    duration: "+ 1 hora 31 minutos en coche a Tarifa",
+                    label: "Aeropuerto Español más cercano"
+                  },
+                  {
+                    title: "Vuelos a Tánger, Marruecos", 
+                    details: [
+                      "+ Ferry a Tarifa: 1h 15min / ~40€",
+                      "+ Bus al hotel: 15 minutos"
+                    ],
+                    label: "Opción aventurera!"
+                  },
+                  {
+                    title: "Vuelos a Gibraltar Airport",
+                    duration: "+ 50 minutos en coche a Tarifa",
+                    label: "Aeropuerto más cercano…"
+                  },
+                  {
+                    title: "Vuelos a Málaga Airport",
+                    duration: "+ 1 hora 45 minutos en coche a Tarifa",
+                    label: "Aeropuerto más popular"
+                  }
+                ].map((airport, index) => (
+                  <div key={index} className="border border-olive/50 rounded-lg p-6">
+                    <h4 className={combineTypographyClasses(Typography.Heading.H6, "text-charcoal mb-2")}>
+                      {airport.title}
+                    </h4>
+                    {airport.duration && (
+                      <p className="type-body-small text-charcoal/70 !font-[500] mb-2">
+                        {airport.duration}
+                      </p>
+                    )}
+                    {airport.details && airport.details.map((detail, i) => (
+                      <p key={i} className="type-body-small text-charcoal/70 !font-[500] mb-2">
+                        {detail}
+                      </p>
+                    ))}
+                    <p className="type-ui-label font-bold text-olive">{airport.label}</p>
+                  </div>
+                ))}
               </div>
             </TabsContent>
           </Tabs>
@@ -189,7 +217,7 @@ export function TravelSection() {
             </h3>
             <div className="space-y-4">
               <p className="type-body-large text-charcoal">
-                La playa y chiringitos están a poca distancia andando
+                La playa y chiringitos están a poca distancia andando del hotel
               </p>
               <p className="type-body-base text-charcoal/70">
                 Para explorar y hacer turismo, necesitarás un coche
@@ -198,7 +226,7 @@ export function TravelSection() {
                 href="https://horizontesur.es/lineas-regulares/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-coral hover:text-coral/80 transition-colors type-ui-label"
+                className="inline-flex items-center gap-2 pb-12 font-bold text-coral hover:text-coral/80 transition-colors type-ui-label"
               >
                 Horarios de Autobús <ExternalLink className="w-4 h-4" />
               </a>

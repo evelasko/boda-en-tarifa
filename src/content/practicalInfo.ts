@@ -1,18 +1,18 @@
 export const weatherWarnings = [
-    "first of all it is a very windy beach",
-    "the night is usually chilly",
-    "if the wind comes from the west, expect cold under shade"
+    "primero que nada, es una playa muy ventosa",
+    "la noche suele ser fría",
+    "si el viento viene del oeste, espera frío bajo la sombra durante el día"
   ]
   
   export const beReadyFor = [
-    "walking over irregular surfaces",
-    "chilly nights, bring some cover up",
-    "it IS a beach wedding, expect naughty sand"
+    "caminar sobre superficies irregulares", 
+    "noches frías, trae algo de abrigo",
+    "ES una boda en la playa, espera arena traviesa"
   ]
   
   export const dressCode = [
-    "white is perfectly allowed, no one will steal our shine",
-    "there is no need to be formal, and feel free to be as fancy as you want",
-    "just show up in whatever floats your boat",
-    "and beware: you WILL definitely DANCE the night away"
+    "el blanco está perfectamente permitido, nadie robará nuestro brillo",
+    "no hay necesidad de ser formal, y siéntete libre de ser tan elegante como quieras",
+    "solo ven con lo que te haga sentir bien",
+    "y cuidado: DEFINITIVAMENTE BAILARÁS toda la noche y CANTARÁS al amanecer"
   ]
