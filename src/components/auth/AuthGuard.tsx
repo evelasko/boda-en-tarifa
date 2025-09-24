@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import GoogleSignInButton from './GoogleSignInButton';
 import AppleSignInButton from './AppleSignInButton';
 import Image from 'next/image';
+import Link from 'next/link';
 interface AuthGuardProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
@@ -55,6 +56,18 @@ export default function AuthGuard({ children, fallback }: AuthGuardProps) {
                <p className="text-xs text-black/70 text-center mt-4">
                  Usamos autenticación segura para verificar su identidad para el formulario RSVP
                </p>
+             <div className="mt-6 text-center">
+               <Link href="/" className="inline-flex flex-col items-center text-charcoal hover:text-charcoal/80">
+                 <Image
+                   src="/icons/steer.png"
+                   alt="Home"
+                   width={32}
+                   height={32}
+                   className="mb-2"
+                 />
+                 <span>Volver al inicio</span>
+               </Link>
+             </div>
              </div>
            </div>
          </div>

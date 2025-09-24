@@ -11,19 +11,23 @@ import Typography, { combineTypographyClasses } from '@/lib/typography';
 interface SignInModalProps {
   isOpen: boolean;
   onClose: () => void;
+  redirectToRSVP?: boolean; // Only redirect to RSVP if explicitly requested
 }
 
-export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
+export default function SignInModal({ isOpen, onClose, redirectToRSVP = false }: SignInModalProps) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  // Redirect to RSVP page when user successfully signs in
+  // Redirect to RSVP page when user successfully signs in (only if explicitly requested)
   useEffect(() => {
-    if (user && !loading) {
+    if (user && !loading && redirectToRSVP) {
       router.push('/rsvp');
       onClose();
+    } else if (user && !loading && !redirectToRSVP) {
+      // Just close the modal without redirecting
+      onClose();
     }
-  }, [user, loading, router, onClose]);
+  }, [user, loading, router, onClose, redirectToRSVP]);
 
   // Handle escape key
   useEffect(() => {

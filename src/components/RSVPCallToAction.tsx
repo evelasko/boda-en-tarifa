@@ -47,7 +47,8 @@ export function RSVPCallToAction() {
 
       <SignInModal 
         isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+        onClose={() => setIsModalOpen(false)}
+        redirectToRSVP={true}
       />
     </>
   )

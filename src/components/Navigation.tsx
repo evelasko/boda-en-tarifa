@@ -139,7 +139,8 @@ export function Navigation() {
       {/* Sign In Modal */}
       <SignInModal 
         isOpen={isSignInModalOpen} 
-        onClose={() => setIsSignInModalOpen(false)} 
+        onClose={() => setIsSignInModalOpen(false)}
+        redirectToRSVP={true}
       />
     </nav>
   )

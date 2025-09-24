@@ -1,93 +1,67 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import AuthGuard from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
+import { SpanishRSVPForm } from '@/components/rsvp/SpanishRSVPForm';
 
 function RSVPFormContent() {
   const { user, logout } = useAuth();
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-2xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              RSVP Form
-            </h1>
-            <p className="text-gray-600">
-              Welcome, {user?.displayName || user?.email}!
-            </p>
-          </div>
+  const handleSuccess = () => {
+    setShowSuccessMessage(true);
+  };
 
-          {/* User Info */}
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-            <h2 className="text-lg font-semibold mb-2">Your Information</h2>
-            <p className="text-sm text-gray-600">
-              <strong>Name:</strong> {user?.displayName || 'Not provided'}
-            </p>
-            <p className="text-sm text-gray-600">
-              <strong>Email:</strong> {user?.email}
-            </p>
-          </div>
+  const handleError = (error: string) => {
+    console.error('RSVP Error:', error);
+    // You could show a toast notification here
+  };
 
-          {/* RSVP Form Placeholder */}
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Will you be attending?
-              </label>
-              <div className="space-y-2">
-                <label className="flex items-center">
-                  <input type="radio" name="attending" value="yes" className="mr-2" />
-                  Yes, I&apos;ll be there!
-                </label>
-                <label className="flex items-center">
-                  <input type="radio" name="attending" value="no" className="mr-2" />
-                  Sorry, I can&apos;t make it
-                </label>
+  if (showSuccessMessage) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-2xl mx-auto px-4">
+          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <div className="mb-6">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
               </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                ¡Respuesta enviada con éxito!
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Gracias por confirmar tu asistencia. Te esperamos en nuestra boda.
+              </p>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Number of guests
-              </label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Dietary restrictions or special requests
-              </label>
-              <textarea 
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows={3}
-                placeholder="Any allergies, dietary preferences, or special requests..."
-              />
-            </div>
-
-            <div className="flex gap-4">
-              <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                Submit RSVP
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => setShowSuccessMessage(false)}
+                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Editar respuesta
               </button>
               <button 
                 onClick={logout}
-                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="px-6 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
-                Sign Out
+                Cerrar sesión
               </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <SpanishRSVPForm 
+      user={user!}
+      onSuccess={handleSuccess}
+      onError={handleError}
+    />
   );
 }
 
