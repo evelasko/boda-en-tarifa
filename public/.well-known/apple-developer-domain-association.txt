@@ -1,0 +1,13 @@
+# This file will be provided by Apple Developer Console
+# when you configure your Service ID for Sign in with Apple
+# 
+# Steps to get this file:
+# 1. Go to Apple Developer Console > Identifiers > Service IDs
+# 2. Select your Service ID (com.bodaentarifa.app.service)
+# 3. Configure Sign in with Apple
+# 4. Add your domain (bodaentarifa.com)
+# 5. Download the verification file
+# 6. Replace this placeholder with the actual file content
+#
+# The file should be accessible at:
+# https://bodaentarifa.com/.well-known/apple-developer-domain-association.txt

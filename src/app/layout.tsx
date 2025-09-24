@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ReactLenis from 'lenis/react'
+import { AuthProvider } from '@/contexts/AuthContext'
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -71,7 +72,9 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={'antialiased'} suppressHydrationWarning={true}>
-      <ReactLenis root>{children}</ReactLenis>
+        <AuthProvider>
+          <ReactLenis root>{children}</ReactLenis>
+        </AuthProvider>
       </body>
     </html>
   );

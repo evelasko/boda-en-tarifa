@@ -18,6 +18,10 @@ interface SlideImageProps {
    * the mask will scale proportionally when the image is displayed at different sizes.
    */
   maskHeight: number;
+  /**
+   * Class name for the image container
+   */
+  className?: string;
 }
 
 export function SlideImage({ 
@@ -25,14 +29,15 @@ export function SlideImage({
   alt, 
   originalWidth, 
   originalHeight, 
-  maskHeight 
+  maskHeight,
+  className
 }: SlideImageProps) {
   // Calculate the mask height as a percentage of the image height
   // This ensures the mask scales proportionally with the image
   const calculatedMaskHeight = Math.round((maskHeight / originalHeight) * 100);
  
   return (
-    <div className="relative w-full">
+    <div className={cn("relative w-full", className)}>
       {/* Image container with proper aspect ratio */}
       <div 
         className="relative w-full"

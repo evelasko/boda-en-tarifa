@@ -6,10 +6,12 @@ import { cn } from '@/lib/utils'
 import { Menu, X } from 'lucide-react'
 import Typography from '@/lib/typography'
 import Logo from './Logo'
+import SignInModal from './auth/SignInModal'
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false)
   
   useEffect(() => {
     const handleScroll = () => {
@@ -38,6 +40,12 @@ export function Navigation() {
       element.scrollIntoView({ behavior: 'smooth' })
       setIsMobileMenuOpen(false)
     }
+  }
+
+  const handleRSVPClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsSignInModalOpen(true)
+    setIsMobileMenuOpen(false)
   }
   
   return (
@@ -74,15 +82,15 @@ export function Navigation() {
             ))}
             
             {/* RSVP Button */}
-            <Link
-              href="/rsvp"
+            <button
+              onClick={handleRSVPClick}
               className={cn(
-                "px-6 py-2 mix-blend-multiply bg-coral/30 text-cream rounded-full hover:bg-coral/90 transition-colors type-ui-label",
+                "px-6 py-2 mix-blend-multiply bg-coral/30 text-cream rounded-full hover:bg-coral/90 transition-colors type-ui-label cursor-pointer",
                 isScrolled ? "text-charcoal" : "text-cream"
               )}
             >
               RSVP
-            </Link>
+            </button>
           </div>
           
           {/* Mobile Menu Button */}
@@ -118,15 +126,21 @@ export function Navigation() {
               </a>
             ))}
             
-            <Link
-              href="/rsvp"
-              className="px-6 py-3 bg-coral text-cream rounded-full hover:bg-coral/90 transition-colors type-ui-label text-center mt-4"
+            <button
+              onClick={handleRSVPClick}
+              className="px-6 py-3 bg-coral text-cream rounded-full hover:bg-coral/90 transition-colors type-ui-label text-center mt-4 cursor-pointer"
             >
               RSVP
-            </Link>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Sign In Modal */}
+      <SignInModal 
+        isOpen={isSignInModalOpen} 
+        onClose={() => setIsSignInModalOpen(false)} 
+      />
     </nav>
   )
 }
