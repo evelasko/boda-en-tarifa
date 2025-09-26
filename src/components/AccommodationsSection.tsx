@@ -4,6 +4,7 @@ import React from 'react'
 import { ExternalLink, Star, Bell } from 'lucide-react'
 import { SlideImage } from './SlideImage'
 import Typography, { combineTypographyClasses } from '@/lib/typography'
+import Image from 'next/image'
 
 interface Accommodation {
   id: string
@@ -15,6 +16,7 @@ interface Accommodation {
   comingSoon?: boolean
   bookingLinks?: string[]
   discount?: string
+  image?: string
 }
 
 export function AccommodationsSection() {
@@ -27,7 +29,8 @@ export function AccommodationsSection() {
       pricing: 'Double: 100€ • Single: 100€',
       link: 'https://www.tresmareshotel.com',
       featured: true,
-      discount: 'Third night: 60€'
+      discount: 'Third night: 60€',
+      image: '/images/tres-mares-1.jpg'
     },
     {
       id: '100_fun',
@@ -39,7 +42,8 @@ export function AccommodationsSection() {
       bookingLinks: [
         'https://direct-book.com/properties/100por100fundirect?locale=es&items[0][adults]=2&items[0][children]=0&items[0][infants]=0&currency=EUR&checkInDate=2025-07-27&checkOutDate=2025-07-28&trackPage=yes',
         'https://www.booking.com/Share-Wmsuvr2'
-      ]
+      ],
+      image: '/images/100-hotel-1.jpg'
     },
     {
       id: 'copacabana',
@@ -48,7 +52,8 @@ export function AccommodationsSection() {
       pricing: null,
       link: 'https://www.copacabanatarifa.com/es/inicio',
       comingSoon: true,
-      bookingLinks: ['https://www.booking.com/Share-VhBGeU']
+      bookingLinks: ['https://www.booking.com/Share-VhBGeU'],
+      image: '/images/copacabana-tarifa.jpg'
     },
     {
       id: 'kampaoh_paloma',
@@ -56,7 +61,8 @@ export function AccommodationsSection() {
       type: 'glamping',
       pricing: null,
       link: 'https://es.kampaoh.com/punta-paloma-playa-cadiz-andalucia/',
-      comingSoon: true
+      comingSoon: true,
+      image: '/images/kampaoh-paloma-1.jpeg'
     },
     {
       id: 'kampaoh_tarifa',
@@ -64,14 +70,15 @@ export function AccommodationsSection() {
       type: 'glamping',
       pricing: null,
       link: 'https://es.kampaoh.com/tarifa-cadiz-andalucia/',
-      comingSoon: true
+      comingSoon: true,
+      image: '/images/kampaoh-tarifa-1.jpeg'
     }
   ]
   
   return (
     <section id="accommodations" className="pt-20 lg:pt-32 bg-monkey-texture bg-contain bg-repeat-y">
       <div className="container mx-auto px-4">
-      <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal text-center')}>
+      <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 !text-charcoal text-center')}>
           Dónde Alojarse
         </h2>
         
@@ -80,8 +87,8 @@ export function AccommodationsSection() {
             {accommodations.map((accommodation) => (
               <div
                 key={accommodation.id}
-                className={`relative border rounded-lg overflow-hidden transition-all hover:shadow-lg ${
-                  accommodation.featured ? 'border-coral/50 bg-coral/5' : 'border-charcoal/20'
+                className={`relative border bg-coral/20 hover:bg-coral/30 rounded-lg overflow-hidden transition-all hover:shadow-lg ${
+                  accommodation.featured ? 'border-coral/50 bg-coral/5' : 'border-charcoal/50'
                 }`}
               >
                 {/* Featured Badge */}
@@ -96,12 +103,18 @@ export function AccommodationsSection() {
                 
                 {/* Image placeholder */}
                 <div className="h-48 bg-gradient-to-br from-sand/30 to-ocean/30 relative">
+                  
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <svg width="60" height="60" viewBox="0 0 60 60" className="text-charcoal/20">
+                  {accommodation.image ? (
+                    <Image src={accommodation.image} alt={accommodation.name} fill className="object-cover" />
+                  ) : (
+                    <svg width="60" height="60" viewBox="0 0 60 60" className="text-white/20">
                       <rect x="10" y="20" width="40" height="25" stroke="currentColor" strokeWidth="2" fill="none" />
                       <polygon points="10,20 30,5 50,20" stroke="currentColor" strokeWidth="2" fill="none" />
                       <rect x="25" y="30" width="10" height="15" stroke="currentColor" strokeWidth="2" fill="none" />
                     </svg>
+                  )}
+                    
                   </div>
                   
                   {/* Type badge */}
@@ -109,7 +122,7 @@ export function AccommodationsSection() {
                     <span className={`px-2 py-1 rounded-full text-xs type-ui-label ${
                       accommodation.type === 'hotel' 
                         ? 'bg-sage text-cream' 
-                        : 'bg-gold text-charcoal'
+                        : 'bg-gold text-white'
                     }`}>
                       {accommodation.type === 'hotel' ? 'Hotel' : 'Glamping'}
                     </span>
@@ -118,14 +131,14 @@ export function AccommodationsSection() {
                 
                 {/* Content */}
                 <div className="p-6">
-                  <h3 className="type-heading-tertiary text-charcoal mb-3">
+                  <h3 className="type-heading-tertiary font-bold text-white mb-3">
                     {accommodation.name}
                   </h3>
                   
                   {/* Pricing */}
                   {accommodation.pricing ? (
                     <div className="mb-4">
-                      <p className="type-body-base text-charcoal">
+                      <p className="type-body-base text-white">
                         {accommodation.pricing}
                       </p>
                       {accommodation.discount && (
@@ -136,7 +149,7 @@ export function AccommodationsSection() {
                     </div>
                   ) : (
                     <div className="mb-4">
-                      <div className="flex items-center gap-2 text-charcoal/70">
+                      <div className="flex items-center gap-2 text-white/70">
                         <Bell className="w-4 h-4" />
                         <span className="type-body-small">
                           Próximamente
@@ -154,21 +167,21 @@ export function AccommodationsSection() {
                       className={`block w-full px-4 py-2 rounded-full text-center transition-colors type-ui-label ${
                         accommodation.featured
                           ? 'bg-coral text-cream hover:bg-coral/90'
-                          : 'border border-charcoal/20 text-charcoal hover:border-charcoal/40'
+                          : 'border border-coral text-white hover:border-charcoal/40'
                       }`}
                     >
                       {accommodation.pricing ? 'Reservar Ahora' : 'Visitar Web'}
                     </a>
                     
                     {accommodation.comingSoon && (
-                      <button className="w-full px-4 py-2 border border-charcoal/20 rounded-full text-charcoal hover:border-charcoal/40 transition-colors type-ui-label">
+                      <button className="w-full px-4 py-2 border border-coral rounded-full text-white hover:border-charcoal/40 transition-colors type-ui-label">
                         Suscribirse a Actualizaciones
                       </button>
                     )}
                     
                     {accommodation.bookingLinks && (
                       <div className="text-center">
-                        <p className="type-body-small text-charcoal/50 mb-2">
+                        <p className="type-body-small text-white/50 mb-2">
                           Reserva rápida:
                         </p>
                         <div className="flex items-center justify-center gap-2">
@@ -178,7 +191,7 @@ export function AccommodationsSection() {
                               href={link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-charcoal/50 hover:text-charcoal transition-colors"
+                              className="text-white/50 hover:text-white transition-colors"
                             >
                               <ExternalLink className="w-4 h-4" />
                             </a>

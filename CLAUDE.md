@@ -9,18 +9,22 @@ This is a Next.js 15 wedding website for Enrique & Manuel's beach wedding in Tar
 ## Development Commands
 
 ### Core Commands
+
 - `npm run dev` - Start development server with TurboPack
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
 
 ### TypeScript Check
+
 Since there's no explicit typecheck script, use:
+
 - `npx tsc --noEmit` - Check TypeScript types without emitting files
 
 ## Architecture & Key Components
 
 ### Tech Stack
+
 - **Framework**: Next.js 15.4.4 with App Router
 - **Styling**: TailwindCSS 4 with custom `@theme` directive
 - **Language**: TypeScript 5
@@ -28,7 +32,8 @@ Since there's no explicit typecheck script, use:
 - **Font System**: Custom typography using Adobe Fonts (Trajan Pro 3 & Gotham)
 
 ### Project Structure
-```
+
+```tree
 src/
 ├── app/           # Next.js App Router pages
 ├── components/    # React components (e.g., TypographyDemo)
@@ -53,6 +58,7 @@ src/
 ### Important Implementation Details
 
 1. **Adobe Fonts Integration**: Currently commented out in layout.tsx:27. Uncomment when ready:
+
    ```jsx
    <link rel="stylesheet" href="https://use.typekit.net/tqk3qdr.css" />
    ```
@@ -71,6 +77,7 @@ src/
 ### Design Tokens
 
 **Color Palette** (from prd.md):
+
 - Primary: coral (#E4A085), sage (#9CAF88), sand (#D4C5B9), ocean (#7A9E9F)
 - Neutral: cream (#FAF6F2), charcoal (#3A3A3A), gold (#C9A961)
 - Muted variants for subtle interactions
