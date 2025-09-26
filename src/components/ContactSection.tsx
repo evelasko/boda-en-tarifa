@@ -10,11 +10,11 @@ export function ContactSection() {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
           {/* Header */}
-          <h2 className="type-heading-primary text-cream mb-8">
+          <h2 className="type-heading-primary text-charcoal mb-8">
             Contacto
           </h2>
           
-          <p className="type-body-large text-cream/80 mb-12">
+          <p className="type-body-large text-charcoal/80 mb-12">
             ¡No podemos esperar a celebrar con vosotros en Tarifa!
           </p>
           
@@ -68,13 +68,13 @@ export function ContactSection() {
           <div className="border-t border-cream/10 pt-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <span className="type-heading-ornamental text-cream">E&M</span>
+                <span className="type-heading-ornamental text-charcoal">E&M</span>
                 <span className="type-body-small text-cream/50">
                   30 de Mayo, 2025 • Tarifa, España
                 </span>
               </div>
               
-              <div className="flex items-center gap-2 text-cream/50">
+              <div className="flex items-center gap-2 text-charcoal/50">
                 <Heart className="w-4 h-4 text-coral" />
                 <span className="type-body-small">
                   Hecho con amor para nuestra boda en la playa

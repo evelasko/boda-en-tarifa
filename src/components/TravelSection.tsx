@@ -62,7 +62,7 @@ export function TravelSection() {
                     <div className="space-y-2 text-charcoal/70">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4" />
-                        <span className="type-body-small">6 hours 30 minutes</span>
+                        <span className="type-body-small">6 horas 30 minutos</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <MapPin className="w-4 h-4" />
@@ -70,7 +70,7 @@ export function TravelSection() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Euro className="w-4 h-4" />
-                        <span className="type-body-small">No tolls</span>
+                        <span className="type-body-small">Sin peajes</span>
                       </div>
                     </div>
                     <a
@@ -89,7 +89,7 @@ export function TravelSection() {
                     <div className="space-y-2 text-charcoal/70">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4" />
-                        <span className="type-body-small">6 hours</span>
+                        <span className="type-body-small">6 horas</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <MapPin className="w-4 h-4" />
@@ -97,7 +97,7 @@ export function TravelSection() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Euro className="w-4 h-4" />
-                        <span className="type-body-small">~30€ tolls</span>
+                        <span className="type-body-small">~30€ peajes</span>
                       </div>
                     </div>
                     <a
@@ -106,16 +106,16 @@ export function TravelSection() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 mt-4 text-olive hover:text-olive/80 transition-colors type-ui-label"
                     >
-                      View Route <ExternalLink className="w-4 h-4" />
+                      Ver Ruta <ExternalLink className="w-4 h-4" />
                     </a>
                   </div>
                 </div>
                 
                 {/* Carpool */}
-                <div className="bg-gold/10 rounded-lg p-6 text-center">
-                  <Users className="w-8 h-8 text-gold mx-auto mb-2" />
+                <div className="p-6 text-center">
+                  <Users className="w-8 h-8 text-charcoal mx-auto mb-2" />
                   <p className="type-body-lead text-charcoal mb-2">
-                    Compartir Coche Disponible
+                    Compartir Coche disponible bajo petición
                   </p>
                   <p className="type-body-small text-charcoal/70">
                     Contáctanos para coordinar con otros invitados
