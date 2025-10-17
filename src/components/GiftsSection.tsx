@@ -55,7 +55,7 @@ export function GiftsSection() {
           </h2>
           
           <p className="type-body-large text-white/80 mb-12">
-            Lo importante es que vengáis, aunque nos encanta viajar, y si quisierais que lleguemos más lejos podéis contribuir a través de la siguiente cuenta, Bizum, ETH bitcoin etc.
+            Vuestra presencia ya es un regalo, así que lo importante es que vengáis. Pero si queréis colaborar, nos encanta viajar, y podéis contribuir a añadir kilómetros a nuestra luna de miel a través de la siguiente cuenta, Bizum, ETH bitcoin etc.
           </p>
           
           {/* Gift Options */}
@@ -125,9 +125,9 @@ export function GiftsSection() {
             </div>
           </div>
           
-          <p className="type-body-small text-white/50">
+          {/* <p className="type-body-small text-white/50">
             Contáctanos para detalles específicos de pago
-          </p>
+          </p> */}
           
         </div>
       </div>

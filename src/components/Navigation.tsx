@@ -85,11 +85,12 @@ export function Navigation() {
             <button
               onClick={handleRSVPClick}
               className={cn(
+                Typography.UI.Overline,
                 "px-6 py-2 mix-blend-multiply bg-coral/30 text-cream rounded-full hover:bg-coral/90 transition-colors type-ui-label cursor-pointer",
                 isScrolled ? "text-charcoal" : "text-cream"
               )}
             >
-              RSVP
+              Confirmar<br />Asistencia
             </button>
           </div>
           
@@ -130,7 +131,7 @@ export function Navigation() {
               onClick={handleRSVPClick}
               className="px-6 py-3 bg-coral text-cream rounded-full hover:bg-coral/90 transition-colors type-ui-label text-center mt-4 cursor-pointer"
             >
-              RSVP
+              Confirmar Asistencia
             </button>
           </div>
         </div>

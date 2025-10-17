@@ -1,13 +1,13 @@
 export const weatherWarnings = [
-    "primero que nada, es una playa muy ventosa",
+    "primero que nada, es una playa con mucho viento",
     "la noche suele ser fría",
-    "si el viento viene del oeste, espera frío bajo la sombra durante el día"
+    "si el viento viene del oeste, puede refrescar durante el día"
   ]
   
   export const beReadyFor = [
     "caminar sobre superficies irregulares", 
     "noches frías, trae algo de abrigo",
-    "ES una boda en la playa, espera arena traviesa"
+    "es una boda en la playa, espera arena traviesa"
   ]
   
   export const dressCode = [

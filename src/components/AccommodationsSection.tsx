@@ -26,53 +26,52 @@ export function AccommodationsSection() {
       id: 'tres_mares',
       name: 'Chill Out Hotel Tres Mares',
       type: 'hotel',
-      pricing: 'Double: 100€ • Single: 100€',
+      pricing: 'Doble: a partir de 60€',
       link: 'https://www.tresmareshotel.com',
       featured: true,
-      discount: 'Third night: 60€',
+      discount: 'CÓDIGO DE RESERVA: MANUELYENRIQUE',
       image: '/images/tres-mares-1.jpg'
     },
     {
       id: '100_fun',
       name: '100% Fun Hotel',
       type: 'hotel',
-      pricing: null,
+      featured: true,
+      pricing: '🔔 Próximamente',
       link: 'https://100x100fun.com',
-      comingSoon: true,
-      bookingLinks: [
-        'https://direct-book.com/properties/100por100fundirect?locale=es&items[0][adults]=2&items[0][children]=0&items[0][infants]=0&currency=EUR&checkInDate=2025-07-27&checkOutDate=2025-07-28&trackPage=yes',
-        'https://www.booking.com/Share-Wmsuvr2'
-      ],
+      comingSoon: false,
+      discount: 'CÓDIGO DE RESERVA DISPONIBLE EN DICIEMBRE',
       image: '/images/100-hotel-1.jpg'
     },
     {
       id: 'copacabana',
       name: 'Copacabana Hotel',
       type: 'hotel',
-      pricing: null,
+      featured: true,
+      pricing: 'Mínimo 2 noches, precio en la web',
       link: 'https://www.copacabanatarifa.com/es/inicio',
-      comingSoon: true,
-      bookingLinks: ['https://www.booking.com/Share-VhBGeU'],
+      discount: 'Descuento del 20% en la tercera noche (SIN CÓDIGO)',
+      comingSoon: false,
       image: '/images/copacabana-tarifa.jpg'
     },
-    {
-      id: 'kampaoh_paloma',
-      name: 'Kampaoh Paloma',
-      type: 'glamping',
-      pricing: null,
-      link: 'https://es.kampaoh.com/punta-paloma-playa-cadiz-andalucia/',
-      comingSoon: true,
-      image: '/images/kampaoh-paloma-1.jpeg'
-    },
-    {
-      id: 'kampaoh_tarifa',
-      name: 'Kampaoh Tarifa',
-      type: 'glamping',
-      pricing: null,
-      link: 'https://es.kampaoh.com/tarifa-cadiz-andalucia/',
-      comingSoon: true,
-      image: '/images/kampaoh-tarifa-1.jpeg'
-    }
+    // {
+    //   id: 'kampaoh_paloma',
+    //   name: 'Kampaoh Paloma',
+    //   type: 'glamping',
+    //   pricing: null,
+    //   link: 'https://es.kampaoh.com/punta-paloma-playa-cadiz-andalucia/',
+    //   comingSoon: false,
+    //   image: '/images/kampaoh-paloma-1.jpeg'
+    // },
+    // {
+    //   id: 'kampaoh_tarifa',
+    //   name: 'Kampaoh Tarifa',
+    //   type: 'glamping',
+    //   pricing: null,
+    //   link: 'https://es.kampaoh.com/tarifa-cadiz-andalucia/',
+    //   comingSoon: false,
+    //   image: '/images/kampaoh-tarifa-1.jpeg'
+    // }
   ]
   
   return (
@@ -84,7 +83,7 @@ export function AccommodationsSection() {
         
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {accommodations.map((accommodation) => (
+            {accommodations.map((accommodation, index) => (
               <div
                 key={accommodation.id}
                 className={`relative border bg-coral/20 hover:bg-coral/30 rounded-lg overflow-hidden transition-all hover:shadow-lg ${
@@ -92,7 +91,7 @@ export function AccommodationsSection() {
                 }`}
               >
                 {/* Featured Badge */}
-                {accommodation.featured && (
+                {accommodation.featured && index === 0 && (
                   <div className="absolute top-4 left-4 z-10">
                     <div className="bg-coral text-cream px-3 py-1 rounded-full flex items-center gap-1">
                       <Star className="w-4 h-4" />
@@ -142,7 +141,7 @@ export function AccommodationsSection() {
                         {accommodation.pricing}
                       </p>
                       {accommodation.discount && (
-                        <p className="type-body-small text-coral mt-1">
+                        <p className="type-body-small text-coral !font-extrabold mt-1">
                           {accommodation.discount}
                         </p>
                       )}

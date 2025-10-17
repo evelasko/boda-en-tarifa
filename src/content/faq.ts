@@ -26,7 +26,7 @@ export const faqs = [
     },
     {
       id: 'q6',
-      question: '¿Pregunta no listada? ¡No dudes en consultar!',
+      question: '¿Tu pregunta no aparece? ¡No dudes en consultar!',
       answer: '¡Estamos aquí para ayudar! Si tienes cualquier otra pregunta o inquietud, no dudes en contactarnos directamente. Puedes contactarnos por correo electrónico, teléfono o unirte a nuestro grupo de WhatsApp para respuestas rápidas.'
     }
   ]

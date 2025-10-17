@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { AccommodationManagement, AttendanceStatus, MainCoursePreference, NightOption, RSVPResponse, RSVPSubmission, TransportationNeed } from '@/types/rsvp';
+import { AttendanceStatus, MainCoursePreference, NightOption, RSVPResponse, RSVPSubmission, TransportationNeed } from '@/types/rsvp';
 import { useRSVPForm } from '@/lib/hooks/useRSVPForm';
 import { RSVPService } from '@/lib/firestore';
 
@@ -15,6 +15,7 @@ import { TextArea } from './TextArea';
 import { ConditionalField } from './ConditionalField';
 import { FormProgress } from './FormProgress';
 import { AutoSaveIndicator } from './AutoSaveIndicator';
+import { auth } from '@/lib/firebase';
 
 interface SpanishRSVPFormProps {
   user: User;
@@ -72,7 +73,9 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
 
   // Handle cancel - navigate back to home page
   const handleCancel = () => {
-    router.push('/');
+    auth.signOut().then(() => {
+      router.push('/');
+    });
   };
 
   // Handle field updates
@@ -170,7 +173,7 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
             />
 
             {/* Question 2: ¿Quieres que te gestionemos el alojamiento? */}
-            <RadioGroup
+            {/* <RadioGroup
               name="accommodationManagement"
               label="¿Quieres que te gestionemos el alojamiento?"
               required
@@ -181,7 +184,7 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
               ]}
               value={responses.accommodationManagement}
               onChange={(value) => value && handleFieldUpdate('accommodationManagement', value as AccommodationManagement)}
-            />
+            /> */}
 
             {/* Question 3: ¿Qué noches te quedarás en Cádiz? */}
             <CheckboxGroup

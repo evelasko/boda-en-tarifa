@@ -6,7 +6,7 @@ import { Phone, MessageCircle, Heart } from 'lucide-react'
 export function ContactSection() {
   
   return (
-    <section id="contact" className="pt-20 lg:pt-32 bg-lovers-texture-small bg-contain bg-repeat-y">
+    <section id="contact" className="pt-20 lg:pt-32 bg-lovers-texture-small bg-cover bg-repeat-y">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
           {/* Header */}
