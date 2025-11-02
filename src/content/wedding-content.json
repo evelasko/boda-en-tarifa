@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Enrique & Manuel - 30 de Mayo, 2025",
+    "title": "Enrique & Manuel - 30 de Mayo, 2026",
     "description": "Únete a nuestra celebración de boda en la playa de Tarifa, España",
     "keywords": [
       "boda",
@@ -14,14 +14,14 @@
     "backgroundImage": "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1920&q=80",
     "greeting": "¡Nos casamos!",
     "names": "Enrique & Manuel",
-    "date": "2025-05-30",
+    "date": "2026-05-30",
     "location": "Tarifa, España"
   },
   "events": [
     {
       "id": "early-welcome",
       "type": "welcome",
-      "date": "2025-05-29",
+      "date": "2026-05-29",
       "time": "15:00",
       "title": "Bienvenida",
       "description": "Únete a nosotros para bebidas y tapas en la playa",
@@ -46,7 +46,7 @@
     {
       "id": "pre-wedding",
       "type": "pre-wedding",
-      "date": "2025-05-29",
+      "date": "2026-05-29",
       "time": "21:00",
       "title": "Pre-Boda",
       "description": "Una noche de celebración antes del gran día",
@@ -71,7 +71,7 @@
     {
       "id": "ceremony",
       "type": "ceremony",
-      "date": "2025-05-30",
+      "date": "2026-05-30",
       "time": "18:00",
       "title": "Ceremonia",
       "description": "El momento en que decimos 'Sí, quiero' con el océano como testigo",
@@ -96,7 +96,7 @@
     {
       "id": "celebration",
       "type": "celebration",
-      "date": "2025-05-30",
+      "date": "2026-05-30",
       "time": "19:00",
       "title": "Celebración",
       "description": "Cocktail, cena, y recuerdos bajo las estrellas",
@@ -121,7 +121,7 @@
     {
       "id": "party",
       "type": "party",
-      "date": "2025-05-30",
+      "date": "2026-05-30",
       "time": "23:00",
       "title": "Fiesta",
       "description": "Baile y jarana hasta que llegue la mañana",
@@ -146,7 +146,7 @@
     {
       "id": "post-wedding",
       "type": "post-wedding",
-      "date": "2025-05-31",
+      "date": "2026-05-31",
       "time": "14:00",
       "title": "Brunch",
       "description": "Una reunión relajada para compartir historias y despedirnos",
@@ -407,7 +407,7 @@
   "rsvp": {
     "title": "Confirmar Asistencia",
     "description": "Por favor, háznoslo saber si nos acompañarás en nuestro día especial",
-    "deadline": "2025-04-30",
+    "deadline": "2026-04-30",
     "questions": [
       {
         "id": "attendance",
@@ -417,23 +417,23 @@
         "options": [
           {
             "value": "early-welcome",
-            "label": "Bienvenida Anticipada (29 de Mayo)"
+            "label": "Bienvenida Anticipada (29 de Mayo, 2026)"
           },
           {
             "value": "pre-wedding",
-            "label": "Fiesta Pre-Boda (29 de Mayo)"
+            "label": "Fiesta Pre-Boda (29 de Mayo, 2026)"
           },
           {
             "value": "ceremony",
-            "label": "Ceremonia de Boda (30 de Mayo)"
+            "label": "Ceremonia de Boda (30 de Mayo, 2026)"
           },
           {
             "value": "celebration",
-            "label": "Celebración de Boda (30 de Mayo)"
+            "label": "Celebración de Boda (30 de Mayo, 2026)"
           },
           {
             "value": "post-wedding",
-            "label": "Brunch Post-Boda (31 de Mayo)"
+            "label": "Brunch Post-Boda (31 de Mayo, 2026)"
           }
         ]
       },
