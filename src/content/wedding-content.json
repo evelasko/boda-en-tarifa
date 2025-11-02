@@ -21,7 +21,7 @@
     {
       "id": "early-welcome",
       "type": "welcome",
-      "date": "2025-05-30",
+      "date": "2025-05-29",
       "time": "15:00",
       "title": "Bienvenida",
       "description": "Únete a nosotros para bebidas y tapas en la playa",
@@ -46,7 +46,7 @@
     {
       "id": "pre-wedding",
       "type": "pre-wedding",
-      "date": "2025-05-30",
+      "date": "2025-05-29",
       "time": "21:00",
       "title": "Pre-Boda",
       "description": "Una noche de celebración antes del gran día",
@@ -421,7 +421,7 @@
           },
           {
             "value": "pre-wedding",
-            "label": "Fiesta Pre-Boda (30 de Mayo)"
+            "label": "Fiesta Pre-Boda (29 de Mayo)"
           },
           {
             "value": "ceremony",
