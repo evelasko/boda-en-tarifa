@@ -14,6 +14,11 @@ import {
 } from 'firebase/firestore';
 import { app } from './firebase';
 import { RSVPSubmission, RSVPResponse } from '@/types/rsvp';
+import { 
+  captureFirestoreError, 
+  addSentryBreadcrumb,
+  withSentrySpan 
+} from './sentry-helpers';
 
 // Initialize Firestore
 export const db = getFirestore(app);
@@ -34,54 +39,100 @@ export class RSVPService {
     isSubmitted: boolean = false
   ): Promise<void> {
     try {
-      const rsvpRef = doc(db, RSVP_COLLECTION, userId);
-      const now = new Date();
-      
-      // Check if document exists to determine if this is an update
-      const existingDoc = await getDoc(rsvpRef);
-      const isUpdate = existingDoc.exists();
-      
-      // For updates, merge with existing responses
-      let finalResponses: RSVPResponse;
-      if (isUpdate) {
-        const existingData = existingDoc.data() as RSVPSubmission;
-        finalResponses = {
-          ...existingData.responses,
-          ...responses // Override with new values
-        } as RSVPResponse;
-      } else {
-        // For new documents, we need all required fields
-        if (isSubmitted && !RSVPValidation.isFormValid(responses)) {
-          throw new Error('Cannot submit incomplete form');
+      // Add breadcrumb
+      addSentryBreadcrumb(
+        `Saving RSVP response for user ${userId}`,
+        'firestore.rsvp',
+        'info',
+        { 
+          user_id: userId,
+          is_submitted: isSubmitted,
+          field_count: Object.keys(responses).length,
         }
-        finalResponses = responses as RSVPResponse;
-      }
+      );
       
-      const rsvpData: RSVPSubmission = {
-        userId,
-        userEmail,
-        userDisplayName,
-        responses: finalResponses,
-        submittedAt: isUpdate ? existingDoc.data()?.submittedAt || now : now,
-        lastUpdatedAt: now,
-        isSubmitted,
-        version: isUpdate ? (existingDoc.data()?.version || 0) + 1 : 1
-      };
+      await withSentrySpan(
+        'Save RSVP Response',
+        'firestore.write',
+        async () => {
+          const rsvpRef = doc(db, RSVP_COLLECTION, userId);
+          const now = new Date();
+          
+          // Check if document exists to determine if this is an update
+          const existingDoc = await getDoc(rsvpRef);
+          const isUpdate = existingDoc.exists();
+          
+          // For updates, merge with existing responses
+          let finalResponses: RSVPResponse;
+          if (isUpdate) {
+            const existingData = existingDoc.data() as RSVPSubmission;
+            finalResponses = {
+              ...existingData.responses,
+              ...responses // Override with new values
+            } as RSVPResponse;
+          } else {
+            // For new documents, we need all required fields
+            if (isSubmitted && !RSVPValidation.isFormValid(responses)) {
+              throw new Error('Cannot submit incomplete form');
+            }
+            finalResponses = responses as RSVPResponse;
+          }
+          
+          const rsvpData: RSVPSubmission = {
+            userId,
+            userEmail,
+            userDisplayName,
+            responses: finalResponses,
+            submittedAt: isUpdate ? existingDoc.data()?.submittedAt || now : now,
+            lastUpdatedAt: now,
+            isSubmitted,
+            version: isUpdate ? (existingDoc.data()?.version || 0) + 1 : 1
+          };
 
-      if (isUpdate) {
-        await updateDoc(rsvpRef, {
-          ...rsvpData,
-          lastUpdatedAt: serverTimestamp()
-        });
-      } else {
-        await setDoc(rsvpRef, {
-          ...rsvpData,
-          submittedAt: serverTimestamp(),
-          lastUpdatedAt: serverTimestamp()
-        });
-      }
+          if (isUpdate) {
+            await updateDoc(rsvpRef, {
+              ...rsvpData,
+              lastUpdatedAt: serverTimestamp()
+            });
+          } else {
+            await setDoc(rsvpRef, {
+              ...rsvpData,
+              submittedAt: serverTimestamp(),
+              lastUpdatedAt: serverTimestamp()
+            });
+          }
+          
+          // Track successful save
+          addSentryBreadcrumb(
+            `RSVP response saved successfully`,
+            'firestore.rsvp',
+            'info',
+            { 
+              user_id: userId,
+              is_update: isUpdate,
+              is_submitted: isSubmitted,
+            }
+          );
+        },
+        { operation: isSubmitted ? 'submit' : 'save' }
+      );
     } catch (error) {
       console.error('Error saving RSVP response:', error);
+      
+      // Capture error in Sentry
+      captureFirestoreError(
+        error as Error,
+        'write',
+        RSVP_COLLECTION,
+        userId,
+        {
+          user_id: userId,
+          user_email: userEmail,
+          is_submitted: isSubmitted,
+          field_count: Object.keys(responses).length,
+        }
+      );
+      
       throw new Error('No se pudo guardar la respuesta. Por favor, inténtalo de nuevo.');
     }
   }
@@ -92,21 +143,59 @@ export class RSVPService {
    */
   static async getRSVPResponse(userId: string): Promise<RSVPSubmission | null> {
     try {
-      const rsvpRef = doc(db, RSVP_COLLECTION, userId);
-      const rsvpSnap = await getDoc(rsvpRef);
+      // Add breadcrumb
+      addSentryBreadcrumb(
+        `Getting RSVP response for user ${userId}`,
+        'firestore.rsvp',
+        'info',
+        { user_id: userId }
+      );
       
-      if (rsvpSnap.exists()) {
-        const data = rsvpSnap.data();
-        return {
-          ...data,
-          submittedAt: data.submittedAt?.toDate() || new Date(),
-          lastUpdatedAt: data.lastUpdatedAt?.toDate() || new Date()
-        } as RSVPSubmission;
-      }
+      const result = await withSentrySpan(
+        'Get RSVP Response',
+        'firestore.read',
+        async () => {
+          const rsvpRef = doc(db, RSVP_COLLECTION, userId);
+          const rsvpSnap = await getDoc(rsvpRef);
+          
+          if (rsvpSnap.exists()) {
+            const data = rsvpSnap.data();
+            return {
+              ...data,
+              submittedAt: data.submittedAt?.toDate() || new Date(),
+              lastUpdatedAt: data.lastUpdatedAt?.toDate() || new Date()
+            } as RSVPSubmission;
+          }
+          
+          return null;
+        }
+      );
       
-      return null;
+      // Track result
+      addSentryBreadcrumb(
+        `RSVP response retrieved`,
+        'firestore.rsvp',
+        'info',
+        { 
+          user_id: userId,
+          found: !!result,
+          is_submitted: result?.isSubmitted,
+        }
+      );
+      
+      return result;
     } catch (error) {
       console.error('Error getting RSVP response:', error);
+      
+      // Capture error in Sentry
+      captureFirestoreError(
+        error as Error,
+        'read',
+        RSVP_COLLECTION,
+        userId,
+        { user_id: userId }
+      );
+      
       throw new Error('No se pudo cargar la respuesta. Por favor, inténtalo de nuevo.');
     }
   }
@@ -116,10 +205,42 @@ export class RSVPService {
    */
   static async deleteRSVPResponse(userId: string): Promise<void> {
     try {
-      const rsvpRef = doc(db, RSVP_COLLECTION, userId);
-      await deleteDoc(rsvpRef);
+      // Add breadcrumb
+      addSentryBreadcrumb(
+        `Deleting RSVP response for user ${userId}`,
+        'firestore.rsvp',
+        'info',
+        { user_id: userId }
+      );
+      
+      await withSentrySpan(
+        'Delete RSVP Response',
+        'firestore.delete',
+        async () => {
+          const rsvpRef = doc(db, RSVP_COLLECTION, userId);
+          await deleteDoc(rsvpRef);
+        }
+      );
+      
+      // Track successful deletion
+      addSentryBreadcrumb(
+        `RSVP response deleted successfully`,
+        'firestore.rsvp',
+        'info',
+        { user_id: userId }
+      );
     } catch (error) {
       console.error('Error deleting RSVP response:', error);
+      
+      // Capture error in Sentry
+      captureFirestoreError(
+        error as Error,
+        'delete',
+        RSVP_COLLECTION,
+        userId,
+        { user_id: userId }
+      );
+      
       throw new Error('No se pudo eliminar la respuesta. Por favor, inténtalo de nuevo.');
     }
   }
@@ -129,22 +250,55 @@ export class RSVPService {
    */
   static async getAllRSVPResponses(): Promise<RSVPSubmission[]> {
     try {
-      const q = query(
-        collection(db, RSVP_COLLECTION),
-        orderBy('lastUpdatedAt', 'desc')
+      // Add breadcrumb
+      addSentryBreadcrumb(
+        'Getting all RSVP responses',
+        'firestore.rsvp',
+        'info'
       );
       
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          ...data,
-          submittedAt: data.submittedAt?.toDate() || new Date(),
-          lastUpdatedAt: data.lastUpdatedAt?.toDate() || new Date()
-        } as RSVPSubmission;
-      });
+      const results = await withSentrySpan(
+        'Get All RSVP Responses',
+        'firestore.read',
+        async () => {
+          const q = query(
+            collection(db, RSVP_COLLECTION),
+            orderBy('lastUpdatedAt', 'desc')
+          );
+          
+          const snapshot = await getDocs(q);
+          return snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+              ...data,
+              submittedAt: data.submittedAt?.toDate() || new Date(),
+              lastUpdatedAt: data.lastUpdatedAt?.toDate() || new Date()
+            } as RSVPSubmission;
+          });
+        }
+      );
+      
+      // Track result
+      addSentryBreadcrumb(
+        'All RSVP responses retrieved',
+        'firestore.rsvp',
+        'info',
+        { count: results.length }
+      );
+      
+      return results;
     } catch (error) {
       console.error('Error getting all RSVP responses:', error);
+      
+      // Capture error in Sentry
+      captureFirestoreError(
+        error as Error,
+        'read',
+        RSVP_COLLECTION,
+        undefined,
+        { operation: 'get_all' }
+      );
+      
       throw new Error('No se pudieron cargar las respuestas. Por favor, inténtalo de nuevo.');
     }
   }
@@ -156,6 +310,14 @@ export class RSVPService {
     userId: string, 
     callback: (rsvp: RSVPSubmission | null) => void
   ): () => void {
+    // Add breadcrumb
+    addSentryBreadcrumb(
+      `Subscribing to RSVP updates for user ${userId}`,
+      'firestore.rsvp',
+      'info',
+      { user_id: userId }
+    );
+    
     const rsvpRef = doc(db, RSVP_COLLECTION, userId);
     
     return onSnapshot(rsvpRef, (doc) => {
@@ -172,6 +334,19 @@ export class RSVPService {
       }
     }, (error) => {
       console.error('Error in RSVP subscription:', error);
+      
+      // Capture subscription error in Sentry
+      captureFirestoreError(
+        error as Error,
+        'subscribe',
+        RSVP_COLLECTION,
+        userId,
+        { 
+          user_id: userId,
+          error_type: 'subscription',
+        }
+      );
+      
       callback(null);
     });
   }

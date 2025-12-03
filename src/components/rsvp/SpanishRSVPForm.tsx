@@ -6,6 +6,11 @@ import { useRouter } from 'next/navigation';
 import { AttendanceStatus, MainCoursePreference, NightOption, RSVPResponse, RSVPSubmission, TransportationNeed } from '@/types/rsvp';
 import { useRSVPForm } from '@/lib/hooks/useRSVPForm';
 import { RSVPService } from '@/lib/firestore';
+import { 
+  captureRSVPError, 
+  addSentryBreadcrumb,
+  withSentrySpan 
+} from '@/lib/sentry-helpers';
 
 // Form components
 import { RadioGroup } from './RadioGroup';
@@ -46,10 +51,51 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
     const loadData = async () => {
       try {
         setIsLoading(true);
-        const existingData = await RSVPService.getRSVPResponse(user.uid);
+        
+        // Add breadcrumb for loading attempt
+        addSentryBreadcrumb(
+          'RSVP form component loading data',
+          'rsvp.component',
+          'info',
+          { user_id: user.uid }
+        );
+        
+        const existingData = await withSentrySpan(
+          'Load RSVP Form Data',
+          'rsvp.component.load',
+          async () => {
+            return await RSVPService.getRSVPResponse(user.uid);
+          }
+        );
+        
         setInitialData(existingData); // This can be null for new users, which is fine
+        
+        // Track successful load
+        addSentryBreadcrumb(
+          'RSVP form data loaded',
+          'rsvp.component',
+          'info',
+          { 
+            user_id: user.uid,
+            has_data: !!existingData,
+            is_submitted: existingData?.isSubmitted,
+          }
+        );
       } catch (error) {
         console.error('Failed to load existing data:', error);
+        
+        // Capture load error
+        captureRSVPError(
+          error as Error,
+          'load',
+          undefined,
+          {
+            user_id: user.uid,
+            user_email: user.email,
+            component: 'SpanishRSVPForm',
+          }
+        );
+        
         // Only show error to user for actual network/server errors, not for "no data found"
         onError?.('No se pudo cargar los datos existentes');
       } finally {
@@ -58,22 +104,69 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
     };
 
     loadData();
-  }, [user.uid, onError]);
+  }, [user.uid, user.email, onError]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Track form submission attempt
+    addSentryBreadcrumb(
+      'RSVP form submit button clicked',
+      'rsvp.component',
+      'info',
+      { 
+        user_id: user.uid,
+        is_valid: isValid,
+        is_dirty: isDirty,
+      }
+    );
+    
     const success = await submitForm();
     if (success) {
       setShowSuccessMessage(true);
       onSuccess?.();
+      
+      // Track successful submission
+      addSentryBreadcrumb(
+        'RSVP form submitted successfully',
+        'rsvp.component',
+        'info',
+        { user_id: user.uid }
+      );
+    } else {
+      // Track failed submission
+      addSentryBreadcrumb(
+        'RSVP form submission failed',
+        'rsvp.component',
+        'error',
+        { 
+          user_id: user.uid,
+          has_errors: Object.keys(errors).length > 0,
+        }
+      );
     }
   };
 
   // Handle cancel - navigate back to home page
   const handleCancel = () => {
+    // Track form cancellation
+    addSentryBreadcrumb(
+      'RSVP form cancelled',
+      'rsvp.component',
+      'info',
+      { 
+        user_id: user.uid,
+        was_dirty: isDirty,
+        was_submitted: isSubmitted,
+      }
+    );
+    
     auth.signOut().then(() => {
+      router.push('/');
+    }).catch((error) => {
+      console.error('Error signing out:', error);
+      // Still navigate even if signout fails
       router.push('/');
     });
   };

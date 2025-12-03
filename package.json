@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev --turbopack",
+    "dev": "NODE_OPTIONS='--inspect' next dev",
     "clean": "rm -rf .next",
     "build": "next build",
     "start": "next start",
@@ -14,6 +14,7 @@
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-tabs": "^1.1.12",
+    "@sentry/nextjs": "^10.28.0",
     "clsx": "^2.1.1",
     "firebase": "^12.0.0",
     "framer-motion": "^12.23.9",
