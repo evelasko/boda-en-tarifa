@@ -265,21 +265,7 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
               onChange={(value) => value && handleFieldUpdate('attendance', value as AttendanceStatus)}
             />
 
-            {/* Question 2: ¿Quieres que te gestionemos el alojamiento? */}
-            {/* <RadioGroup
-              name="accommodationManagement"
-              label="¿Quieres que te gestionemos el alojamiento?"
-              required
-              error={errors.accommodationManagement}
-              options={[
-                { value: 'yes', label: 'Sí, quiero que me lo gestionéis' },
-                { value: 'no', label: 'No, me lo gestiono por mi cuenta' }
-              ]}
-              value={responses.accommodationManagement}
-              onChange={(value) => value && handleFieldUpdate('accommodationManagement', value as AccommodationManagement)}
-            /> */}
-
-            {/* Question 3: ¿Qué noches te quedarás en Cádiz? */}
+            {/* Question 2: ¿Qué noches te quedarás en Cádiz? */}
             <CheckboxGroup
               name="nightsStaying"
               label="¿Qué noches te quedarás en Cádiz? (Marca todas las que correspondan)"
@@ -295,7 +281,7 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
               onChange={(value) => handleFieldUpdate('nightsStaying', value as NightOption[])}
             />
 
-            {/* Question 3b: Other nights combination (conditional) */}
+            {/* Question 2b: Other nights combination (conditional) */}
             <ConditionalField 
               condition={responses.nightsStaying?.includes('other') || false}
             >
@@ -310,11 +296,10 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
               />
             </ConditionalField>
 
-            {/* Question 4: ¿Con quién compartes habitación? */}
+            {/* Question 3: ¿Con quién compartes habitación? */}
             <TextInput
               name="roomSharing"
               label="¿Con quién compartes habitación? (Escribe su nombre o indica si no lo sabes aún o si deseas habitación individual)"
-              required
               error={errors.roomSharing}
               value={responses.roomSharing || ''}
               onChange={(value) => handleFieldUpdate('roomSharing', value)}
@@ -322,7 +307,7 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
               maxLength={100}
             />
 
-            {/* Question 5: ¿Necesitas ayuda con el transporte? */}
+            {/* Question 4: ¿Necesitas ayuda con el transporte? */}
             <CheckboxGroup
               name="transportationNeeds"
               label="¿Necesitas ayuda con el transporte? (Marca lo que se aplique)"
@@ -338,7 +323,7 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
               onChange={(value) => handleFieldUpdate('transportationNeeds', value as TransportationNeed[])}
             />
 
-            {/* Question 6: ¿Tienes alguna alergia, intolerancia o necesidad alimentaria? */}
+            {/* Question 5: ¿Tienes alguna alergia, intolerancia o necesidad alimentaria? */}
             <TextArea
               name="dietaryRestrictions"
               label="¿Tienes alguna alergia, intolerancia o necesidad alimentaria?"
@@ -349,7 +334,7 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
               rows={3}
             />
 
-            {/* Question 7: ¿Qué prefieres para el plato principal? */}
+            {/* Question 6: ¿Qué prefieres para el plato principal? */}
             <RadioGroup
               name="mainCoursePreference"
               label="¿Qué prefieres para el plato principal?"

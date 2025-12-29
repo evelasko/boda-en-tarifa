@@ -1,0 +1,6 @@
+onlyBuiltDependencies:
+  - '@firebase/util'
+  - '@sentry/cli'
+  - protobufjs
+  - sharp
+  - unrs-resolver

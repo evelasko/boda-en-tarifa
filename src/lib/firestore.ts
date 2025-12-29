@@ -51,6 +51,9 @@ export class RSVPService {
         }
       );
       
+      // Clean responses to remove undefined values before saving
+      const cleanedResponses = cleanRSVPResponse(responses);
+      
       await withSentrySpan(
         'Save RSVP Response',
         'firestore.write',
@@ -68,14 +71,14 @@ export class RSVPService {
             const existingData = existingDoc.data() as RSVPSubmission;
             finalResponses = {
               ...existingData.responses,
-              ...responses // Override with new values
+              ...cleanedResponses // Override with new cleaned values
             } as RSVPResponse;
           } else {
             // For new documents, we need all required fields
-            if (isSubmitted && !RSVPValidation.isFormValid(responses)) {
+            if (isSubmitted && !RSVPValidation.isFormValid(cleanedResponses)) {
               throw new Error('Cannot submit incomplete form');
             }
-            finalResponses = responses as RSVPResponse;
+            finalResponses = cleanedResponses as RSVPResponse;
           }
           
           const rsvpData: RSVPSubmission = {
@@ -393,32 +396,27 @@ export class RSVPValidation {
       errors.attendance = 'Por favor, indica si vas a venir a la boda';
     }
 
-    // Question 2: Accommodation management (required)
-    if (!responses.accommodationManagement) {
-      errors.accommodationManagement = 'Por favor, indica si quieres que gestionemos tu alojamiento';
-    }
-
-    // Question 3: Nights staying (required, at least one)
+    // Question 2: Nights staying (required, at least one)
     if (!responses.nightsStaying || responses.nightsStaying.length === 0) {
       errors.nightsStaying = 'Por favor, selecciona al menos una noche';
     }
 
-    // Question 3: Other nights combination (required if "other" is selected)
+    // Question 2b: Other nights combination (required if "other" is selected)
     if (responses.nightsStaying?.includes('other') && !responses.otherNightsCombination?.trim()) {
       errors.otherNightsCombination = 'Por favor, especifica tu combinación de noches';
     }
 
-    // Question 4: Room sharing (required)
-    if (!responses.roomSharing?.trim()) {
-      errors.roomSharing = 'Por favor, indica con quién compartes habitación';
-    }
+    // Question 3: Room sharing (optional - removed validation)
+    // Users can leave this empty per requirements
 
-    // Question 5: Transportation needs (required, at least one)
+    // Question 4: Transportation needs (required, at least one)
     if (!responses.transportationNeeds || responses.transportationNeeds.length === 0) {
       errors.transportationNeeds = 'Por favor, selecciona al menos una opción de transporte';
     }
 
-    // Question 7: Main course preference (required)
+    // Question 5: Dietary restrictions (optional - no validation needed)
+
+    // Question 6: Main course preference (required)
     if (!responses.mainCoursePreference) {
       errors.mainCoursePreference = 'Por favor, selecciona tu preferencia para el plato principal';
     }

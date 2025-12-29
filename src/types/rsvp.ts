@@ -189,17 +189,8 @@ export const RSVP_FORM_CONFIG: RSVPQuestionConfig[] = [
   }
 ];
 
-// Default form state
-export const DEFAULT_RSVP_RESPONSE: Partial<RSVPResponse> = {
-  attendance: undefined,
-  accommodationManagement: undefined,
-  nightsStaying: [],
-  otherNightsCombination: '',
-  roomSharing: '',
-  transportationNeeds: [],
-  dietaryRestrictions: '',
-  mainCoursePreference: undefined
-};
+// Default form state (not used directly in state initialization to avoid reference issues)
+export const DEFAULT_RSVP_RESPONSE: Partial<RSVPResponse> = {};
 
 // Auto-save configuration
 export const AUTO_SAVE_CONFIG: AutoSaveConfig = {

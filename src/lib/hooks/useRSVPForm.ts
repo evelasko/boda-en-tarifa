@@ -40,8 +40,10 @@ interface UseRSVPFormReturn {
 }
 
 export function useRSVPForm({ user, initialData }: UseRSVPFormProps): UseRSVPFormReturn {
-  // Form state
-  const [responses, setResponses] = useState<Partial<RSVPResponse>>(DEFAULT_RSVP_RESPONSE);
+  // Form state - use a stable empty object instead of DEFAULT_RSVP_RESPONSE to avoid reference issues
+  const [responses, setResponses] = useState<Partial<RSVPResponse>>(() => 
+    initialData?.responses || {}
+  );
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -52,7 +54,7 @@ export function useRSVPForm({ user, initialData }: UseRSVPFormProps): UseRSVPFor
   // Auto-save state
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(AUTO_SAVE_CONFIG.enabled);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const lastSavedDataRef = useRef<Partial<RSVPResponse>>(DEFAULT_RSVP_RESPONSE);
+  const lastSavedDataRef = useRef<Partial<RSVPResponse>>({});
   
   // Load initial data
   useEffect(() => {
@@ -300,11 +302,11 @@ export function useRSVPForm({ user, initialData }: UseRSVPFormProps): UseRSVPFor
   
   // Reset form
   const resetForm = useCallback(() => {
-    setResponses(DEFAULT_RSVP_RESPONSE);
+    setResponses({});
     setErrors({});
     setIsDirty(false);
     setIsSubmitted(false);
-    lastSavedDataRef.current = DEFAULT_RSVP_RESPONSE;
+    lastSavedDataRef.current = {};
   }, []);
   
   // Load existing data
