@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { ExternalLink, Star, Bell } from 'lucide-react'
+import { ExternalLink, Star, Bell, XCircle } from 'lucide-react'
 import { SlideImage } from './SlideImage'
 import Typography, { combineTypographyClasses } from '@/lib/typography'
 import Image from 'next/image'
@@ -17,6 +17,7 @@ interface Accommodation {
   bookingLinks?: string[]
   discount?: string
   image?: string
+  soldOut?: boolean
 }
 
 export function AccommodationsSection() {
@@ -30,7 +31,8 @@ export function AccommodationsSection() {
       link: 'https://www.tresmareshotel.com',
       featured: true,
       discount: 'CÓDIGO DE RESERVA: MANUELYENRIQUE',
-      image: '/images/tres-mares-1.jpg'
+      image: '/images/tres-mares-1.jpg',
+      soldOut: true,
     },
     {
       id: '100_fun',
@@ -41,7 +43,8 @@ export function AccommodationsSection() {
       link: 'https://100x100fun.com',
       comingSoon: false,
       discount: 'CÓDIGO DE RESERVA DISPONIBLE EN DICIEMBRE',
-      image: '/images/100-hotel-1.jpg'
+      image: '/images/100-hotel-1.jpg',
+      soldOut: true,
     },
     {
       id: 'copacabana',
@@ -83,6 +86,7 @@ export function AccommodationsSection() {
         
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Accommodations cards */}
             {accommodations.map((accommodation, index) => (
               <div
                 key={accommodation.id}
@@ -159,44 +163,53 @@ export function AccommodationsSection() {
                   
                   {/* Actions */}
                   <div className="space-y-2">
-                    <a
-                      href={accommodation.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`block w-full px-4 py-2 rounded-full text-center transition-colors type-ui-label ${
-                        accommodation.featured
-                          ? 'bg-coral text-cream hover:bg-coral/90'
-                          : 'border border-coral text-white hover:border-charcoal/40'
-                      }`}
-                    >
-                      {accommodation.pricing ? 'Reservar Ahora' : 'Visitar Web'}
-                    </a>
-                    
-                    {accommodation.comingSoon && (
-                      <button className="w-full px-4 py-2 border border-coral rounded-full text-white hover:border-charcoal/40 transition-colors type-ui-label">
-                        Suscribirse a Actualizaciones
-                      </button>
-                    )}
-                    
-                    {accommodation.bookingLinks && (
-                      <div className="text-center">
-                        <p className="type-body-small text-white/50 mb-2">
-                          Reserva rápida:
-                        </p>
-                        <div className="flex items-center justify-center gap-2">
-                          {accommodation.bookingLinks.map((link, index) => (
-                            <a
-                              key={index}
-                              href={link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-white/50 hover:text-white transition-colors"
-                            >
-                              <ExternalLink className="w-4 h-4" />
-                            </a>
-                          ))}
-                        </div>
+                    {accommodation.soldOut ? (
+                      <div className="w-full px-4 py-3 rounded-full bg-charcoal/60 border border-charcoal/40 flex items-center justify-center gap-2">
+                        <XCircle className="w-5 h-5 text-white/70" />
+                        <span className="type-ui-label text-white/70">Agotado</span>
                       </div>
+                    ) : (
+                      <>
+                        <a
+                          href={accommodation.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`block w-full px-4 py-2 rounded-full text-center transition-colors type-ui-label ${
+                            accommodation.featured
+                              ? 'bg-coral text-cream hover:bg-coral/90'
+                              : 'border border-coral text-white hover:border-charcoal/40'
+                          }`}
+                        >
+                          {accommodation.pricing ? 'Reservar Ahora' : 'Visitar Web'}
+                        </a>
+                        
+                        {accommodation.comingSoon && (
+                          <button className="w-full px-4 py-2 border border-coral rounded-full text-white hover:border-charcoal/40 transition-colors type-ui-label">
+                            Suscribirse a Actualizaciones
+                          </button>
+                        )}
+                        
+                        {accommodation.bookingLinks && (
+                          <div className="text-center">
+                            <p className="type-body-small text-white/50 mb-2">
+                              Reserva rápida:
+                            </p>
+                            <div className="flex items-center justify-center gap-2">
+                              {accommodation.bookingLinks.map((link, index) => (
+                                <a
+                                  key={index}
+                                  href={link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-white/50 hover:text-white transition-colors"
+                                >
+                                  <ExternalLink className="w-4 h-4" />
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
