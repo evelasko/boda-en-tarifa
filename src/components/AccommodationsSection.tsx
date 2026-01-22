@@ -39,10 +39,10 @@ export function AccommodationsSection() {
       name: '100% Fun Hotel',
       type: 'hotel',
       featured: true,
-      pricing: '🔔 Próximamente',
+      pricing: "No disponible",
       link: 'https://100x100fun.com',
       comingSoon: false,
-      discount: 'CÓDIGO DE RESERVA DISPONIBLE EN DICIEMBRE',
+      discount: 'Ninguno',
       image: '/images/100-hotel-1.jpg',
       soldOut: true,
     },
@@ -55,17 +55,19 @@ export function AccommodationsSection() {
       link: 'https://www.copacabanatarifa.com/es/inicio',
       discount: 'Descuento del 20% en la tercera noche (SIN CÓDIGO)',
       comingSoon: false,
-      image: '/images/copacabana-tarifa.jpg'
+      image: '/images/copacabana-tarifa.jpg',
+      soldOut: false,
     },
-    // {
-    //   id: 'kampaoh_paloma',
-    //   name: 'Kampaoh Paloma',
-    //   type: 'glamping',
-    //   pricing: null,
-    //   link: 'https://es.kampaoh.com/punta-paloma-playa-cadiz-andalucia/',
-    //   comingSoon: false,
-    //   image: '/images/kampaoh-paloma-1.jpeg'
-    // },
+    {
+      id: 'dulce_nombre',
+      name: 'Hotel Dulce Nombre',
+      type: 'hotel',
+      pricing: 'Doble: a partir de 70€',
+      link: 'https://www.hoteldulcenombre.com/',
+      comingSoon: false,
+      featured: true,
+      image: '/images/dulce-nombre.jpg'
+    },
     // {
     //   id: 'kampaoh_tarifa',
     //   name: 'Kampaoh Tarifa',
@@ -80,7 +82,7 @@ export function AccommodationsSection() {
   return (
     <section id="accommodations" className="pt-20 lg:pt-32 bg-monkey-texture bg-contain bg-repeat-y">
       <div className="container mx-auto px-4">
-      <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 !text-charcoal text-center')}>
+      <h2 className={combineTypographyClasses(Typography.Display.Medium, 'mb-8 text-charcoal! text-center')}>
           Dónde Alojarse
         </h2>
         
@@ -105,7 +107,7 @@ export function AccommodationsSection() {
                 )}
                 
                 {/* Image placeholder */}
-                <div className="h-48 bg-gradient-to-br from-sand/30 to-ocean/30 relative">
+                <div className="h-48 bg-linear-to-br from-sand/30 to-ocean/30 relative">
                   
                   <div className="absolute inset-0 flex items-center justify-center">
                   {accommodation.image ? (
@@ -145,7 +147,7 @@ export function AccommodationsSection() {
                         {accommodation.pricing}
                       </p>
                       {accommodation.discount && (
-                        <p className="type-body-small text-coral !font-extrabold mt-1">
+                        <p className="type-body-small text-coral font-extrabold! mt-1">
                           {accommodation.discount}
                         </p>
                       )}

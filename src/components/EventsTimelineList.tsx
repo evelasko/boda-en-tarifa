@@ -64,7 +64,7 @@ export function EventsTimelineList() {
               >
                 <div className="flex flex-col md:flex-row gap-4">
                   {/* Column 1: Image Icon - 100px on mobile, 200px on desktop */}
-                  <div className="w-[100px] md:w-[200px] flex-shrink-0 mx-auto md:mx-0">
+                  <div className="w-[100px] md:w-[200px] shrink-0 mx-auto md:mx-0">
                     <Image 
                       src={`/icons/${event.icon}.png`} 
                       alt={event.icon} 
@@ -109,7 +109,7 @@ export function EventsTimelineList() {
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                       {/* Sub-column 1: Venue Name and Address */}
                       <div className="flex items-start gap-2 text-charcoal/60 flex-1 justify-center md:justify-start">
-                        <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                        <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
                         <div className="type-body-small text-center md:text-left">
                           <p className="font-medium">{event.venue.name}</p>
                           <p className="text-sm">{event.venue.address}</p>
@@ -117,7 +117,7 @@ export function EventsTimelineList() {
                       </div>
                       
                       {/* Sub-column 2: Social Links and Map Button - Inline on all screens */}
-                      <div className="flex items-center justify-center md:justify-end gap-3 md:flex-shrink-0">
+                      <div className="flex items-center justify-center md:justify-end gap-3 md:shrink-0">
                         {/* Social Links */}
                         {event.venue.social && (
                           <div className="flex items-center gap-3">
@@ -158,7 +158,7 @@ export function EventsTimelineList() {
                         <button
                           onClick={() => setExpandedEvent(expandedEvent === event.id ? null : event.id)}
                           className={cn(
-                            "px-4 py-2 rounded-full border transition-colors type-ui-label text-sm",
+                            "px-4 py-2 rounded-full border transition-colors type-ui-label text-sm md:mr-4",
                             borderColorClasses[event.color as keyof typeof borderColorClasses],
                             `hover:${colorClasses[event.color as keyof typeof colorClasses]}`
                           )}
