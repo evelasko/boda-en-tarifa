@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 16, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/middleware.ts"],"sourcesContent":["import { NextResponse } from 'next/server';\nimport type { NextRequest } from 'next/server';\n\nexport function middleware(request: NextRequest) {\n  // Only protect the RSVP route\n  if (request.nextUrl.pathname.startsWith('/rsvp')) {\n    // Check if user is authenticated by looking for the Firebase auth token\n    const token = request.cookies.get('firebase-auth-token');\n    \n    if (!token) {\n      // Redirect to the same RSVP page but with a sign-in prompt\n      // The AuthGuard component will handle showing the sign-in UI\n      return NextResponse.next();\n    }\n  }\n\n  return NextResponse.next();\n}\n\nexport const config = {\n  matcher: ['/rsvp/:path*']\n};\n"],"names":[],"mappings":";;;;;;AAAA;AAAA;;AAGO,SAAS,WAAW,OAAoB;IAC7C,8BAA8B;IAC9B,IAAI,QAAQ,OAAO,CAAC,QAAQ,CAAC,UAAU,CAAC,UAAU;QAChD,wEAAwE;QACxE,MAAM,QAAQ,QAAQ,OAAO,CAAC,GAAG,CAAC;QAElC,IAAI,CAAC,OAAO;YACV,2DAA2D;YAC3D,6DAA6D;YAC7D,OAAO,yYAAY,CAAC,IAAI;QAC1B;IACF;IAEA,OAAO,yYAAY,CAAC,IAAI;AAC1B;AAEO,MAAM,SAAS;IACpB,SAAS;QAAC;KAAe;AAC3B"}}]
-}
