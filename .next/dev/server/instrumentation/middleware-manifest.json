@@ -1,0 +1,16 @@
+{
+  "sorted_middleware": [],
+  "middleware": {},
+  "instrumentation": {
+    "files": [
+      "server/edge/chunks/7d71f_@sentry_core_build_esm_296643c4._.js",
+      "server/edge/chunks/ded4b_@sentry_opentelemetry_build_esm_index_b3a2a7a3.js",
+      "server/edge/chunks/d26d3_@sentry_vercel-edge_build_esm_index_c43ccd58.js",
+      "server/edge/chunks/node_modules__pnpm_9f2b2016._.js",
+      "server/edge/chunks/[root-of-the-server]__de015db2._.js",
+      "server/edge/chunks/50557_next_dist_esm_build_templates_edge-wrapper_ff18dd3c.js"
+    ],
+    "name": "instrumentation"
+  },
+  "functions": {}
+}

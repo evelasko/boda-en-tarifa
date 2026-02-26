@@ -1,0 +1,10 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/sentry-example-api/route": "app/api/sentry-example-api/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js",
+  "/rsvp/page": "app/rsvp/page.js",
+  "/sentry-example-page/page": "app/sentry-example-page/page.js",
+  "/type/page": "app/type/page.js"
+}

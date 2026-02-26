@@ -1,0 +1,22 @@
+[00:00:02.585] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[00:00:02.833] Server  LOG     ✓ Ready in 2.4s
+[00:00:04.209] Server  ERROR   (node:91090) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[00:00:04.247] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:04.749] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:05.306] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:48.100] Server  LOG     ✓ Compiled in 148ms
+[00:02:50.693] Server  LOG     ✓ Compiled in 78ms
+[00:02:55.774] Server  LOG     ✓ Compiled in 52ms
+[00:03:06.847] Browser WARN    Image with src "/images/tres-mares-1.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:06.848] Browser WARN    Image with src "/images/copacabana-tarifa.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:06.848] Browser WARN    Image with src "/images/100-hotel-1.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:11.614] Browser WARN    Image with src "/images/dulce-nombre.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:34.688] Server  LOG     ✓ Compiled in 41ms
+[00:06:27.987] Server  LOG     ✓ Compiled in 79ms
+[00:06:38.244] Server  LOG     ✓ Compiled in 44ms
+[00:06:55.625] Server  LOG     ✓ Compiled in 72ms
+[00:07:30.998] Server  LOG     ✓ Compiled in 49ms
+[00:07:45.464] Server  LOG     ✓ Compiled in 54ms
+[00:08:01.520] Server  LOG     ✓ Compiled in 25ms
+[00:08:22.736] Server  LOG     ✓ Compiled in 74ms
