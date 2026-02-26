@@ -13,3 +13,15 @@ Thumbs.db
 .env.*.local
 .next/
 node_modules/
+# Log files
+*.log
+logs/
+# Editor logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+# Firebase debug and logs
+.firebase/logs/
+# VS Code debug logs
+.vscode/*.log
