@@ -11,6 +11,7 @@ Thumbs.db
 .env
 .env.local
 .env.*.local
+!.env.example
 .next/
 node_modules/
 # Log files
@@ -25,3 +26,7 @@ pnpm-debug.log*
 .firebase/logs/
 # VS Code debug logs
 .vscode/*.log
+
+# Firebase service account keys
+**/service-account*.json
+**/firebase-adminsdk*.json
