@@ -1,1 +1,53 @@
-{}
+{
+  "parameters": {
+    "event_schedule_json": {
+      "defaultValue": {
+        "value": "[{\"id\": \"welcome-party\", \"title\": \"Fiesta de Bienvenida\", \"description\": \"Cocktails y tapas para dar la bienvenida a todos los invitados\", \"startTime\": \"2026-05-29T20:00:00+02:00\", \"endTime\": \"2026-05-29T23:59:00+02:00\", \"venueId\": \"chiringuito-playa\", \"dayNumber\": 1}, {\"id\": \"ceremony\", \"title\": \"Ceremonia\", \"description\": \"La ceremonia de boda de Enrique y Manuel\", \"startTime\": \"2026-05-30T18:00:00+02:00\", \"endTime\": \"2026-05-30T19:00:00+02:00\", \"venueId\": \"mirador-estrecho\", \"ctaLabel\": \"Ver en mapa\", \"ctaDeepLink\": \"bodaentarifa://map?venue=mirador-estrecho\", \"dayNumber\": 2}, {\"id\": \"farewell-brunch\", \"title\": \"Brunch de Despedida\", \"description\": \"Desayuno relajado junto al mar antes de las despedidas\", \"startTime\": \"2026-05-31T11:00:00+02:00\", \"endTime\": \"2026-05-31T14:00:00+02:00\", \"venueId\": \"chiringuito-playa\", \"dayNumber\": 3}]"
+      },
+      "description": "Full three-day event timeline. JSON array of event objects with id, title, description, startTime, endTime, venueId, dayNumber, and optional ctaLabel/ctaDeepLink.",
+      "valueType": "STRING"
+    },
+    "venues_json": {
+      "defaultValue": {
+        "value": "[{\"id\": \"chiringuito-playa\", \"name\": \"Chiringuito Playa de los Lances\", \"latitude\": 36.0058, \"longitude\": -5.6119, \"walkingDirections\": \"Desde el centro, caminar 10 min por el paseo maritimo hacia el sur\", \"terrainNote\": \"arena\"}, {\"id\": \"mirador-estrecho\", \"name\": \"Mirador del Estrecho\", \"latitude\": 36.0008, \"longitude\": -5.6108, \"walkingDirections\": \"Desde el centro, subir por la Calle Sancho IV hasta el mirador\", \"terrainNote\": \"asfalto\"}]"
+      },
+      "description": "List of wedding venues with GPS coordinates. JSON array of venue objects with id, name, latitude, longitude, and optional walkingDirections/terrainNote.",
+      "valueType": "STRING"
+    },
+    "time_gates_json": {
+      "defaultValue": {
+        "value": "[{\"id\": \"cocktail-menu\", \"title\": \"Carta de Cocteles\", \"contentType\": \"cocktailMenu\", \"unlockAt\": \"2026-05-30T19:30:00+02:00\"}, {\"id\": \"seating-chart\", \"title\": \"Plan de Mesas\", \"contentType\": \"seatingChart\", \"unlockAt\": \"2026-05-30T21:50:00+02:00\"}, {\"id\": \"banquet-menu\", \"title\": \"Menu del Banquete\", \"contentType\": \"banquetMenu\", \"unlockAt\": \"2026-05-30T22:00:00+02:00\"}]"
+      },
+      "description": "Unlock timestamps for time-gated content. JSON array with id, title, contentType (cocktailMenu/seatingChart/banquetMenu), and unlockAt (ISO 8601).",
+      "valueType": "STRING"
+    },
+    "seating_chart_json": {
+      "defaultValue": {
+        "value": "[]"
+      },
+      "description": "Table and seat assignments per guest. JSON array of objects with guestUid, tableName, and seatNumber. Empty until populated closer to the event.",
+      "valueType": "STRING"
+    },
+    "quick_contacts_json": {
+      "defaultValue": {
+        "value": "[{\"id\": \"taxi-tarifa\", \"label\": \"Taxi Local\", \"phoneNumber\": \"34956684174\", \"type\": \"phone\"}, {\"id\": \"coordinadora\", \"label\": \"Coordinadora\", \"phoneNumber\": \"34600000000\", \"type\": \"whatsapp\"}]"
+      },
+      "description": "Emergency and coordinator contacts. JSON array of objects with id, label, phoneNumber (international format without +), and type (phone/whatsapp).",
+      "valueType": "STRING"
+    },
+    "wind_tips_json": {
+      "defaultValue": {
+        "value": "{\"levante\": [\"Hoy sopla levante... agarra bien el sombrero!\", \"Levante en Tarifa: el peinado es solo una sugerencia\"], \"poniente\": [\"Poniente suave, buen dia para la playa\", \"Con poniente asi, hasta las gaviotas estan relajadas\"], \"other\": [\"Sin viento en Tarifa... seguro que estamos en Tarifa?\", \"Dia tranquilo, aprovechad para las fotos!\"]}"
+      },
+      "description": "Fun tip strings for the weather widget, keyed by wind type. JSON object with keys levante, poniente, and other, each mapping to an array of Spanish tip strings.",
+      "valueType": "STRING"
+    },
+    "development_trigger_time": {
+      "defaultValue": {
+        "value": "2026-05-31T05:00:00+02:00"
+      },
+      "description": "Deadline for automatic film development in the Unfiltered Camera feature. ISO 8601 timestamp in Europe/Madrid timezone.",
+      "valueType": "STRING"
+    }
+  }
+}
