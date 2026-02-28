@@ -1,55 +1,55 @@
 name: boda_en_tarifa_app
 description: "Boda en Tarifa App"
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.10.7
+  sdk: ^3.11.0
 
 dependencies:
+  cached_network_image: ^3.4.1
+  camera: ^0.12.0
+  cloud_firestore: ^6.1.2
+  cloudinary_public: ^0.23.1
+  connectivity_plus: ^7.0.0
+  cupertino_icons: ^1.0.8
+  drift: ^2.31.0
+  firebase_auth: ^6.1.4
+  firebase_core: ^4.4.0
+  firebase_messaging: ^16.1.1
+  firebase_remote_config: ^6.1.4
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.8
-  go_router: ^14.8.1
-  flutter_riverpod: ^2.6.1
-  google_fonts: ^6.2.1
+  flutter_local_notifications: ^20.1.0
+  flutter_riverpod: ^3.2.1
+  flutter_svg: ^2.2.3
+  fpdart: ^1.2.0
+  freezed_annotation: ^3.1.0
+  go_router: ^17.1.0
+  google_fonts: ^8.0.2
+  google_sign_in: ^7.2.0
+  image_picker: ^1.2.1
+  json_annotation: ^4.11.0
+  mapbox_maps_flutter: ^2.19.1
+  path_provider: ^2.1.5
+  permission_handler: ^12.0.1
+  receive_sharing_intent: ^1.8.1
+  riverpod_annotation: ^4.0.2
+  sign_in_with_apple: ^7.0.1
+  sqlite3_flutter_libs: ^0.6.0+eol
+  url_launcher: ^6.3.2
+  workmanager: ^0.9.0+3
 
 dev_dependencies:
+  build_runner: ^2.11.1
+  drift_dev: ^2.31.0
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
+  freezed: ^3.2.5
+  json_serializable: ^6.13.0
+  riverpod_generator: ^4.0.3
 
 flutter:
   uses-material-design: true
-
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
-
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/to/resolution-aware-images
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/to/asset-from-package
-
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/to/font-from-package

@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "501055602355",
+    "project_id": "boda-en-tarifa",
+    "storage_bucket": "boda-en-tarifa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:501055602355:android:529504f84f144ffae13ac6",
+        "android_client_info": {
+          "package_name": "com.example.boda_en_tarifa_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "501055602355-mu1krsofnee03ull5u7og05oqqt9aajn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDExiq2lEDNbxXi0Mx8x1gOaeASI6nv4eg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "501055602355-mu1krsofnee03ull5u7og05oqqt9aajn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "501055602355-k115u0bh2pm2a6iatprotnf2topm5t93.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.bodaEnTarifaApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
