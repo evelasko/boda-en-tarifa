@@ -37,12 +37,10 @@ python3 scripts/linear.py list-todo           # All Todo issues
 
 4. Record the issue's title, description, labels, and acceptance criteria from the script output
 
-## Phase 2: Branch Setup
+## Phase 2: Prepare Workspace
 
 1. Ensure the working tree is clean (`git status`). If there are uncommitted changes, warn the user and stop.
-2. Fetch latest from origin: `git fetch origin`
-3. Create and checkout a branch named after the issue identifier: `git checkout -b <identifier-slug> origin/main`
-4. Get the issue UUID: `python3 scripts/linear.py get-issue-id $ARGUMENTS`, then update status to **In Progress** using `mcp__linear-server__save_issue` with that `id`
+2. Get the issue UUID: `python3 scripts/linear.py get-issue-id $ARGUMENTS`, then update status to **In Progress** using `mcp__linear-server__save_issue` with that `id`
 
 ## Phase 3: Exploration
 
