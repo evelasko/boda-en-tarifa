@@ -1,0 +1,73 @@
+[
+  {
+    "name": "Mandragora",
+    "description": "Nuestro restaurante favorito en el casco antiguo. La carta cambia con las estaciones y todo es de producto local. Reservad con antelación.",
+    "category": "Restaurante",
+    "mapUrl": "https://maps.apple.com/?q=Mandragora+Tarifa&ll=36.0127,-5.6044"
+  },
+  {
+    "name": "El Lola",
+    "description": "Tapas creativas en pleno centro. El ambiente por la noche es genial y las croquetas son de otro nivel.",
+    "category": "Restaurante",
+    "mapUrl": "https://maps.apple.com/?q=El+Lola+Tarifa&ll=36.0130,-5.6050"
+  },
+  {
+    "name": "Café Azul",
+    "description": "El mejor sitio para desayunar o merendar. Zumos naturales, tostadas con aguacate y buenísimo café.",
+    "category": "Café",
+    "mapUrl": "https://maps.apple.com/?q=Cafe+Azul+Tarifa&ll=36.0132,-5.6038"
+  },
+  {
+    "name": "Chiringuito El Mirlo",
+    "description": "Chiringuito en la playa de Los Lances con los pies en la arena. Perfecto para un atardecer con vino y pescaíto frito.",
+    "category": "Restaurante",
+    "mapUrl": "https://maps.apple.com/?q=Chiringuito+El+Mirlo+Tarifa&ll=36.0050,-5.6130"
+  },
+  {
+    "name": "Playa de Bolonia",
+    "description": "La playa más bonita de la zona. Arena blanca, duna gigante y aguas turquesas. Merece la pena el viaje de 20 minutos.",
+    "category": "Playa",
+    "mapUrl": "https://maps.apple.com/?q=Playa+de+Bolonia&ll=36.0880,-5.7750"
+  },
+  {
+    "name": "Playa de Valdevaqueros",
+    "description": "Playa enorme con dunas y viento perfecto para kite. Incluso si no hacéis kite, pasear por aquí es espectacular.",
+    "category": "Playa",
+    "mapUrl": "https://maps.apple.com/?q=Valdevaqueros+Tarifa&ll=36.0560,-5.6830"
+  },
+  {
+    "name": "Playa de los Lances",
+    "description": "La playa más cercana al centro. Ideal para un paseo al amanecer o una tarde tranquila.",
+    "category": "Playa",
+    "mapUrl": "https://maps.apple.com/?q=Playa+de+los+Lances+Tarifa&ll=36.0065,-5.6100"
+  },
+  {
+    "name": "La Ruina",
+    "description": "Bar con terraza escondido entre las callejuelas del casco antiguo. Cócteles bien hechos y buen ambiente.",
+    "category": "Bar",
+    "mapUrl": "https://maps.apple.com/?q=La+Ruina+Tarifa&ll=36.0125,-5.6040"
+  },
+  {
+    "name": "Misiana Tapas Bar",
+    "description": "Tapas de autor con vistas al Estrecho desde su terraza en lo alto del pueblo. Imprescindible al atardecer.",
+    "category": "Bar",
+    "mapUrl": "https://maps.apple.com/?q=Misiana+Tapas+Bar+Tarifa&ll=36.0120,-5.6035"
+  },
+  {
+    "name": "Avistamiento de ballenas",
+    "description": "Excursión en barco por el Estrecho de Gibraltar para ver delfines y ballenas. Firmis sale desde el puerto de Tarifa.",
+    "category": "Actividad",
+    "mapUrl": "https://maps.apple.com/?q=FIRMM+Tarifa&ll=36.0080,-5.6025"
+  },
+  {
+    "name": "Paseo por el casco antiguo",
+    "description": "Perdeos por las callejuelas blancas, pasad por la Puerta de Jerez y llegad hasta el Castillo de Guzmán el Bueno.",
+    "category": "Actividad"
+  },
+  {
+    "name": "Baelo Claudia",
+    "description": "Ruinas romanas junto a la playa de Bolonia. Podéis combinar la visita con un día de playa.",
+    "category": "Actividad",
+    "mapUrl": "https://maps.apple.com/?q=Baelo+Claudia&ll=36.0905,-5.7720"
+  }
+]
