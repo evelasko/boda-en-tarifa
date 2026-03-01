@@ -10,3 +10,4 @@ setGlobalOptions({maxInstances: 10});
 // Auth
 export {generateMagicLink} from "./auth/generate-magic-link.js";
 export {onUserCreate} from "./auth/on-user-create.js";
+export {cleanupExpiredMagicLinks} from "./auth/cleanup-expired-magic-links.js";
