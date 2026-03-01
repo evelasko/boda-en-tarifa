@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/hero_banner.dart';
 import '../widgets/quick_action_buttons.dart';
 import '../widgets/wind_weather_widget.dart';
 
@@ -18,6 +19,9 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  HeroBannerWidget(),
+                  AdminOverrideControls(),
+                  SizedBox(height: 16),
                   WindWeatherWidget(),
                   SizedBox(height: 24),
                   _PlaceholderSection(),
