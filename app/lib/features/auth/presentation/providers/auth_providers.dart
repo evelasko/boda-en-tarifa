@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart'
+    show AsyncNotifier, AsyncNotifierProvider;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:boda_en_tarifa_app/core/providers/core_providers.dart';
@@ -54,4 +58,47 @@ SignOut signOutUseCase(Ref ref) {
 @Riverpod(keepAlive: true)
 Stream<AppUser?> authState(Ref ref) {
   return ref.watch(authRepositoryProvider).onAuthStateChange();
+}
+
+// ---------------------------------------------------------------------------
+// Sign-in controller (manual provider — no code-gen needed)
+// ---------------------------------------------------------------------------
+
+final signInControllerProvider =
+    AsyncNotifierProvider<SignInController, void>(SignInController.new);
+
+/// Manages the loading / error state while the user signs in via any method.
+class SignInController extends AsyncNotifier<void> {
+  @override
+  FutureOr<void> build() {}
+
+  Future<void> signInWithGoogle() async {
+    if (state.isLoading) return;
+    state = const AsyncLoading();
+    final result = await ref.read(signInWithGoogleUseCaseProvider)();
+    state = result.fold(
+      (f) => AsyncError(f, f.stackTrace ?? StackTrace.current),
+      (_) => const AsyncData(null),
+    );
+  }
+
+  Future<void> signInWithApple() async {
+    if (state.isLoading) return;
+    state = const AsyncLoading();
+    final result = await ref.read(signInWithAppleUseCaseProvider)();
+    state = result.fold(
+      (f) => AsyncError(f, f.stackTrace ?? StackTrace.current),
+      (_) => const AsyncData(null),
+    );
+  }
+
+  Future<void> signInWithMagicLink(String token) async {
+    if (state.isLoading) return;
+    state = const AsyncLoading();
+    final result = await ref.read(signInWithMagicLinkUseCaseProvider)(token);
+    state = result.fold(
+      (f) => AsyncError(f, f.stackTrace ?? StackTrace.current),
+      (_) => const AsyncData(null),
+    );
+  }
 }

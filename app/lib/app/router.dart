@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'scaffold.dart';
 import '../features/auth/presentation/providers/auth_providers.dart';
+import '../features/auth/presentation/screens/access_denied_screen.dart';
 import '../features/auth/presentation/screens/welcome_screen.dart';
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/community/presentation/screens/community_screen.dart';
@@ -38,8 +39,10 @@ class _RouterNotifier extends ChangeNotifier {
     final isLoggedIn = authValue.asData?.value != null;
     final location = state.matchedLocation;
 
-    // Routes that are accessible without authentication.
-    final isPublicRoute = location == '/welcome' || location == '/login';
+    final isPublicRoute =
+        location == '/welcome' ||
+        location == '/login' ||
+        location == '/access-denied';
 
     if (!isLoggedIn && !isPublicRoute) return '/welcome';
     if (isLoggedIn && location == '/welcome') return '/home';
@@ -59,7 +62,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       // ── Unauthenticated ──────────────────────────────────────────────────
       GoRoute(
         path: '/welcome',
-        builder: (context, state) => const WelcomeScreen(),
+        builder: (context, state) => WelcomeScreen(
+          magicLinkToken: state.uri.queryParameters['token'],
+        ),
+      ),
+      GoRoute(
+        path: '/access-denied',
+        builder: (context, state) => const AccessDeniedScreen(),
       ),
 
       // Magic link deep link: boda-en-tarifa.com/login?token=xyz
