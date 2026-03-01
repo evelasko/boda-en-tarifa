@@ -4,7 +4,7 @@ part of 'app_database.dart';
 
 // ignore_for_file: type=lint
 class $EventSchedulesTable extends EventSchedules
-    with TableInfo<$EventSchedulesTable, EventSchedule> {
+    with TableInfo<$EventSchedulesTable, EventScheduleRow> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -123,7 +123,7 @@ class $EventSchedulesTable extends EventSchedules
   static const String $name = 'event_schedules';
   @override
   VerificationContext validateIntegrity(
-    Insertable<EventSchedule> instance, {
+    Insertable<EventScheduleRow> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -205,9 +205,9 @@ class $EventSchedulesTable extends EventSchedules
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  EventSchedule map(Map<String, dynamic> data, {String? tablePrefix}) {
+  EventScheduleRow map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return EventSchedule(
+    return EventScheduleRow(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
@@ -253,7 +253,8 @@ class $EventSchedulesTable extends EventSchedules
   }
 }
 
-class EventSchedule extends DataClass implements Insertable<EventSchedule> {
+class EventScheduleRow extends DataClass
+    implements Insertable<EventScheduleRow> {
   final String id;
   final String title;
   final String description;
@@ -263,7 +264,7 @@ class EventSchedule extends DataClass implements Insertable<EventSchedule> {
   final String? ctaLabel;
   final String? ctaDeepLink;
   final int dayNumber;
-  const EventSchedule({
+  const EventScheduleRow({
     required this.id,
     required this.title,
     required this.description,
@@ -311,12 +312,12 @@ class EventSchedule extends DataClass implements Insertable<EventSchedule> {
     );
   }
 
-  factory EventSchedule.fromJson(
+  factory EventScheduleRow.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return EventSchedule(
+    return EventScheduleRow(
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String>(json['description']),
@@ -344,7 +345,7 @@ class EventSchedule extends DataClass implements Insertable<EventSchedule> {
     };
   }
 
-  EventSchedule copyWith({
+  EventScheduleRow copyWith({
     String? id,
     String? title,
     String? description,
@@ -354,7 +355,7 @@ class EventSchedule extends DataClass implements Insertable<EventSchedule> {
     Value<String?> ctaLabel = const Value.absent(),
     Value<String?> ctaDeepLink = const Value.absent(),
     int? dayNumber,
-  }) => EventSchedule(
+  }) => EventScheduleRow(
     id: id ?? this.id,
     title: title ?? this.title,
     description: description ?? this.description,
@@ -365,8 +366,8 @@ class EventSchedule extends DataClass implements Insertable<EventSchedule> {
     ctaDeepLink: ctaDeepLink.present ? ctaDeepLink.value : this.ctaDeepLink,
     dayNumber: dayNumber ?? this.dayNumber,
   );
-  EventSchedule copyWithCompanion(EventSchedulesCompanion data) {
-    return EventSchedule(
+  EventScheduleRow copyWithCompanion(EventSchedulesCompanion data) {
+    return EventScheduleRow(
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
       description: data.description.present
@@ -385,7 +386,7 @@ class EventSchedule extends DataClass implements Insertable<EventSchedule> {
 
   @override
   String toString() {
-    return (StringBuffer('EventSchedule(')
+    return (StringBuffer('EventScheduleRow(')
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
@@ -414,7 +415,7 @@ class EventSchedule extends DataClass implements Insertable<EventSchedule> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is EventSchedule &&
+      (other is EventScheduleRow &&
           other.id == this.id &&
           other.title == this.title &&
           other.description == this.description &&
@@ -426,7 +427,7 @@ class EventSchedule extends DataClass implements Insertable<EventSchedule> {
           other.dayNumber == this.dayNumber);
 }
 
-class EventSchedulesCompanion extends UpdateCompanion<EventSchedule> {
+class EventSchedulesCompanion extends UpdateCompanion<EventScheduleRow> {
   final Value<String> id;
   final Value<String> title;
   final Value<String> description;
@@ -467,7 +468,7 @@ class EventSchedulesCompanion extends UpdateCompanion<EventSchedule> {
        endTime = Value(endTime),
        venueId = Value(venueId),
        dayNumber = Value(dayNumber);
-  static Insertable<EventSchedule> custom({
+  static Insertable<EventScheduleRow> custom({
     Expression<String>? id,
     Expression<String>? title,
     Expression<String>? description,
@@ -573,7 +574,7 @@ class EventSchedulesCompanion extends UpdateCompanion<EventSchedule> {
   }
 }
 
-class $VenuesTable extends Venues with TableInfo<$VenuesTable, Venue> {
+class $VenuesTable extends Venues with TableInfo<$VenuesTable, VenueRow> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -657,7 +658,7 @@ class $VenuesTable extends Venues with TableInfo<$VenuesTable, Venue> {
   static const String $name = 'venues';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Venue> instance, {
+    Insertable<VenueRow> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -715,9 +716,9 @@ class $VenuesTable extends Venues with TableInfo<$VenuesTable, Venue> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Venue map(Map<String, dynamic> data, {String? tablePrefix}) {
+  VenueRow map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Venue(
+    return VenueRow(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
@@ -751,14 +752,14 @@ class $VenuesTable extends Venues with TableInfo<$VenuesTable, Venue> {
   }
 }
 
-class Venue extends DataClass implements Insertable<Venue> {
+class VenueRow extends DataClass implements Insertable<VenueRow> {
   final String id;
   final String name;
   final double latitude;
   final double longitude;
   final String? walkingDirections;
   final String? terrainNote;
-  const Venue({
+  const VenueRow({
     required this.id,
     required this.name,
     required this.latitude,
@@ -797,12 +798,12 @@ class Venue extends DataClass implements Insertable<Venue> {
     );
   }
 
-  factory Venue.fromJson(
+  factory VenueRow.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Venue(
+    return VenueRow(
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       latitude: serializer.fromJson<double>(json['latitude']),
@@ -826,14 +827,14 @@ class Venue extends DataClass implements Insertable<Venue> {
     };
   }
 
-  Venue copyWith({
+  VenueRow copyWith({
     String? id,
     String? name,
     double? latitude,
     double? longitude,
     Value<String?> walkingDirections = const Value.absent(),
     Value<String?> terrainNote = const Value.absent(),
-  }) => Venue(
+  }) => VenueRow(
     id: id ?? this.id,
     name: name ?? this.name,
     latitude: latitude ?? this.latitude,
@@ -843,8 +844,8 @@ class Venue extends DataClass implements Insertable<Venue> {
         : this.walkingDirections,
     terrainNote: terrainNote.present ? terrainNote.value : this.terrainNote,
   );
-  Venue copyWithCompanion(VenuesCompanion data) {
-    return Venue(
+  VenueRow copyWithCompanion(VenuesCompanion data) {
+    return VenueRow(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       latitude: data.latitude.present ? data.latitude.value : this.latitude,
@@ -860,7 +861,7 @@ class Venue extends DataClass implements Insertable<Venue> {
 
   @override
   String toString() {
-    return (StringBuffer('Venue(')
+    return (StringBuffer('VenueRow(')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('latitude: $latitude, ')
@@ -883,7 +884,7 @@ class Venue extends DataClass implements Insertable<Venue> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Venue &&
+      (other is VenueRow &&
           other.id == this.id &&
           other.name == this.name &&
           other.latitude == this.latitude &&
@@ -892,7 +893,7 @@ class Venue extends DataClass implements Insertable<Venue> {
           other.terrainNote == this.terrainNote);
 }
 
-class VenuesCompanion extends UpdateCompanion<Venue> {
+class VenuesCompanion extends UpdateCompanion<VenueRow> {
   final Value<String> id;
   final Value<String> name;
   final Value<double> latitude;
@@ -921,7 +922,7 @@ class VenuesCompanion extends UpdateCompanion<Venue> {
        name = Value(name),
        latitude = Value(latitude),
        longitude = Value(longitude);
-  static Insertable<Venue> custom({
+  static Insertable<VenueRow> custom({
     Expression<String>? id,
     Expression<String>? name,
     Expression<double>? latitude,
@@ -2436,6 +2437,911 @@ class PendingWritesCompanion extends UpdateCompanion<PendingWrite> {
   }
 }
 
+class $TimeGatesTable extends TimeGates
+    with TableInfo<$TimeGatesTable, TimeGate> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TimeGatesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contentTypeMeta = const VerificationMeta(
+    'contentType',
+  );
+  @override
+  late final GeneratedColumn<String> contentType = GeneratedColumn<String>(
+    'content_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _unlockAtMeta = const VerificationMeta(
+    'unlockAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> unlockAt = GeneratedColumn<DateTime>(
+    'unlock_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, contentType, title, unlockAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'time_gates';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TimeGate> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('content_type')) {
+      context.handle(
+        _contentTypeMeta,
+        contentType.isAcceptableOrUnknown(
+          data['content_type']!,
+          _contentTypeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_contentTypeMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('unlock_at')) {
+      context.handle(
+        _unlockAtMeta,
+        unlockAt.isAcceptableOrUnknown(data['unlock_at']!, _unlockAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_unlockAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TimeGate map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TimeGate(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      contentType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content_type'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      unlockAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}unlock_at'],
+      )!,
+    );
+  }
+
+  @override
+  $TimeGatesTable createAlias(String alias) {
+    return $TimeGatesTable(attachedDatabase, alias);
+  }
+}
+
+class TimeGate extends DataClass implements Insertable<TimeGate> {
+  final String id;
+  final String contentType;
+  final String title;
+  final DateTime unlockAt;
+  const TimeGate({
+    required this.id,
+    required this.contentType,
+    required this.title,
+    required this.unlockAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['content_type'] = Variable<String>(contentType);
+    map['title'] = Variable<String>(title);
+    map['unlock_at'] = Variable<DateTime>(unlockAt);
+    return map;
+  }
+
+  TimeGatesCompanion toCompanion(bool nullToAbsent) {
+    return TimeGatesCompanion(
+      id: Value(id),
+      contentType: Value(contentType),
+      title: Value(title),
+      unlockAt: Value(unlockAt),
+    );
+  }
+
+  factory TimeGate.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TimeGate(
+      id: serializer.fromJson<String>(json['id']),
+      contentType: serializer.fromJson<String>(json['contentType']),
+      title: serializer.fromJson<String>(json['title']),
+      unlockAt: serializer.fromJson<DateTime>(json['unlockAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'contentType': serializer.toJson<String>(contentType),
+      'title': serializer.toJson<String>(title),
+      'unlockAt': serializer.toJson<DateTime>(unlockAt),
+    };
+  }
+
+  TimeGate copyWith({
+    String? id,
+    String? contentType,
+    String? title,
+    DateTime? unlockAt,
+  }) => TimeGate(
+    id: id ?? this.id,
+    contentType: contentType ?? this.contentType,
+    title: title ?? this.title,
+    unlockAt: unlockAt ?? this.unlockAt,
+  );
+  TimeGate copyWithCompanion(TimeGatesCompanion data) {
+    return TimeGate(
+      id: data.id.present ? data.id.value : this.id,
+      contentType: data.contentType.present
+          ? data.contentType.value
+          : this.contentType,
+      title: data.title.present ? data.title.value : this.title,
+      unlockAt: data.unlockAt.present ? data.unlockAt.value : this.unlockAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TimeGate(')
+          ..write('id: $id, ')
+          ..write('contentType: $contentType, ')
+          ..write('title: $title, ')
+          ..write('unlockAt: $unlockAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, contentType, title, unlockAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TimeGate &&
+          other.id == this.id &&
+          other.contentType == this.contentType &&
+          other.title == this.title &&
+          other.unlockAt == this.unlockAt);
+}
+
+class TimeGatesCompanion extends UpdateCompanion<TimeGate> {
+  final Value<String> id;
+  final Value<String> contentType;
+  final Value<String> title;
+  final Value<DateTime> unlockAt;
+  final Value<int> rowid;
+  const TimeGatesCompanion({
+    this.id = const Value.absent(),
+    this.contentType = const Value.absent(),
+    this.title = const Value.absent(),
+    this.unlockAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TimeGatesCompanion.insert({
+    required String id,
+    required String contentType,
+    required String title,
+    required DateTime unlockAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       contentType = Value(contentType),
+       title = Value(title),
+       unlockAt = Value(unlockAt);
+  static Insertable<TimeGate> custom({
+    Expression<String>? id,
+    Expression<String>? contentType,
+    Expression<String>? title,
+    Expression<DateTime>? unlockAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (contentType != null) 'content_type': contentType,
+      if (title != null) 'title': title,
+      if (unlockAt != null) 'unlock_at': unlockAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TimeGatesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? contentType,
+    Value<String>? title,
+    Value<DateTime>? unlockAt,
+    Value<int>? rowid,
+  }) {
+    return TimeGatesCompanion(
+      id: id ?? this.id,
+      contentType: contentType ?? this.contentType,
+      title: title ?? this.title,
+      unlockAt: unlockAt ?? this.unlockAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (contentType.present) {
+      map['content_type'] = Variable<String>(contentType.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (unlockAt.present) {
+      map['unlock_at'] = Variable<DateTime>(unlockAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TimeGatesCompanion(')
+          ..write('id: $id, ')
+          ..write('contentType: $contentType, ')
+          ..write('title: $title, ')
+          ..write('unlockAt: $unlockAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SeatingAssignmentsTable extends SeatingAssignments
+    with TableInfo<$SeatingAssignmentsTable, SeatingAssignmentRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SeatingAssignmentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _guestIdMeta = const VerificationMeta(
+    'guestId',
+  );
+  @override
+  late final GeneratedColumn<String> guestId = GeneratedColumn<String>(
+    'guest_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _guestNameMeta = const VerificationMeta(
+    'guestName',
+  );
+  @override
+  late final GeneratedColumn<String> guestName = GeneratedColumn<String>(
+    'guest_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _assignedTableMeta = const VerificationMeta(
+    'assignedTable',
+  );
+  @override
+  late final GeneratedColumn<String> assignedTable = GeneratedColumn<String>(
+    'assigned_table',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _seatNumberMeta = const VerificationMeta(
+    'seatNumber',
+  );
+  @override
+  late final GeneratedColumn<int> seatNumber = GeneratedColumn<int>(
+    'seat_number',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    guestId,
+    guestName,
+    assignedTable,
+    seatNumber,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'seating_assignments';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SeatingAssignmentRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('guest_id')) {
+      context.handle(
+        _guestIdMeta,
+        guestId.isAcceptableOrUnknown(data['guest_id']!, _guestIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_guestIdMeta);
+    }
+    if (data.containsKey('guest_name')) {
+      context.handle(
+        _guestNameMeta,
+        guestName.isAcceptableOrUnknown(data['guest_name']!, _guestNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_guestNameMeta);
+    }
+    if (data.containsKey('assigned_table')) {
+      context.handle(
+        _assignedTableMeta,
+        assignedTable.isAcceptableOrUnknown(
+          data['assigned_table']!,
+          _assignedTableMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_assignedTableMeta);
+    }
+    if (data.containsKey('seat_number')) {
+      context.handle(
+        _seatNumberMeta,
+        seatNumber.isAcceptableOrUnknown(data['seat_number']!, _seatNumberMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_seatNumberMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {guestId};
+  @override
+  SeatingAssignmentRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SeatingAssignmentRow(
+      guestId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}guest_id'],
+      )!,
+      guestName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}guest_name'],
+      )!,
+      assignedTable: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}assigned_table'],
+      )!,
+      seatNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}seat_number'],
+      )!,
+    );
+  }
+
+  @override
+  $SeatingAssignmentsTable createAlias(String alias) {
+    return $SeatingAssignmentsTable(attachedDatabase, alias);
+  }
+}
+
+class SeatingAssignmentRow extends DataClass
+    implements Insertable<SeatingAssignmentRow> {
+  final String guestId;
+  final String guestName;
+  final String assignedTable;
+  final int seatNumber;
+  const SeatingAssignmentRow({
+    required this.guestId,
+    required this.guestName,
+    required this.assignedTable,
+    required this.seatNumber,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['guest_id'] = Variable<String>(guestId);
+    map['guest_name'] = Variable<String>(guestName);
+    map['assigned_table'] = Variable<String>(assignedTable);
+    map['seat_number'] = Variable<int>(seatNumber);
+    return map;
+  }
+
+  SeatingAssignmentsCompanion toCompanion(bool nullToAbsent) {
+    return SeatingAssignmentsCompanion(
+      guestId: Value(guestId),
+      guestName: Value(guestName),
+      assignedTable: Value(assignedTable),
+      seatNumber: Value(seatNumber),
+    );
+  }
+
+  factory SeatingAssignmentRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SeatingAssignmentRow(
+      guestId: serializer.fromJson<String>(json['guestId']),
+      guestName: serializer.fromJson<String>(json['guestName']),
+      assignedTable: serializer.fromJson<String>(json['assignedTable']),
+      seatNumber: serializer.fromJson<int>(json['seatNumber']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'guestId': serializer.toJson<String>(guestId),
+      'guestName': serializer.toJson<String>(guestName),
+      'assignedTable': serializer.toJson<String>(assignedTable),
+      'seatNumber': serializer.toJson<int>(seatNumber),
+    };
+  }
+
+  SeatingAssignmentRow copyWith({
+    String? guestId,
+    String? guestName,
+    String? assignedTable,
+    int? seatNumber,
+  }) => SeatingAssignmentRow(
+    guestId: guestId ?? this.guestId,
+    guestName: guestName ?? this.guestName,
+    assignedTable: assignedTable ?? this.assignedTable,
+    seatNumber: seatNumber ?? this.seatNumber,
+  );
+  SeatingAssignmentRow copyWithCompanion(SeatingAssignmentsCompanion data) {
+    return SeatingAssignmentRow(
+      guestId: data.guestId.present ? data.guestId.value : this.guestId,
+      guestName: data.guestName.present ? data.guestName.value : this.guestName,
+      assignedTable: data.assignedTable.present
+          ? data.assignedTable.value
+          : this.assignedTable,
+      seatNumber: data.seatNumber.present
+          ? data.seatNumber.value
+          : this.seatNumber,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SeatingAssignmentRow(')
+          ..write('guestId: $guestId, ')
+          ..write('guestName: $guestName, ')
+          ..write('assignedTable: $assignedTable, ')
+          ..write('seatNumber: $seatNumber')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(guestId, guestName, assignedTable, seatNumber);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SeatingAssignmentRow &&
+          other.guestId == this.guestId &&
+          other.guestName == this.guestName &&
+          other.assignedTable == this.assignedTable &&
+          other.seatNumber == this.seatNumber);
+}
+
+class SeatingAssignmentsCompanion
+    extends UpdateCompanion<SeatingAssignmentRow> {
+  final Value<String> guestId;
+  final Value<String> guestName;
+  final Value<String> assignedTable;
+  final Value<int> seatNumber;
+  final Value<int> rowid;
+  const SeatingAssignmentsCompanion({
+    this.guestId = const Value.absent(),
+    this.guestName = const Value.absent(),
+    this.assignedTable = const Value.absent(),
+    this.seatNumber = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SeatingAssignmentsCompanion.insert({
+    required String guestId,
+    required String guestName,
+    required String assignedTable,
+    required int seatNumber,
+    this.rowid = const Value.absent(),
+  }) : guestId = Value(guestId),
+       guestName = Value(guestName),
+       assignedTable = Value(assignedTable),
+       seatNumber = Value(seatNumber);
+  static Insertable<SeatingAssignmentRow> custom({
+    Expression<String>? guestId,
+    Expression<String>? guestName,
+    Expression<String>? assignedTable,
+    Expression<int>? seatNumber,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (guestId != null) 'guest_id': guestId,
+      if (guestName != null) 'guest_name': guestName,
+      if (assignedTable != null) 'assigned_table': assignedTable,
+      if (seatNumber != null) 'seat_number': seatNumber,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SeatingAssignmentsCompanion copyWith({
+    Value<String>? guestId,
+    Value<String>? guestName,
+    Value<String>? assignedTable,
+    Value<int>? seatNumber,
+    Value<int>? rowid,
+  }) {
+    return SeatingAssignmentsCompanion(
+      guestId: guestId ?? this.guestId,
+      guestName: guestName ?? this.guestName,
+      assignedTable: assignedTable ?? this.assignedTable,
+      seatNumber: seatNumber ?? this.seatNumber,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (guestId.present) {
+      map['guest_id'] = Variable<String>(guestId.value);
+    }
+    if (guestName.present) {
+      map['guest_name'] = Variable<String>(guestName.value);
+    }
+    if (assignedTable.present) {
+      map['assigned_table'] = Variable<String>(assignedTable.value);
+    }
+    if (seatNumber.present) {
+      map['seat_number'] = Variable<int>(seatNumber.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SeatingAssignmentsCompanion(')
+          ..write('guestId: $guestId, ')
+          ..write('guestName: $guestName, ')
+          ..write('assignedTable: $assignedTable, ')
+          ..write('seatNumber: $seatNumber, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ConfigCacheTable extends ConfigCache
+    with TableInfo<$ConfigCacheTable, ConfigCacheData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ConfigCacheTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _keyMeta = const VerificationMeta('key');
+  @override
+  late final GeneratedColumn<String> key = GeneratedColumn<String>(
+    'key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _valueMeta = const VerificationMeta('value');
+  @override
+  late final GeneratedColumn<String> value = GeneratedColumn<String>(
+    'value',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [key, value, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'config_cache';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ConfigCacheData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('key')) {
+      context.handle(
+        _keyMeta,
+        key.isAcceptableOrUnknown(data['key']!, _keyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_keyMeta);
+    }
+    if (data.containsKey('value')) {
+      context.handle(
+        _valueMeta,
+        value.isAcceptableOrUnknown(data['value']!, _valueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_valueMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {key};
+  @override
+  ConfigCacheData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ConfigCacheData(
+      key: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}key'],
+      )!,
+      value: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}value'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ConfigCacheTable createAlias(String alias) {
+    return $ConfigCacheTable(attachedDatabase, alias);
+  }
+}
+
+class ConfigCacheData extends DataClass implements Insertable<ConfigCacheData> {
+  final String key;
+  final String value;
+  final DateTime updatedAt;
+  const ConfigCacheData({
+    required this.key,
+    required this.value,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['key'] = Variable<String>(key);
+    map['value'] = Variable<String>(value);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ConfigCacheCompanion toCompanion(bool nullToAbsent) {
+    return ConfigCacheCompanion(
+      key: Value(key),
+      value: Value(value),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory ConfigCacheData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ConfigCacheData(
+      key: serializer.fromJson<String>(json['key']),
+      value: serializer.fromJson<String>(json['value']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'key': serializer.toJson<String>(key),
+      'value': serializer.toJson<String>(value),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  ConfigCacheData copyWith({String? key, String? value, DateTime? updatedAt}) =>
+      ConfigCacheData(
+        key: key ?? this.key,
+        value: value ?? this.value,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  ConfigCacheData copyWithCompanion(ConfigCacheCompanion data) {
+    return ConfigCacheData(
+      key: data.key.present ? data.key.value : this.key,
+      value: data.value.present ? data.value.value : this.value,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ConfigCacheData(')
+          ..write('key: $key, ')
+          ..write('value: $value, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(key, value, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ConfigCacheData &&
+          other.key == this.key &&
+          other.value == this.value &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ConfigCacheCompanion extends UpdateCompanion<ConfigCacheData> {
+  final Value<String> key;
+  final Value<String> value;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const ConfigCacheCompanion({
+    this.key = const Value.absent(),
+    this.value = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ConfigCacheCompanion.insert({
+    required String key,
+    required String value,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : key = Value(key),
+       value = Value(value),
+       updatedAt = Value(updatedAt);
+  static Insertable<ConfigCacheData> custom({
+    Expression<String>? key,
+    Expression<String>? value,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (key != null) 'key': key,
+      if (value != null) 'value': value,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ConfigCacheCompanion copyWith({
+    Value<String>? key,
+    Value<String>? value,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return ConfigCacheCompanion(
+      key: key ?? this.key,
+      value: value ?? this.value,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (key.present) {
+      map['key'] = Variable<String>(key.value);
+    }
+    if (value.present) {
+      map['value'] = Variable<String>(value.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ConfigCacheCompanion(')
+          ..write('key: $key, ')
+          ..write('value: $value, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2444,6 +3350,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CachedGuestsTable cachedGuests = $CachedGuestsTable(this);
   late final $ExposuresTable exposures = $ExposuresTable(this);
   late final $PendingWritesTable pendingWrites = $PendingWritesTable(this);
+  late final $TimeGatesTable timeGates = $TimeGatesTable(this);
+  late final $SeatingAssignmentsTable seatingAssignments =
+      $SeatingAssignmentsTable(this);
+  late final $ConfigCacheTable configCache = $ConfigCacheTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2454,6 +3364,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     cachedGuests,
     exposures,
     pendingWrites,
+    timeGates,
+    seatingAssignments,
+    configCache,
   ];
 }
 
@@ -2640,17 +3553,21 @@ class $$EventSchedulesTableTableManager
         RootTableManager<
           _$AppDatabase,
           $EventSchedulesTable,
-          EventSchedule,
+          EventScheduleRow,
           $$EventSchedulesTableFilterComposer,
           $$EventSchedulesTableOrderingComposer,
           $$EventSchedulesTableAnnotationComposer,
           $$EventSchedulesTableCreateCompanionBuilder,
           $$EventSchedulesTableUpdateCompanionBuilder,
           (
-            EventSchedule,
-            BaseReferences<_$AppDatabase, $EventSchedulesTable, EventSchedule>,
+            EventScheduleRow,
+            BaseReferences<
+              _$AppDatabase,
+              $EventSchedulesTable,
+              EventScheduleRow
+            >,
           ),
-          EventSchedule,
+          EventScheduleRow,
           PrefetchHooks Function()
         > {
   $$EventSchedulesTableTableManager(
@@ -2726,17 +3643,17 @@ typedef $$EventSchedulesTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $EventSchedulesTable,
-      EventSchedule,
+      EventScheduleRow,
       $$EventSchedulesTableFilterComposer,
       $$EventSchedulesTableOrderingComposer,
       $$EventSchedulesTableAnnotationComposer,
       $$EventSchedulesTableCreateCompanionBuilder,
       $$EventSchedulesTableUpdateCompanionBuilder,
       (
-        EventSchedule,
-        BaseReferences<_$AppDatabase, $EventSchedulesTable, EventSchedule>,
+        EventScheduleRow,
+        BaseReferences<_$AppDatabase, $EventSchedulesTable, EventScheduleRow>,
       ),
-      EventSchedule,
+      EventScheduleRow,
       PrefetchHooks Function()
     >;
 typedef $$VenuesTableCreateCompanionBuilder =
@@ -2877,14 +3794,14 @@ class $$VenuesTableTableManager
         RootTableManager<
           _$AppDatabase,
           $VenuesTable,
-          Venue,
+          VenueRow,
           $$VenuesTableFilterComposer,
           $$VenuesTableOrderingComposer,
           $$VenuesTableAnnotationComposer,
           $$VenuesTableCreateCompanionBuilder,
           $$VenuesTableUpdateCompanionBuilder,
-          (Venue, BaseReferences<_$AppDatabase, $VenuesTable, Venue>),
-          Venue,
+          (VenueRow, BaseReferences<_$AppDatabase, $VenuesTable, VenueRow>),
+          VenueRow,
           PrefetchHooks Function()
         > {
   $$VenuesTableTableManager(_$AppDatabase db, $VenuesTable table)
@@ -2946,14 +3863,14 @@ typedef $$VenuesTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $VenuesTable,
-      Venue,
+      VenueRow,
       $$VenuesTableFilterComposer,
       $$VenuesTableOrderingComposer,
       $$VenuesTableAnnotationComposer,
       $$VenuesTableCreateCompanionBuilder,
       $$VenuesTableUpdateCompanionBuilder,
-      (Venue, BaseReferences<_$AppDatabase, $VenuesTable, Venue>),
-      Venue,
+      (VenueRow, BaseReferences<_$AppDatabase, $VenuesTable, VenueRow>),
+      VenueRow,
       PrefetchHooks Function()
     >;
 typedef $$CachedGuestsTableCreateCompanionBuilder =
@@ -3678,6 +4595,543 @@ typedef $$PendingWritesTableProcessedTableManager =
       PendingWrite,
       PrefetchHooks Function()
     >;
+typedef $$TimeGatesTableCreateCompanionBuilder =
+    TimeGatesCompanion Function({
+      required String id,
+      required String contentType,
+      required String title,
+      required DateTime unlockAt,
+      Value<int> rowid,
+    });
+typedef $$TimeGatesTableUpdateCompanionBuilder =
+    TimeGatesCompanion Function({
+      Value<String> id,
+      Value<String> contentType,
+      Value<String> title,
+      Value<DateTime> unlockAt,
+      Value<int> rowid,
+    });
+
+class $$TimeGatesTableFilterComposer
+    extends Composer<_$AppDatabase, $TimeGatesTable> {
+  $$TimeGatesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get contentType => $composableBuilder(
+    column: $table.contentType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get unlockAt => $composableBuilder(
+    column: $table.unlockAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$TimeGatesTableOrderingComposer
+    extends Composer<_$AppDatabase, $TimeGatesTable> {
+  $$TimeGatesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get contentType => $composableBuilder(
+    column: $table.contentType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get unlockAt => $composableBuilder(
+    column: $table.unlockAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$TimeGatesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TimeGatesTable> {
+  $$TimeGatesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get contentType => $composableBuilder(
+    column: $table.contentType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get unlockAt =>
+      $composableBuilder(column: $table.unlockAt, builder: (column) => column);
+}
+
+class $$TimeGatesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TimeGatesTable,
+          TimeGate,
+          $$TimeGatesTableFilterComposer,
+          $$TimeGatesTableOrderingComposer,
+          $$TimeGatesTableAnnotationComposer,
+          $$TimeGatesTableCreateCompanionBuilder,
+          $$TimeGatesTableUpdateCompanionBuilder,
+          (TimeGate, BaseReferences<_$AppDatabase, $TimeGatesTable, TimeGate>),
+          TimeGate,
+          PrefetchHooks Function()
+        > {
+  $$TimeGatesTableTableManager(_$AppDatabase db, $TimeGatesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TimeGatesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TimeGatesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TimeGatesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> contentType = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<DateTime> unlockAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TimeGatesCompanion(
+                id: id,
+                contentType: contentType,
+                title: title,
+                unlockAt: unlockAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String contentType,
+                required String title,
+                required DateTime unlockAt,
+                Value<int> rowid = const Value.absent(),
+              }) => TimeGatesCompanion.insert(
+                id: id,
+                contentType: contentType,
+                title: title,
+                unlockAt: unlockAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TimeGatesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TimeGatesTable,
+      TimeGate,
+      $$TimeGatesTableFilterComposer,
+      $$TimeGatesTableOrderingComposer,
+      $$TimeGatesTableAnnotationComposer,
+      $$TimeGatesTableCreateCompanionBuilder,
+      $$TimeGatesTableUpdateCompanionBuilder,
+      (TimeGate, BaseReferences<_$AppDatabase, $TimeGatesTable, TimeGate>),
+      TimeGate,
+      PrefetchHooks Function()
+    >;
+typedef $$SeatingAssignmentsTableCreateCompanionBuilder =
+    SeatingAssignmentsCompanion Function({
+      required String guestId,
+      required String guestName,
+      required String assignedTable,
+      required int seatNumber,
+      Value<int> rowid,
+    });
+typedef $$SeatingAssignmentsTableUpdateCompanionBuilder =
+    SeatingAssignmentsCompanion Function({
+      Value<String> guestId,
+      Value<String> guestName,
+      Value<String> assignedTable,
+      Value<int> seatNumber,
+      Value<int> rowid,
+    });
+
+class $$SeatingAssignmentsTableFilterComposer
+    extends Composer<_$AppDatabase, $SeatingAssignmentsTable> {
+  $$SeatingAssignmentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get guestId => $composableBuilder(
+    column: $table.guestId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get guestName => $composableBuilder(
+    column: $table.guestName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get assignedTable => $composableBuilder(
+    column: $table.assignedTable,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get seatNumber => $composableBuilder(
+    column: $table.seatNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SeatingAssignmentsTableOrderingComposer
+    extends Composer<_$AppDatabase, $SeatingAssignmentsTable> {
+  $$SeatingAssignmentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get guestId => $composableBuilder(
+    column: $table.guestId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get guestName => $composableBuilder(
+    column: $table.guestName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get assignedTable => $composableBuilder(
+    column: $table.assignedTable,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get seatNumber => $composableBuilder(
+    column: $table.seatNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SeatingAssignmentsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SeatingAssignmentsTable> {
+  $$SeatingAssignmentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get guestId =>
+      $composableBuilder(column: $table.guestId, builder: (column) => column);
+
+  GeneratedColumn<String> get guestName =>
+      $composableBuilder(column: $table.guestName, builder: (column) => column);
+
+  GeneratedColumn<String> get assignedTable => $composableBuilder(
+    column: $table.assignedTable,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get seatNumber => $composableBuilder(
+    column: $table.seatNumber,
+    builder: (column) => column,
+  );
+}
+
+class $$SeatingAssignmentsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SeatingAssignmentsTable,
+          SeatingAssignmentRow,
+          $$SeatingAssignmentsTableFilterComposer,
+          $$SeatingAssignmentsTableOrderingComposer,
+          $$SeatingAssignmentsTableAnnotationComposer,
+          $$SeatingAssignmentsTableCreateCompanionBuilder,
+          $$SeatingAssignmentsTableUpdateCompanionBuilder,
+          (
+            SeatingAssignmentRow,
+            BaseReferences<
+              _$AppDatabase,
+              $SeatingAssignmentsTable,
+              SeatingAssignmentRow
+            >,
+          ),
+          SeatingAssignmentRow,
+          PrefetchHooks Function()
+        > {
+  $$SeatingAssignmentsTableTableManager(
+    _$AppDatabase db,
+    $SeatingAssignmentsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SeatingAssignmentsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SeatingAssignmentsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SeatingAssignmentsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> guestId = const Value.absent(),
+                Value<String> guestName = const Value.absent(),
+                Value<String> assignedTable = const Value.absent(),
+                Value<int> seatNumber = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SeatingAssignmentsCompanion(
+                guestId: guestId,
+                guestName: guestName,
+                assignedTable: assignedTable,
+                seatNumber: seatNumber,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String guestId,
+                required String guestName,
+                required String assignedTable,
+                required int seatNumber,
+                Value<int> rowid = const Value.absent(),
+              }) => SeatingAssignmentsCompanion.insert(
+                guestId: guestId,
+                guestName: guestName,
+                assignedTable: assignedTable,
+                seatNumber: seatNumber,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SeatingAssignmentsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SeatingAssignmentsTable,
+      SeatingAssignmentRow,
+      $$SeatingAssignmentsTableFilterComposer,
+      $$SeatingAssignmentsTableOrderingComposer,
+      $$SeatingAssignmentsTableAnnotationComposer,
+      $$SeatingAssignmentsTableCreateCompanionBuilder,
+      $$SeatingAssignmentsTableUpdateCompanionBuilder,
+      (
+        SeatingAssignmentRow,
+        BaseReferences<
+          _$AppDatabase,
+          $SeatingAssignmentsTable,
+          SeatingAssignmentRow
+        >,
+      ),
+      SeatingAssignmentRow,
+      PrefetchHooks Function()
+    >;
+typedef $$ConfigCacheTableCreateCompanionBuilder =
+    ConfigCacheCompanion Function({
+      required String key,
+      required String value,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$ConfigCacheTableUpdateCompanionBuilder =
+    ConfigCacheCompanion Function({
+      Value<String> key,
+      Value<String> value,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$ConfigCacheTableFilterComposer
+    extends Composer<_$AppDatabase, $ConfigCacheTable> {
+  $$ConfigCacheTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ConfigCacheTableOrderingComposer
+    extends Composer<_$AppDatabase, $ConfigCacheTable> {
+  $$ConfigCacheTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ConfigCacheTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ConfigCacheTable> {
+  $$ConfigCacheTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get key =>
+      $composableBuilder(column: $table.key, builder: (column) => column);
+
+  GeneratedColumn<String> get value =>
+      $composableBuilder(column: $table.value, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$ConfigCacheTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ConfigCacheTable,
+          ConfigCacheData,
+          $$ConfigCacheTableFilterComposer,
+          $$ConfigCacheTableOrderingComposer,
+          $$ConfigCacheTableAnnotationComposer,
+          $$ConfigCacheTableCreateCompanionBuilder,
+          $$ConfigCacheTableUpdateCompanionBuilder,
+          (
+            ConfigCacheData,
+            BaseReferences<_$AppDatabase, $ConfigCacheTable, ConfigCacheData>,
+          ),
+          ConfigCacheData,
+          PrefetchHooks Function()
+        > {
+  $$ConfigCacheTableTableManager(_$AppDatabase db, $ConfigCacheTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ConfigCacheTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ConfigCacheTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ConfigCacheTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> key = const Value.absent(),
+                Value<String> value = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ConfigCacheCompanion(
+                key: key,
+                value: value,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String key,
+                required String value,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ConfigCacheCompanion.insert(
+                key: key,
+                value: value,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ConfigCacheTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ConfigCacheTable,
+      ConfigCacheData,
+      $$ConfigCacheTableFilterComposer,
+      $$ConfigCacheTableOrderingComposer,
+      $$ConfigCacheTableAnnotationComposer,
+      $$ConfigCacheTableCreateCompanionBuilder,
+      $$ConfigCacheTableUpdateCompanionBuilder,
+      (
+        ConfigCacheData,
+        BaseReferences<_$AppDatabase, $ConfigCacheTable, ConfigCacheData>,
+      ),
+      ConfigCacheData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3692,4 +5146,10 @@ class $AppDatabaseManager {
       $$ExposuresTableTableManager(_db, _db.exposures);
   $$PendingWritesTableTableManager get pendingWrites =>
       $$PendingWritesTableTableManager(_db, _db.pendingWrites);
+  $$TimeGatesTableTableManager get timeGates =>
+      $$TimeGatesTableTableManager(_db, _db.timeGates);
+  $$SeatingAssignmentsTableTableManager get seatingAssignments =>
+      $$SeatingAssignmentsTableTableManager(_db, _db.seatingAssignments);
+  $$ConfigCacheTableTableManager get configCache =>
+      $$ConfigCacheTableTableManager(_db, _db.configCache);
 }

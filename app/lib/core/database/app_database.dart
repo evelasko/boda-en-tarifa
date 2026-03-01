@@ -11,6 +11,7 @@ part 'app_database.g.dart';
 // Tables
 // ---------------------------------------------------------------------------
 
+@DataClassName('EventScheduleRow')
 class EventSchedules extends Table {
   TextColumn get id => text()();
   TextColumn get title => text()();
@@ -26,6 +27,7 @@ class EventSchedules extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+@DataClassName('VenueRow')
 class Venues extends Table {
   TextColumn get id => text()();
   TextColumn get name => text()();
@@ -76,6 +78,36 @@ class PendingWrites extends Table {
   DateTimeColumn get createdAt => dateTime()();
 }
 
+class TimeGates extends Table {
+  TextColumn get id => text()();
+  TextColumn get contentType => text()();
+  TextColumn get title => text()();
+  DateTimeColumn get unlockAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DataClassName('SeatingAssignmentRow')
+class SeatingAssignments extends Table {
+  TextColumn get guestId => text()();
+  TextColumn get guestName => text()();
+  TextColumn get assignedTable => text()();
+  IntColumn get seatNumber => integer()();
+
+  @override
+  Set<Column> get primaryKey => {guestId};
+}
+
+class ConfigCache extends Table {
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {key};
+}
+
 // ---------------------------------------------------------------------------
 // Database
 // ---------------------------------------------------------------------------
@@ -86,6 +118,9 @@ class PendingWrites extends Table {
   CachedGuests,
   Exposures,
   PendingWrites,
+  TimeGates,
+  SeatingAssignments,
+  ConfigCache,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase._({required QueryExecutor executor}) : super(executor);
@@ -95,11 +130,18 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (m) => m.createAll(),
+        onUpgrade: (m, from, to) async {
+          if (from < 2) {
+            await m.createTable(timeGates);
+            await m.createTable(seatingAssignments);
+            await m.createTable(configCache);
+          }
+        },
       );
 }
 

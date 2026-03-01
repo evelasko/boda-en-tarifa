@@ -1,0 +1,29 @@
+{
+  "taxis": [
+    {
+      "name": "Radio Taxi Tarifa",
+      "phone": "+34956684174",
+      "role": "taxi"
+    },
+    {
+      "name": "Taxi Pepe",
+      "phone": "+34600123456",
+      "whatsappUrl": "https://wa.me/34600123456",
+      "role": "taxi"
+    }
+  ],
+  "coordinators": [
+    {
+      "name": "Laura (Wedding Planner)",
+      "phone": "+34611222333",
+      "whatsappUrl": "https://wa.me/34611222333",
+      "role": "coordinator"
+    },
+    {
+      "name": "Carlos (Dia de la boda)",
+      "phone": "+34622333444",
+      "whatsappUrl": "https://wa.me/34622333444",
+      "role": "coordinator"
+    }
+  ]
+}

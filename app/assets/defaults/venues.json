@@ -1,0 +1,26 @@
+[
+  {
+    "id": "chiringuito",
+    "name": "Chiringuito El Mirante",
+    "latitude": 36.0125,
+    "longitude": -5.6080,
+    "walkingDirections": "Desde el centro, caminar 10 min por el paseo maritimo hacia el sur",
+    "terrainNote": "Arena — recomendamos calzado plano"
+  },
+  {
+    "id": "playa",
+    "name": "Playa de los Lances",
+    "latitude": 36.0100,
+    "longitude": -5.6120,
+    "walkingDirections": "Acceso por la pasarela de madera frente al hotel",
+    "terrainNote": "Arena fina — no llevar tacones"
+  },
+  {
+    "id": "finca",
+    "name": "Finca La Tarifa",
+    "latitude": 36.0200,
+    "longitude": -5.5980,
+    "walkingDirections": "Habra shuttle desde el hotel. Salida a las 20:30",
+    "terrainNote": "Cesped y gravilla — calzado comodo recomendado"
+  }
+]

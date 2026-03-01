@@ -1,0 +1,62 @@
+[
+  {
+    "id": "thu-welcome",
+    "title": "Welcome Drinks",
+    "description": "Bienvenida informal con vistas al estrecho",
+    "startTime": "2026-05-29T19:00:00+02:00",
+    "endTime": "2026-05-29T23:00:00+02:00",
+    "venueId": "chiringuito",
+    "ctaLabel": "Ver ubicacion",
+    "ctaDeepLink": "boda://venue/chiringuito",
+    "dayNumber": 1
+  },
+  {
+    "id": "fri-ceremony",
+    "title": "Ceremonia",
+    "description": "Ceremonia al atardecer en la playa",
+    "startTime": "2026-05-30T18:00:00+02:00",
+    "endTime": "2026-05-30T19:00:00+02:00",
+    "venueId": "playa",
+    "ctaLabel": "Ver ubicacion",
+    "ctaDeepLink": "boda://venue/playa",
+    "dayNumber": 2
+  },
+  {
+    "id": "fri-cocktail",
+    "title": "Coctel",
+    "description": "Coctel y aperitivos junto al mar",
+    "startTime": "2026-05-30T19:00:00+02:00",
+    "endTime": "2026-05-30T20:30:00+02:00",
+    "venueId": "playa",
+    "dayNumber": 2
+  },
+  {
+    "id": "fri-dinner",
+    "title": "Cena",
+    "description": "Cena de celebracion",
+    "startTime": "2026-05-30T21:00:00+02:00",
+    "endTime": "2026-05-30T23:30:00+02:00",
+    "venueId": "finca",
+    "ctaLabel": "Ver menu",
+    "ctaDeepLink": "boda://menu",
+    "dayNumber": 2
+  },
+  {
+    "id": "fri-party",
+    "title": "Fiesta",
+    "description": "Musica y baile hasta el amanecer",
+    "startTime": "2026-05-30T23:30:00+02:00",
+    "endTime": "2026-05-31T05:00:00+02:00",
+    "venueId": "finca",
+    "dayNumber": 2
+  },
+  {
+    "id": "sat-brunch",
+    "title": "Brunch de despedida",
+    "description": "Desayuno tardio para recuperarse",
+    "startTime": "2026-05-31T11:00:00+02:00",
+    "endTime": "2026-05-31T14:00:00+02:00",
+    "venueId": "chiringuito",
+    "dayNumber": 3
+  }
+]
