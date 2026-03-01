@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import 'scaffold.dart';
 import '../features/auth/presentation/providers/auth_providers.dart';
+import '../features/auth/presentation/providers/onboarding_providers.dart';
 import '../features/auth/presentation/screens/access_denied_screen.dart';
 import '../features/auth/presentation/screens/magic_link_handler_screen.dart';
+import '../features/auth/presentation/screens/onboarding_wizard_screen.dart';
 import '../features/auth/presentation/screens/welcome_screen.dart';
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/community/presentation/screens/community_screen.dart';
@@ -27,6 +29,10 @@ class _RouterNotifier extends ChangeNotifier {
       authStateProvider,
       (previous, next) => notifyListeners(),
     );
+    _ref.listen(
+      onboardingCompleteProvider,
+      (previous, next) => notifyListeners(),
+    );
   }
 
   final Ref _ref;
@@ -46,7 +52,22 @@ class _RouterNotifier extends ChangeNotifier {
         location == '/access-denied';
 
     if (!isLoggedIn && !isPublicRoute) return '/welcome';
-    if (isLoggedIn && location == '/welcome') return '/home';
+
+    if (isLoggedIn) {
+      final onboardingValue = _ref.read(onboardingCompleteProvider);
+
+      // Don't redirect while onboarding status is loading.
+      if (onboardingValue.isLoading) return null;
+
+      final onboardingDone = onboardingValue.asData?.value ?? false;
+
+      if (!onboardingDone && location != '/onboarding') return '/onboarding';
+      if (onboardingDone &&
+          (location == '/welcome' || location == '/onboarding')) {
+        return '/home';
+      }
+    }
+
     return null;
   }
 }
@@ -80,6 +101,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           token: state.uri.queryParameters['token'],
           guestName: state.uri.queryParameters['name'],
         ),
+      ),
+
+      // Onboarding wizard (authenticated but pre-onboarding)
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingWizardScreen(),
       ),
 
       // ── Authenticated shell — 5-tab StatefulShellRoute ───────────────────
