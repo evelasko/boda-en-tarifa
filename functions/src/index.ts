@@ -11,3 +11,6 @@ setGlobalOptions({maxInstances: 10});
 export {generateMagicLink} from "./auth/generate-magic-link.js";
 export {onUserCreate} from "./auth/on-user-create.js";
 export {cleanupExpiredMagicLinks} from "./auth/cleanup-expired-magic-links.js";
+
+// Camera
+export {triggerFilmDevelopment} from "./camera/trigger-film-development.js";
