@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/quick_action_buttons.dart';
 import '../widgets/wind_weather_widget.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -9,16 +10,23 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Inicio')),
-      body: const SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            WindWeatherWidget(),
-            SizedBox(height: 24),
-            _PlaceholderSection(),
-          ],
-        ),
+      body: const Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  WindWeatherWidget(),
+                  SizedBox(height: 24),
+                  _PlaceholderSection(),
+                ],
+              ),
+            ),
+          ),
+          QuickActionButtons(),
+        ],
       ),
     );
   }

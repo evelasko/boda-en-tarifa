@@ -30,9 +30,9 @@
     },
     "quick_contacts_json": {
       "defaultValue": {
-        "value": "[{\"id\": \"taxi-tarifa\", \"label\": \"Taxi Local\", \"phoneNumber\": \"34956684174\", \"type\": \"phone\"}, {\"id\": \"coordinadora\", \"label\": \"Coordinadora\", \"phoneNumber\": \"34600000000\", \"type\": \"whatsapp\"}]"
+        "value": "{\"taxis\": [{\"id\": \"taxi-tarifa\", \"label\": \"Taxi Tarifa\", \"phoneNumber\": \"34956684174\"}, {\"id\": \"taxi-radio\", \"label\": \"Radio Taxi Tarifa\", \"phoneNumber\": \"34956681242\"}], \"coordinators\": [{\"id\": \"coordinadora\", \"label\": \"Coordinadora\", \"phoneNumber\": \"34600000000\", \"whatsappNumber\": \"34600000000\"}]}"
       },
-      "description": "Emergency and coordinator contacts. JSON array of objects with id, label, phoneNumber (international format without +), and type (phone/whatsapp).",
+      "description": "Emergency and coordinator contacts. JSON object with 'taxis' and 'coordinators' arrays. Each taxi: {id, label, phoneNumber}. Each coordinator: {id, label, phoneNumber, whatsappNumber?}. Phone numbers in international format without '+'.",
       "valueType": "STRING"
     },
     "wind_tips_json": {
