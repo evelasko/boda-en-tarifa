@@ -24,6 +24,7 @@ yarn-error.log*
 pnpm-debug.log*
 # Firebase debug and logs
 .firebase/logs/
+.firebase/
 # VS Code debug logs
 .vscode/*.log
 
