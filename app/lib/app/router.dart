@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'app.dart';
@@ -9,6 +10,8 @@ import '../features/itinerary/presentation/screens/itinerary_screen.dart';
 import '../features/directory/presentation/screens/directory_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
+
+final routerProvider = Provider<GoRouter>((ref) => router);
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
