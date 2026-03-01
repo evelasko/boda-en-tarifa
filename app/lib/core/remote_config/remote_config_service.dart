@@ -80,9 +80,14 @@ class RemoteConfigService {
     return rows
         .map((r) => TimeGatedContent(
               id: r.id,
-              contentType: r.contentType,
+              contentType: ContentType.values.firstWhere(
+                (e) => e.value == r.contentType,
+                orElse: () => ContentType.unknown,
+              ),
               title: r.title,
               unlockAt: r.unlockAt,
+              eventId: r.eventId,
+              firestoreDocPath: r.firestoreDocPath,
             ))
         .toList();
   }
@@ -253,9 +258,11 @@ class RemoteConfigService {
             _db.timeGates,
             TimeGatesCompanion.insert(
               id: item.id,
-              contentType: item.contentType,
+              contentType: item.contentType.value,
               title: item.title,
               unlockAt: item.unlockAt,
+              eventId: Value(item.eventId),
+              firestoreDocPath: Value(item.firestoreDocPath),
             ),
           );
         }

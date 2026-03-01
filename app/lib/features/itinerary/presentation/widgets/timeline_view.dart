@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/models/event_schedule.dart';
 import '../../../../core/models/venue.dart';
 import '../providers/itinerary_providers.dart';
+import '../providers/time_gate_providers.dart';
+import 'time_gated_card.dart';
 import 'timeline_card.dart';
 
 class TimelineView extends ConsumerStatefulWidget {
@@ -107,6 +109,17 @@ class _TimelineViewState extends ConsumerState<TimelineView> {
             child: card,
           ),
         );
+
+        // Inject time-gated cards below matching events
+        final gateStates = ref.watch(timeGatesForEventProvider(event.id));
+        for (final gateState in gateStates) {
+          items.add(
+            Padding(
+              padding: const EdgeInsets.only(left: 40, bottom: 12),
+              child: TimeGatedCard(state: gateState),
+            ),
+          );
+        }
       }
     }
 

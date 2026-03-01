@@ -3,12 +3,16 @@
     "id": "menu-reveal",
     "contentType": "menu",
     "title": "Menu de la cena",
-    "unlockAt": "2026-05-28T12:00:00+02:00"
+    "unlockAt": "2026-05-28T12:00:00+02:00",
+    "eventId": "fri-cocktail",
+    "firestoreDocPath": "time_gated_content/menu-reveal"
   },
   {
     "id": "seating-reveal",
     "contentType": "seating",
     "title": "Asignacion de mesas",
-    "unlockAt": "2026-05-29T10:00:00+02:00"
+    "unlockAt": "2026-05-29T10:00:00+02:00",
+    "eventId": "fri-dinner",
+    "firestoreDocPath": "time_gated_content/seating-reveal"
   }
 ]

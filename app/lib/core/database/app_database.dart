@@ -83,6 +83,8 @@ class TimeGates extends Table {
   TextColumn get contentType => text()();
   TextColumn get title => text()();
   DateTimeColumn get unlockAt => dateTime()();
+  TextColumn get eventId => text().nullable()();
+  TextColumn get firestoreDocPath => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -130,7 +132,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -140,6 +142,10 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(timeGates);
             await m.createTable(seatingAssignments);
             await m.createTable(configCache);
+          }
+          if (from < 3) {
+            await m.addColumn(timeGates, timeGates.eventId);
+            await m.addColumn(timeGates, timeGates.firestoreDocPath);
           }
         },
       );

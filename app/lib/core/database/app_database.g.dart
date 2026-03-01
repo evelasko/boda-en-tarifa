@@ -2483,8 +2483,37 @@ class $TimeGatesTable extends TimeGates
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _eventIdMeta = const VerificationMeta(
+    'eventId',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, contentType, title, unlockAt];
+  late final GeneratedColumn<String> eventId = GeneratedColumn<String>(
+    'event_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _firestoreDocPathMeta = const VerificationMeta(
+    'firestoreDocPath',
+  );
+  @override
+  late final GeneratedColumn<String> firestoreDocPath = GeneratedColumn<String>(
+    'firestore_doc_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    contentType,
+    title,
+    unlockAt,
+    eventId,
+    firestoreDocPath,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2529,6 +2558,21 @@ class $TimeGatesTable extends TimeGates
     } else if (isInserting) {
       context.missing(_unlockAtMeta);
     }
+    if (data.containsKey('event_id')) {
+      context.handle(
+        _eventIdMeta,
+        eventId.isAcceptableOrUnknown(data['event_id']!, _eventIdMeta),
+      );
+    }
+    if (data.containsKey('firestore_doc_path')) {
+      context.handle(
+        _firestoreDocPathMeta,
+        firestoreDocPath.isAcceptableOrUnknown(
+          data['firestore_doc_path']!,
+          _firestoreDocPathMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -2554,6 +2598,14 @@ class $TimeGatesTable extends TimeGates
         DriftSqlType.dateTime,
         data['${effectivePrefix}unlock_at'],
       )!,
+      eventId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}event_id'],
+      ),
+      firestoreDocPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}firestore_doc_path'],
+      ),
     );
   }
 
@@ -2568,11 +2620,15 @@ class TimeGate extends DataClass implements Insertable<TimeGate> {
   final String contentType;
   final String title;
   final DateTime unlockAt;
+  final String? eventId;
+  final String? firestoreDocPath;
   const TimeGate({
     required this.id,
     required this.contentType,
     required this.title,
     required this.unlockAt,
+    this.eventId,
+    this.firestoreDocPath,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2581,6 +2637,12 @@ class TimeGate extends DataClass implements Insertable<TimeGate> {
     map['content_type'] = Variable<String>(contentType);
     map['title'] = Variable<String>(title);
     map['unlock_at'] = Variable<DateTime>(unlockAt);
+    if (!nullToAbsent || eventId != null) {
+      map['event_id'] = Variable<String>(eventId);
+    }
+    if (!nullToAbsent || firestoreDocPath != null) {
+      map['firestore_doc_path'] = Variable<String>(firestoreDocPath);
+    }
     return map;
   }
 
@@ -2590,6 +2652,12 @@ class TimeGate extends DataClass implements Insertable<TimeGate> {
       contentType: Value(contentType),
       title: Value(title),
       unlockAt: Value(unlockAt),
+      eventId: eventId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(eventId),
+      firestoreDocPath: firestoreDocPath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(firestoreDocPath),
     );
   }
 
@@ -2603,6 +2671,8 @@ class TimeGate extends DataClass implements Insertable<TimeGate> {
       contentType: serializer.fromJson<String>(json['contentType']),
       title: serializer.fromJson<String>(json['title']),
       unlockAt: serializer.fromJson<DateTime>(json['unlockAt']),
+      eventId: serializer.fromJson<String?>(json['eventId']),
+      firestoreDocPath: serializer.fromJson<String?>(json['firestoreDocPath']),
     );
   }
   @override
@@ -2613,6 +2683,8 @@ class TimeGate extends DataClass implements Insertable<TimeGate> {
       'contentType': serializer.toJson<String>(contentType),
       'title': serializer.toJson<String>(title),
       'unlockAt': serializer.toJson<DateTime>(unlockAt),
+      'eventId': serializer.toJson<String?>(eventId),
+      'firestoreDocPath': serializer.toJson<String?>(firestoreDocPath),
     };
   }
 
@@ -2621,11 +2693,17 @@ class TimeGate extends DataClass implements Insertable<TimeGate> {
     String? contentType,
     String? title,
     DateTime? unlockAt,
+    Value<String?> eventId = const Value.absent(),
+    Value<String?> firestoreDocPath = const Value.absent(),
   }) => TimeGate(
     id: id ?? this.id,
     contentType: contentType ?? this.contentType,
     title: title ?? this.title,
     unlockAt: unlockAt ?? this.unlockAt,
+    eventId: eventId.present ? eventId.value : this.eventId,
+    firestoreDocPath: firestoreDocPath.present
+        ? firestoreDocPath.value
+        : this.firestoreDocPath,
   );
   TimeGate copyWithCompanion(TimeGatesCompanion data) {
     return TimeGate(
@@ -2635,6 +2713,10 @@ class TimeGate extends DataClass implements Insertable<TimeGate> {
           : this.contentType,
       title: data.title.present ? data.title.value : this.title,
       unlockAt: data.unlockAt.present ? data.unlockAt.value : this.unlockAt,
+      eventId: data.eventId.present ? data.eventId.value : this.eventId,
+      firestoreDocPath: data.firestoreDocPath.present
+          ? data.firestoreDocPath.value
+          : this.firestoreDocPath,
     );
   }
 
@@ -2644,13 +2726,16 @@ class TimeGate extends DataClass implements Insertable<TimeGate> {
           ..write('id: $id, ')
           ..write('contentType: $contentType, ')
           ..write('title: $title, ')
-          ..write('unlockAt: $unlockAt')
+          ..write('unlockAt: $unlockAt, ')
+          ..write('eventId: $eventId, ')
+          ..write('firestoreDocPath: $firestoreDocPath')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, contentType, title, unlockAt);
+  int get hashCode =>
+      Object.hash(id, contentType, title, unlockAt, eventId, firestoreDocPath);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2658,7 +2743,9 @@ class TimeGate extends DataClass implements Insertable<TimeGate> {
           other.id == this.id &&
           other.contentType == this.contentType &&
           other.title == this.title &&
-          other.unlockAt == this.unlockAt);
+          other.unlockAt == this.unlockAt &&
+          other.eventId == this.eventId &&
+          other.firestoreDocPath == this.firestoreDocPath);
 }
 
 class TimeGatesCompanion extends UpdateCompanion<TimeGate> {
@@ -2666,12 +2753,16 @@ class TimeGatesCompanion extends UpdateCompanion<TimeGate> {
   final Value<String> contentType;
   final Value<String> title;
   final Value<DateTime> unlockAt;
+  final Value<String?> eventId;
+  final Value<String?> firestoreDocPath;
   final Value<int> rowid;
   const TimeGatesCompanion({
     this.id = const Value.absent(),
     this.contentType = const Value.absent(),
     this.title = const Value.absent(),
     this.unlockAt = const Value.absent(),
+    this.eventId = const Value.absent(),
+    this.firestoreDocPath = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TimeGatesCompanion.insert({
@@ -2679,6 +2770,8 @@ class TimeGatesCompanion extends UpdateCompanion<TimeGate> {
     required String contentType,
     required String title,
     required DateTime unlockAt,
+    this.eventId = const Value.absent(),
+    this.firestoreDocPath = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        contentType = Value(contentType),
@@ -2689,6 +2782,8 @@ class TimeGatesCompanion extends UpdateCompanion<TimeGate> {
     Expression<String>? contentType,
     Expression<String>? title,
     Expression<DateTime>? unlockAt,
+    Expression<String>? eventId,
+    Expression<String>? firestoreDocPath,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2696,6 +2791,8 @@ class TimeGatesCompanion extends UpdateCompanion<TimeGate> {
       if (contentType != null) 'content_type': contentType,
       if (title != null) 'title': title,
       if (unlockAt != null) 'unlock_at': unlockAt,
+      if (eventId != null) 'event_id': eventId,
+      if (firestoreDocPath != null) 'firestore_doc_path': firestoreDocPath,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2705,6 +2802,8 @@ class TimeGatesCompanion extends UpdateCompanion<TimeGate> {
     Value<String>? contentType,
     Value<String>? title,
     Value<DateTime>? unlockAt,
+    Value<String?>? eventId,
+    Value<String?>? firestoreDocPath,
     Value<int>? rowid,
   }) {
     return TimeGatesCompanion(
@@ -2712,6 +2811,8 @@ class TimeGatesCompanion extends UpdateCompanion<TimeGate> {
       contentType: contentType ?? this.contentType,
       title: title ?? this.title,
       unlockAt: unlockAt ?? this.unlockAt,
+      eventId: eventId ?? this.eventId,
+      firestoreDocPath: firestoreDocPath ?? this.firestoreDocPath,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2731,6 +2832,12 @@ class TimeGatesCompanion extends UpdateCompanion<TimeGate> {
     if (unlockAt.present) {
       map['unlock_at'] = Variable<DateTime>(unlockAt.value);
     }
+    if (eventId.present) {
+      map['event_id'] = Variable<String>(eventId.value);
+    }
+    if (firestoreDocPath.present) {
+      map['firestore_doc_path'] = Variable<String>(firestoreDocPath.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2744,6 +2851,8 @@ class TimeGatesCompanion extends UpdateCompanion<TimeGate> {
           ..write('contentType: $contentType, ')
           ..write('title: $title, ')
           ..write('unlockAt: $unlockAt, ')
+          ..write('eventId: $eventId, ')
+          ..write('firestoreDocPath: $firestoreDocPath, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4601,6 +4710,8 @@ typedef $$TimeGatesTableCreateCompanionBuilder =
       required String contentType,
       required String title,
       required DateTime unlockAt,
+      Value<String?> eventId,
+      Value<String?> firestoreDocPath,
       Value<int> rowid,
     });
 typedef $$TimeGatesTableUpdateCompanionBuilder =
@@ -4609,6 +4720,8 @@ typedef $$TimeGatesTableUpdateCompanionBuilder =
       Value<String> contentType,
       Value<String> title,
       Value<DateTime> unlockAt,
+      Value<String?> eventId,
+      Value<String?> firestoreDocPath,
       Value<int> rowid,
     });
 
@@ -4638,6 +4751,16 @@ class $$TimeGatesTableFilterComposer
 
   ColumnFilters<DateTime> get unlockAt => $composableBuilder(
     column: $table.unlockAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get eventId => $composableBuilder(
+    column: $table.eventId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get firestoreDocPath => $composableBuilder(
+    column: $table.firestoreDocPath,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -4670,6 +4793,16 @@ class $$TimeGatesTableOrderingComposer
     column: $table.unlockAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get eventId => $composableBuilder(
+    column: $table.eventId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get firestoreDocPath => $composableBuilder(
+    column: $table.firestoreDocPath,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$TimeGatesTableAnnotationComposer
@@ -4694,6 +4827,14 @@ class $$TimeGatesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get unlockAt =>
       $composableBuilder(column: $table.unlockAt, builder: (column) => column);
+
+  GeneratedColumn<String> get eventId =>
+      $composableBuilder(column: $table.eventId, builder: (column) => column);
+
+  GeneratedColumn<String> get firestoreDocPath => $composableBuilder(
+    column: $table.firestoreDocPath,
+    builder: (column) => column,
+  );
 }
 
 class $$TimeGatesTableTableManager
@@ -4728,12 +4869,16 @@ class $$TimeGatesTableTableManager
                 Value<String> contentType = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<DateTime> unlockAt = const Value.absent(),
+                Value<String?> eventId = const Value.absent(),
+                Value<String?> firestoreDocPath = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TimeGatesCompanion(
                 id: id,
                 contentType: contentType,
                 title: title,
                 unlockAt: unlockAt,
+                eventId: eventId,
+                firestoreDocPath: firestoreDocPath,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -4742,12 +4887,16 @@ class $$TimeGatesTableTableManager
                 required String contentType,
                 required String title,
                 required DateTime unlockAt,
+                Value<String?> eventId = const Value.absent(),
+                Value<String?> firestoreDocPath = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TimeGatesCompanion.insert(
                 id: id,
                 contentType: contentType,
                 title: title,
                 unlockAt: unlockAt,
+                eventId: eventId,
+                firestoreDocPath: firestoreDocPath,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TimeGatedContent {
 
- String get id; String get contentType; String get title; DateTime get unlockAt;
+ String get id; ContentType get contentType; String get title; DateTime get unlockAt; String? get eventId; String? get firestoreDocPath;
 /// Create a copy of TimeGatedContent
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $TimeGatedContentCopyWith<TimeGatedContent> get copyWith => _$TimeGatedContentCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TimeGatedContent&&(identical(other.id, id) || other.id == id)&&(identical(other.contentType, contentType) || other.contentType == contentType)&&(identical(other.title, title) || other.title == title)&&(identical(other.unlockAt, unlockAt) || other.unlockAt == unlockAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TimeGatedContent&&(identical(other.id, id) || other.id == id)&&(identical(other.contentType, contentType) || other.contentType == contentType)&&(identical(other.title, title) || other.title == title)&&(identical(other.unlockAt, unlockAt) || other.unlockAt == unlockAt)&&(identical(other.eventId, eventId) || other.eventId == eventId)&&(identical(other.firestoreDocPath, firestoreDocPath) || other.firestoreDocPath == firestoreDocPath));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,contentType,title,unlockAt);
+int get hashCode => Object.hash(runtimeType,id,contentType,title,unlockAt,eventId,firestoreDocPath);
 
 @override
 String toString() {
-  return 'TimeGatedContent(id: $id, contentType: $contentType, title: $title, unlockAt: $unlockAt)';
+  return 'TimeGatedContent(id: $id, contentType: $contentType, title: $title, unlockAt: $unlockAt, eventId: $eventId, firestoreDocPath: $firestoreDocPath)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $TimeGatedContentCopyWith<$Res>  {
   factory $TimeGatedContentCopyWith(TimeGatedContent value, $Res Function(TimeGatedContent) _then) = _$TimeGatedContentCopyWithImpl;
 @useResult
 $Res call({
- String id, String contentType, String title, DateTime unlockAt
+ String id, ContentType contentType, String title, DateTime unlockAt, String? eventId, String? firestoreDocPath
 });
 
 
@@ -65,13 +65,15 @@ class _$TimeGatedContentCopyWithImpl<$Res>
 
 /// Create a copy of TimeGatedContent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? contentType = null,Object? title = null,Object? unlockAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? contentType = null,Object? title = null,Object? unlockAt = null,Object? eventId = freezed,Object? firestoreDocPath = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,contentType: null == contentType ? _self.contentType : contentType // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as ContentType,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,unlockAt: null == unlockAt ? _self.unlockAt : unlockAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,eventId: freezed == eventId ? _self.eventId : eventId // ignore: cast_nullable_to_non_nullable
+as String?,firestoreDocPath: freezed == firestoreDocPath ? _self.firestoreDocPath : firestoreDocPath // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -156,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String contentType,  String title,  DateTime unlockAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  ContentType contentType,  String title,  DateTime unlockAt,  String? eventId,  String? firestoreDocPath)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TimeGatedContent() when $default != null:
-return $default(_that.id,_that.contentType,_that.title,_that.unlockAt);case _:
+return $default(_that.id,_that.contentType,_that.title,_that.unlockAt,_that.eventId,_that.firestoreDocPath);case _:
   return orElse();
 
 }
@@ -177,10 +179,10 @@ return $default(_that.id,_that.contentType,_that.title,_that.unlockAt);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String contentType,  String title,  DateTime unlockAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  ContentType contentType,  String title,  DateTime unlockAt,  String? eventId,  String? firestoreDocPath)  $default,) {final _that = this;
 switch (_that) {
 case _TimeGatedContent():
-return $default(_that.id,_that.contentType,_that.title,_that.unlockAt);case _:
+return $default(_that.id,_that.contentType,_that.title,_that.unlockAt,_that.eventId,_that.firestoreDocPath);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +199,10 @@ return $default(_that.id,_that.contentType,_that.title,_that.unlockAt);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String contentType,  String title,  DateTime unlockAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  ContentType contentType,  String title,  DateTime unlockAt,  String? eventId,  String? firestoreDocPath)?  $default,) {final _that = this;
 switch (_that) {
 case _TimeGatedContent() when $default != null:
-return $default(_that.id,_that.contentType,_that.title,_that.unlockAt);case _:
+return $default(_that.id,_that.contentType,_that.title,_that.unlockAt,_that.eventId,_that.firestoreDocPath);case _:
   return null;
 
 }
@@ -212,13 +214,15 @@ return $default(_that.id,_that.contentType,_that.title,_that.unlockAt);case _:
 @JsonSerializable()
 
 class _TimeGatedContent implements TimeGatedContent {
-  const _TimeGatedContent({required this.id, required this.contentType, required this.title, required this.unlockAt});
+  const _TimeGatedContent({required this.id, required this.contentType, required this.title, required this.unlockAt, this.eventId, this.firestoreDocPath});
   factory _TimeGatedContent.fromJson(Map<String, dynamic> json) => _$TimeGatedContentFromJson(json);
 
 @override final  String id;
-@override final  String contentType;
+@override final  ContentType contentType;
 @override final  String title;
 @override final  DateTime unlockAt;
+@override final  String? eventId;
+@override final  String? firestoreDocPath;
 
 /// Create a copy of TimeGatedContent
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +237,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TimeGatedContent&&(identical(other.id, id) || other.id == id)&&(identical(other.contentType, contentType) || other.contentType == contentType)&&(identical(other.title, title) || other.title == title)&&(identical(other.unlockAt, unlockAt) || other.unlockAt == unlockAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TimeGatedContent&&(identical(other.id, id) || other.id == id)&&(identical(other.contentType, contentType) || other.contentType == contentType)&&(identical(other.title, title) || other.title == title)&&(identical(other.unlockAt, unlockAt) || other.unlockAt == unlockAt)&&(identical(other.eventId, eventId) || other.eventId == eventId)&&(identical(other.firestoreDocPath, firestoreDocPath) || other.firestoreDocPath == firestoreDocPath));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,contentType,title,unlockAt);
+int get hashCode => Object.hash(runtimeType,id,contentType,title,unlockAt,eventId,firestoreDocPath);
 
 @override
 String toString() {
-  return 'TimeGatedContent(id: $id, contentType: $contentType, title: $title, unlockAt: $unlockAt)';
+  return 'TimeGatedContent(id: $id, contentType: $contentType, title: $title, unlockAt: $unlockAt, eventId: $eventId, firestoreDocPath: $firestoreDocPath)';
 }
 
 
@@ -253,7 +257,7 @@ abstract mixin class _$TimeGatedContentCopyWith<$Res> implements $TimeGatedConte
   factory _$TimeGatedContentCopyWith(_TimeGatedContent value, $Res Function(_TimeGatedContent) _then) = __$TimeGatedContentCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String contentType, String title, DateTime unlockAt
+ String id, ContentType contentType, String title, DateTime unlockAt, String? eventId, String? firestoreDocPath
 });
 
 
@@ -270,13 +274,15 @@ class __$TimeGatedContentCopyWithImpl<$Res>
 
 /// Create a copy of TimeGatedContent
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? contentType = null,Object? title = null,Object? unlockAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? contentType = null,Object? title = null,Object? unlockAt = null,Object? eventId = freezed,Object? firestoreDocPath = freezed,}) {
   return _then(_TimeGatedContent(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,contentType: null == contentType ? _self.contentType : contentType // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as ContentType,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,unlockAt: null == unlockAt ? _self.unlockAt : unlockAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,eventId: freezed == eventId ? _self.eventId : eventId // ignore: cast_nullable_to_non_nullable
+as String?,firestoreDocPath: freezed == firestoreDocPath ? _self.firestoreDocPath : firestoreDocPath // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
