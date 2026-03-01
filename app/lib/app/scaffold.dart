@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:boda_en_tarifa_app/core/media/upload_banner.dart';
+
 class AppScaffold extends StatelessWidget {
   const AppScaffold({super.key, required this.navigationShell});
 
@@ -9,7 +11,12 @@ class AppScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: navigationShell,
+      body: Column(
+        children: [
+          const UploadBanner(),
+          Expanded(child: navigationShell),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: navigationShell.currentIndex,
         onTap: (index) => navigationShell.goBranch(
