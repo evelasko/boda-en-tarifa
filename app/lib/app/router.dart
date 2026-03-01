@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'scaffold.dart';
 import '../features/auth/presentation/providers/auth_providers.dart';
 import '../features/auth/presentation/screens/access_denied_screen.dart';
+import '../features/auth/presentation/screens/magic_link_handler_screen.dart';
 import '../features/auth/presentation/screens/welcome_screen.dart';
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/community/presentation/screens/community_screen.dart';
@@ -71,20 +72,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AccessDeniedScreen(),
       ),
 
-      // Magic link deep link: boda-en-tarifa.com/login?token=xyz
-      // The token is forwarded to WelcomeScreen, which handles authentication.
+      // Magic link deep link: bodaentarifa.com/login?token=xyz&name=Guest
+      // Extracts token and name, handles sign-out + sign-in flow.
       GoRoute(
         path: '/login',
-        redirect: (context, state) {
-          final token = state.uri.queryParameters['token'];
-          if (token != null && token.isNotEmpty) {
-            return Uri(
-              path: '/welcome',
-              queryParameters: {'token': token},
-            ).toString();
-          }
-          return '/welcome';
-        },
+        builder: (context, state) => MagicLinkHandlerScreen(
+          token: state.uri.queryParameters['token'],
+          guestName: state.uri.queryParameters['name'],
+        ),
       ),
 
       // ── Authenticated shell — 5-tab StatefulShellRoute ───────────────────

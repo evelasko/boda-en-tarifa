@@ -61,6 +61,38 @@ Stream<AppUser?> authState(Ref ref) {
 }
 
 // ---------------------------------------------------------------------------
+// Magic link deep link processor (manual provider — no code-gen needed)
+// ---------------------------------------------------------------------------
+
+final magicLinkProcessorProvider =
+    AsyncNotifierProvider<MagicLinkProcessor, void>(MagicLinkProcessor.new);
+
+/// Handles the full magic link deep link flow: sign out existing user if
+/// needed, then sign in with the custom token from the deep link URL.
+class MagicLinkProcessor extends AsyncNotifier<void> {
+  @override
+  FutureOr<void> build() {}
+
+  Future<void> process(String token) async {
+    if (state.isLoading) return;
+    state = const AsyncLoading();
+
+    // Sign out the current user first if already authenticated, so the new
+    // magic link token can authenticate a (potentially different) guest.
+    final currentUser = ref.read(authStateProvider).asData?.value;
+    if (currentUser != null) {
+      await ref.read(signOutUseCaseProvider)();
+    }
+
+    final result = await ref.read(signInWithMagicLinkUseCaseProvider)(token);
+    state = result.fold(
+      (f) => AsyncError(f, f.stackTrace ?? StackTrace.current),
+      (_) => const AsyncData(null),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Sign-in controller (manual provider — no code-gen needed)
 // ---------------------------------------------------------------------------
 
