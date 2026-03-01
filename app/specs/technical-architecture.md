@@ -924,7 +924,7 @@ Since guests are pre-registered in Firestore, authentication is a profile-claimi
 ### 10.2 Magic Link via Custom Token (Frictionless)
 
 1. Couple/Admin runs a Node.js script (using Firebase Admin SDK) to generate a Custom Auth Token for each `uid` in the allowlist.
-2. The custom token is appended to a specialized App Link (`https://boda-en-tarifa.com/login?token=xyz...`).
+2. The custom token is appended to a specialized App Link (`https://bodaentarifa.com/login?token=xyz...`).
 3. Guest receives the unique link via WhatsApp and taps it.
 4. OS automatically routes the deep link into the Flutter app.
 5. App intercepts the token and silently calls `FirebaseAuth.instance.signInWithCustomToken()`.

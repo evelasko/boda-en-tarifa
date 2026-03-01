@@ -72,7 +72,7 @@ Fill in the values from the Firebase Console (Project Settings → General → Y
 | `FIREBASE_APP_ID_IOS` | Firebase Console → iOS app config |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary Dashboard |
 | `MAPBOX_ACCESS_TOKEN` | Mapbox Account → Access Tokens |
-| `DEEP_LINK_DOMAIN` | Pre-filled: `boda-en-tarifa.com` |
+| `DEEP_LINK_DOMAIN` | Pre-filled: `bodaentarifa.com` |
 
 ### Firebase app registration
 
@@ -149,7 +149,7 @@ Fill in the values:
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary Dashboard |
 | `CLOUDINARY_API_KEY` | Cloudinary Dashboard → API Keys |
 | `CLOUDINARY_API_SECRET` | Cloudinary Dashboard → API Keys |
-| `DEEP_LINK_DOMAIN` | Pre-filled: `boda-en-tarifa.com` |
+| `DEEP_LINK_DOMAIN` | Pre-filled: `bodaentarifa.com` |
 
 ### Install and build
 

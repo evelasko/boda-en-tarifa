@@ -26,7 +26,7 @@ This document outlines the detailed user journeys, edge cases, and technical acc
 - **Given** a user is setting up their profile, **When** they choose their contact preference, **Then** their phone number/email is never public, only accessible behind action buttons in the Notice Board.
 
 **Technical Notes for Flutter/Firebase Devs:**
-- **Custom Token Generation:** The easiest way to achieve the direct magic link is via a Node script using the Firebase Admin SDK to generate a Custom Auth Token for each user `uid`. This token is embedded in a deep link (e.g., `https://boda-en-tarifa.com/login?token=xyz`).
+- **Custom Token Generation:** The easiest way to achieve the direct magic link is via a Node script using the Firebase Admin SDK to generate a Custom Auth Token for each user `uid`. This token is embedded in a deep link (e.g., `https://bodaentarifa.com/login?token=xyz`).
 - **App Links:** Ensure iOS Universal Links and Android App Links are properly configured so tapping the link automatically launches the app instead of the browser.
 - There is no "Request Access" flow. Strictly rely on the Firestore allowlist.
 - Local State: Store the onboarding completion boolean in Drift/SharedPreferences to avoid showing the wizard twice.

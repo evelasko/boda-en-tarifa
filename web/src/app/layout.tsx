@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     canonical: "https://bodaentarifa.com", // Update with your actual domain
     languages: {
       "es-ES": "https://bodaentarifa.com",
-      // "en-US": "https://boda-en-tarifa.com/en", // Add if you support English
+      // "en-US": "https://bodaentarifa.com/en", // Add if you support English
     },
   },
   
