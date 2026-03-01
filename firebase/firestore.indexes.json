@@ -1,4 +1,41 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "__comment": "Feed query: newest visible posts (isHidden == false, ordered by createdAt DESC)",
+      "collectionGroup": "feed_posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "isHidden", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "__comment": "User's own posts: filter by authorUid, ordered by createdAt DESC",
+      "collectionGroup": "feed_posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "authorUid", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "__comment": "Guest directory: filter by visibility + side",
+      "collectionGroup": "guests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "isDirectoryVisible", "order": "ASCENDING" },
+        { "fieldPath": "side", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "__comment": "Guest directory: filter by visibility + relationship status",
+      "collectionGroup": "guests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "isDirectoryVisible", "order": "ASCENDING" },
+        { "fieldPath": "relationshipStatus", "order": "ASCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }
