@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../widgets/recommendations_view.dart';
+import '../widgets/timeline_view.dart';
 
 class ItineraryScreen extends StatelessWidget {
   const ItineraryScreen({super.key});
@@ -38,11 +39,7 @@ class ItineraryScreen extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
-            _PlaceholderTab(
-              icon: Icons.calendar_today_outlined,
-              label: 'Programa',
-              subtitle: 'Próximamente',
-            ),
+            TimelineView(),
             _PlaceholderTab(
               icon: Icons.map_outlined,
               label: 'Mapa',
