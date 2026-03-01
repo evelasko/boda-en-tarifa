@@ -9,3 +9,4 @@ setGlobalOptions({maxInstances: 10});
 
 // Auth
 export {generateMagicLink} from "./auth/generate-magic-link.js";
+export {onUserCreate} from "./auth/on-user-create.js";
