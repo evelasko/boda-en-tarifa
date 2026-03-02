@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:boda_en_tarifa_app/core/media/upload_banner.dart';
 import 'package:boda_en_tarifa_app/features/camera/presentation/providers/camera_providers.dart';
+import 'package:boda_en_tarifa_app/share_extension/share_providers.dart';
 
 class AppScaffold extends ConsumerWidget {
   const AppScaffold({super.key, required this.navigationShell});
@@ -13,6 +14,22 @@ class AppScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.read(cameraControllerProvider);
+
+    ref.listen<ShareConfirmation?>(shareConfirmationProvider,
+        (ShareConfirmation? prev, ShareConfirmation? next) {
+      if (next == null) return;
+      final message = switch (next.type) {
+        ShareConfirmationType.enqueued =>
+          '${next.imageCount} foto${next.imageCount == 1 ? '' : 's'} en cola de subida',
+        ShareConfirmationType.authRequired =>
+          'Inicia sesión para compartir fotos',
+      };
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+      ref.read(shareConfirmationProvider.notifier).set(null);
+    });
+
     return Scaffold(
       body: Column(
         children: [
