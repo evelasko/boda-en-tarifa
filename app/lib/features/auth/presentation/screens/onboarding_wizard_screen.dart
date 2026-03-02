@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/app_user.dart';
+import '../../../itinerary/presentation/providers/map_providers.dart';
 import '../providers/auth_providers.dart';
 import '../providers/onboarding_providers.dart';
 import '../widgets/communication_step.dart';
@@ -86,6 +87,13 @@ class _OnboardingWizardScreenState
 
     if (success) {
       context.go('/home');
+      // Fire-and-forget offline tile download in the background
+      ref
+          .read(offlineTileManagerProvider)
+          .downloadTileRegion()
+          .drain<void>()
+          .then((_) => ref.invalidate(mapTilesReadyProvider))
+          .ignore();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

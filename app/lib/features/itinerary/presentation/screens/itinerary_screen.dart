@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../widgets/custom_map.dart';
 import '../widgets/recommendations_view.dart';
 import '../widgets/timeline_view.dart';
 
@@ -40,57 +41,10 @@ class ItineraryScreen extends StatelessWidget {
         body: const TabBarView(
           children: [
             TimelineView(),
-            _PlaceholderTab(
-              icon: Icons.map_outlined,
-              label: 'Mapa',
-              subtitle: 'Próximamente',
-            ),
+            CustomMapWidget(),
             RecommendationsView(),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _PlaceholderTab extends StatelessWidget {
-  const _PlaceholderTab({
-    required this.icon,
-    required this.label,
-    required this.subtitle,
-  });
-
-  final IconData icon;
-  final String label;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 64, color: colors.onSurfaceVariant),
-          const SizedBox(height: 16),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              fontSize: 24,
-              fontWeight: FontWeight.w600,
-              color: colors.onSurface,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            subtitle,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              color: colors.onSurfaceVariant,
-            ),
-          ),
-        ],
       ),
     );
   }

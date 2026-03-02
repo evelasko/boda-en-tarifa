@@ -15,6 +15,7 @@ class _PermissionsStepState extends State<PermissionsStep> {
   PermissionStatus _cameraStatus = PermissionStatus.denied;
   PermissionStatus _photosStatus = PermissionStatus.denied;
   PermissionStatus _notificationStatus = PermissionStatus.denied;
+  PermissionStatus _locationStatus = PermissionStatus.denied;
 
   @override
   void initState() {
@@ -27,12 +28,14 @@ class _PermissionsStepState extends State<PermissionsStep> {
       Permission.camera.status,
       Permission.photos.status,
       Permission.notification.status,
+      Permission.locationWhenInUse.status,
     ]);
     if (!mounted) return;
     setState(() {
       _cameraStatus = results[0];
       _photosStatus = results[1];
       _notificationStatus = results[2];
+      _locationStatus = results[3];
     });
   }
 
@@ -47,6 +50,8 @@ class _PermissionsStepState extends State<PermissionsStep> {
           _photosStatus = status;
         case Permission.notification:
           _notificationStatus = status;
+        case Permission.locationWhenInUse:
+          _locationStatus = status;
         default:
           break;
       }
@@ -106,6 +111,18 @@ class _PermissionsStepState extends State<PermissionsStep> {
                 'Recibe avisos sobre eventos, recordatorios y actualizaciones de la boda.',
             status: _notificationStatus,
             onRequest: () => _requestPermission(Permission.notification),
+          ),
+
+          const SizedBox(height: 12),
+
+          _PermissionCard(
+            icon: Icons.location_on,
+            title: 'Ubicación',
+            description:
+                'Muestra tu posición en el mapa para orientarte entre los lugares de la boda.',
+            status: _locationStatus,
+            onRequest: () =>
+                _requestPermission(Permission.locationWhenInUse),
           ),
         ],
       ),
