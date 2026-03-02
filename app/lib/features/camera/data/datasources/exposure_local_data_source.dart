@@ -17,6 +17,11 @@ abstract class ExposureLocalDataSource {
   Future<List<Exposure>> getUnuploadedExposures();
   Future<void> markAsDeveloped(List<String> ids);
   Future<void> updateCloudinaryPublicId(String exposureId, String publicId);
+
+  // MFC-54: Development Room gallery and publish-to-feed
+  Future<List<Exposure>> getDevelopedExposures();
+  Stream<List<Exposure>> watchDevelopedExposures();
+  Future<void> markAsPublished(List<String> ids);
 }
 
 class ExposureLocalDataSourceImpl implements ExposureLocalDataSource {
@@ -140,6 +145,48 @@ class ExposureLocalDataSourceImpl implements ExposureLocalDataSource {
           .write(ExposuresCompanion(cloudinaryPublicId: Value(publicId)));
     } catch (e) {
       throw CacheException('Error al actualizar cloudinaryPublicId: $e');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // MFC-54: Development Room gallery and publish-to-feed queries
+  // ---------------------------------------------------------------------------
+
+  @override
+  Future<List<Exposure>> getDevelopedExposures() async {
+    try {
+      final query = _db.select(_db.exposures)
+        ..where((t) => t.isDeveloped.equals(true))
+        ..orderBy([(t) => OrderingTerm.asc(t.exposureNumber)]);
+      final rows = await query.get();
+      return rows.map(_rowToEntity).toList();
+    } catch (e) {
+      throw CacheException('Error al obtener exposiciones reveladas: $e');
+    }
+  }
+
+  @override
+  Stream<List<Exposure>> watchDevelopedExposures() {
+    final query = _db.select(_db.exposures)
+      ..where((t) => t.isDeveloped.equals(true))
+      ..orderBy([(t) => OrderingTerm.asc(t.exposureNumber)]);
+    return query.watch().map(
+          (rows) => rows.map(_rowToEntity).toList(),
+        );
+  }
+
+  @override
+  Future<void> markAsPublished(List<String> ids) async {
+    try {
+      await _db.transaction(() async {
+        for (final id in ids) {
+          await (_db.update(_db.exposures)
+                ..where((t) => t.id.equals(id)))
+              .write(const ExposuresCompanion(isPublished: Value(true)));
+        }
+      });
+    } catch (e) {
+      throw CacheException('Error al marcar como publicadas: $e');
     }
   }
 

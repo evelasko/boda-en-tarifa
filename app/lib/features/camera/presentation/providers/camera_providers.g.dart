@@ -290,6 +290,48 @@ final class SyncExposuresUseCaseProvider
 String _$syncExposuresUseCaseHash() =>
     r'ac007e0fcd60abb470ecb8ce753bc2e7e542a38f';
 
+@ProviderFor(publishToFeedUseCase)
+final publishToFeedUseCaseProvider = PublishToFeedUseCaseProvider._();
+
+final class PublishToFeedUseCaseProvider
+    extends $FunctionalProvider<PublishToFeed, PublishToFeed, PublishToFeed>
+    with $Provider<PublishToFeed> {
+  PublishToFeedUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'publishToFeedUseCaseProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$publishToFeedUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<PublishToFeed> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  PublishToFeed create(Ref ref) {
+    return publishToFeedUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(PublishToFeed value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<PublishToFeed>(value),
+    );
+  }
+}
+
+String _$publishToFeedUseCaseHash() =>
+    r'bc3d84513074934765214f1b87af9d87e88f3fe4';
+
 @ProviderFor(CameraControllerNotifier)
 final cameraControllerProvider = CameraControllerNotifierProvider._();
 
@@ -585,3 +627,208 @@ final class CameraSyncOnConnectivityProvider
 
 String _$cameraSyncOnConnectivityHash() =>
     r'c32e65d1135c942ec6a773a4524ad9cef58da455';
+
+/// Stream of developed exposures for the gallery.
+
+@ProviderFor(developedExposureStream)
+final developedExposureStreamProvider = DevelopedExposureStreamProvider._();
+
+/// Stream of developed exposures for the gallery.
+
+final class DevelopedExposureStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Exposure>>,
+          List<Exposure>,
+          Stream<List<Exposure>>
+        >
+    with $FutureModifier<List<Exposure>>, $StreamProvider<List<Exposure>> {
+  /// Stream of developed exposures for the gallery.
+  DevelopedExposureStreamProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'developedExposureStreamProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$developedExposureStreamHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<List<Exposure>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Exposure>> create(Ref ref) {
+    return developedExposureStream(ref);
+  }
+}
+
+String _$developedExposureStreamHash() =>
+    r'0df8d1b4a0dfb30c4fc3fc645dfd901d8c1e76cd';
+
+/// Whether the camera should show the Development Room instead of the viewfinder.
+/// True when there are developed-but-unpublished exposures.
+
+@ProviderFor(showDevelopmentRoom)
+final showDevelopmentRoomProvider = ShowDevelopmentRoomProvider._();
+
+/// Whether the camera should show the Development Room instead of the viewfinder.
+/// True when there are developed-but-unpublished exposures.
+
+final class ShowDevelopmentRoomProvider
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  /// Whether the camera should show the Development Room instead of the viewfinder.
+  /// True when there are developed-but-unpublished exposures.
+  ShowDevelopmentRoomProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'showDevelopmentRoomProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$showDevelopmentRoomHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return showDevelopmentRoom(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$showDevelopmentRoomHash() =>
+    r'a3942941c061a569f2a3cb1e01eb78eae603da1d';
+
+@ProviderFor(SelectedExposures)
+final selectedExposuresProvider = SelectedExposuresProvider._();
+
+final class SelectedExposuresProvider
+    extends $NotifierProvider<SelectedExposures, Set<String>> {
+  SelectedExposuresProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedExposuresProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$selectedExposuresHash();
+
+  @$internal
+  @override
+  SelectedExposures create() => SelectedExposures();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Set<String> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Set<String>>(value),
+    );
+  }
+}
+
+String _$selectedExposuresHash() => r'bfc6f2506f448b3404a6eb2f70129af82f267729';
+
+abstract class _$SelectedExposures extends $Notifier<Set<String>> {
+  Set<String> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<Set<String>, Set<String>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Set<String>, Set<String>>,
+              Set<String>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(PublishController)
+final publishControllerProvider = PublishControllerProvider._();
+
+final class PublishControllerProvider
+    extends $NotifierProvider<PublishController, AsyncValue<PublishResult?>> {
+  PublishControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'publishControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$publishControllerHash();
+
+  @$internal
+  @override
+  PublishController create() => PublishController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<PublishResult?> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<PublishResult?>>(value),
+    );
+  }
+}
+
+String _$publishControllerHash() => r'b3bc73c5d5b1f8bd0702e43a72623271cf9f1a36';
+
+abstract class _$PublishController
+    extends $Notifier<AsyncValue<PublishResult?>> {
+  AsyncValue<PublishResult?> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref =
+        this.ref
+            as $Ref<AsyncValue<PublishResult?>, AsyncValue<PublishResult?>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<PublishResult?>,
+                AsyncValue<PublishResult?>
+              >,
+              AsyncValue<PublishResult?>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}

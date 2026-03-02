@@ -151,4 +151,37 @@ class CameraRepositoryImpl implements CameraRepository {
   @override
   Stream<List<Exposure>> watchUndevelopedExposures() =>
       _exposureLocalDataSource.watchUndevelopedExposures();
+
+  // ---------------------------------------------------------------------------
+  // MFC-54: Development Room gallery and publish-to-feed
+  // ---------------------------------------------------------------------------
+
+  @override
+  FutureEither<List<Exposure>> getDevelopedExposures() async {
+    try {
+      final exposures =
+          await _exposureLocalDataSource.getDevelopedExposures();
+      return Right(exposures);
+    } on CacheException catch (e, st) {
+      return Left(CacheFailure(e.message, st));
+    } catch (e, st) {
+      return Left(CacheFailure(e.toString(), st));
+    }
+  }
+
+  @override
+  Stream<List<Exposure>> watchDevelopedExposures() =>
+      _exposureLocalDataSource.watchDevelopedExposures();
+
+  @override
+  FutureEither<void> markExposuresAsPublished(List<String> ids) async {
+    try {
+      await _exposureLocalDataSource.markAsPublished(ids);
+      return const Right(null);
+    } on CacheException catch (e, st) {
+      return Left(CacheFailure(e.message, st));
+    } catch (e, st) {
+      return Left(CacheFailure(e.toString(), st));
+    }
+  }
 }

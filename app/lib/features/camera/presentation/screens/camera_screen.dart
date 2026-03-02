@@ -8,6 +8,7 @@ import '../widgets/camera_viewfinder.dart';
 import '../widgets/development_animation.dart';
 import '../widgets/film_counter.dart';
 import '../widgets/shutter_button.dart';
+import 'development_room_screen.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
   const CameraScreen({super.key});
@@ -87,7 +88,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     if (mounted) {
       setState(() => _showDevelopmentAnimation = false);
     }
-    // TODO(MFC-54): Navigate to Development Room gallery
+    // Development Room will automatically appear via showDevelopmentRoomProvider
+    // because the exposures were marked as developed by CheckDevelopmentTrigger.
   }
 
   @override
@@ -104,6 +106,18 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
         setState(() => _showDevelopmentAnimation = true);
       }
     });
+
+    // MFC-54: Show Development Room when developed-but-unpublished photos exist
+    final showDevRoom = ref.watch(showDevelopmentRoomProvider);
+    if (showDevRoom && !_showDevelopmentAnimation) {
+      return DevelopmentRoomScreen(
+        onBackToViewfinder: () {
+          // Force re-evaluation — the provider will auto-hide the room
+          // once all exposures are published.
+          ref.invalidate(developedExposureStreamProvider);
+        },
+      );
+    }
 
     if (_permissionStatus == null) {
       return const Scaffold(

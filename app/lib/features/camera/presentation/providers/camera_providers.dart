@@ -6,9 +6,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:boda_en_tarifa_app/core/background/background_tasks.dart';
 import 'package:boda_en_tarifa_app/core/media/image_processor.dart';
+import 'package:boda_en_tarifa_app/core/media/upload_queue.dart';
 import 'package:boda_en_tarifa_app/core/providers/core_providers.dart';
 import 'package:boda_en_tarifa_app/core/remote_config/remote_config_providers.dart';
 import 'package:boda_en_tarifa_app/features/auth/presentation/providers/auth_providers.dart';
+import 'package:boda_en_tarifa_app/features/community/domain/entities/feed_post.dart';
+import 'package:boda_en_tarifa_app/features/community/presentation/providers/feed_providers.dart';
 
 import '../../data/datasources/camera_device_data_source.dart';
 import '../../data/datasources/camera_remote_data_source.dart';
@@ -17,6 +20,7 @@ import '../../data/repositories/camera_repository_impl.dart';
 import '../../domain/entities/exposure.dart';
 import '../../domain/repositories/camera_repository.dart';
 import '../../domain/usecases/check_development_trigger.dart';
+import '../../domain/usecases/publish_to_feed.dart';
 import '../../domain/usecases/sync_exposures.dart';
 
 part 'camera_providers.g.dart';
@@ -67,6 +71,14 @@ CheckDevelopmentTrigger checkDevelopmentTriggerUseCase(Ref ref) {
 @Riverpod(keepAlive: true)
 SyncExposures syncExposuresUseCase(Ref ref) {
   return SyncExposures(repository: ref.watch(cameraRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+PublishToFeed publishToFeedUseCase(Ref ref) {
+  return PublishToFeed(
+    cameraRepository: ref.watch(cameraRepositoryProvider),
+    feedRepository: ref.watch(feedRepositoryProvider),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -232,4 +244,103 @@ void cameraSyncOnConnectivity(Ref ref) {
       ref.read(syncExposuresUseCaseProvider)();
     }
   });
+}
+
+// ---------------------------------------------------------------------------
+// MFC-54: Development Room state
+// ---------------------------------------------------------------------------
+
+/// Stream of developed exposures for the gallery.
+@riverpod
+Stream<List<Exposure>> developedExposureStream(Ref ref) {
+  final repo = ref.watch(cameraRepositoryProvider);
+  return repo.watchDevelopedExposures();
+}
+
+/// Whether the camera should show the Development Room instead of the viewfinder.
+/// True when there are developed-but-unpublished exposures.
+@riverpod
+bool showDevelopmentRoom(Ref ref) {
+  final exposures =
+      ref.watch(developedExposureStreamProvider).asData?.value;
+  if (exposures == null || exposures.isEmpty) return false;
+  return exposures.any((e) => !e.isPublished);
+}
+
+// ---------------------------------------------------------------------------
+// MFC-54: Photo selection state for Development Room
+// ---------------------------------------------------------------------------
+
+@riverpod
+class SelectedExposures extends _$SelectedExposures {
+  @override
+  Set<String> build() => {};
+
+  void toggle(String exposureId) {
+    if (state.contains(exposureId)) {
+      state = {...state}..remove(exposureId);
+    } else {
+      state = {...state, exposureId};
+    }
+  }
+
+  void selectAll(List<String> ids) {
+    state = ids.toSet();
+  }
+
+  void clearSelection() {
+    state = {};
+  }
+}
+
+// ---------------------------------------------------------------------------
+// MFC-54: Publish controller
+// ---------------------------------------------------------------------------
+
+@riverpod
+class PublishController extends _$PublishController {
+  @override
+  AsyncValue<PublishResult?> build() => const AsyncData(null);
+
+  Future<void> publish({
+    required List<Exposure> selectedExposures,
+    required String authorUid,
+    required String authorName,
+    String? authorPhotoUrl,
+  }) async {
+    if (state.isLoading) return;
+    state = const AsyncLoading();
+
+    final useCase = ref.read(publishToFeedUseCaseProvider);
+    final result = await useCase(
+      exposures: selectedExposures,
+      authorUid: authorUid,
+      authorName: authorName,
+      authorPhotoUrl: authorPhotoUrl,
+    );
+
+    state = result.fold(
+      (failure) =>
+          AsyncError(failure, failure.stackTrace ?? StackTrace.current),
+      (publishResult) {
+        // Path B: enqueue not-yet-uploaded photos via upload queue
+        if (publishResult.needsUpload.isNotEmpty) {
+          ref.read(uploadQueueProvider.notifier).enqueue(
+                filePaths: publishResult.needsUpload
+                    .map((e) => e.localPath)
+                    .toList(),
+                authorUid: authorUid,
+                authorName: authorName,
+                authorPhotoUrl: authorPhotoUrl,
+                source: FeedPostSource.unfiltered,
+              );
+        }
+
+        // Clear selection
+        ref.read(selectedExposuresProvider.notifier).clearSelection();
+
+        return AsyncData(publishResult);
+      },
+    );
+  }
 }

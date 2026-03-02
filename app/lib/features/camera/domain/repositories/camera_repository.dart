@@ -18,4 +18,9 @@ abstract class CameraRepository {
   FutureEither<int> getUndevelopedCount();
   FutureEither<List<Exposure>> getUnuploadedExposures();
   Stream<List<Exposure>> watchUndevelopedExposures();
+
+  // MFC-54: Development Room gallery and publish-to-feed
+  FutureEither<List<Exposure>> getDevelopedExposures();
+  Stream<List<Exposure>> watchDevelopedExposures();
+  FutureEither<void> markExposuresAsPublished(List<String> ids);
 }
