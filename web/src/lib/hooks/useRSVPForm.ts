@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { User } from 'firebase/auth';
-import { RSVPResponse, RSVPSubmission, DEFAULT_RSVP_RESPONSE, AUTO_SAVE_CONFIG } from '@/types/rsvp';
+import { RSVPResponse, RSVPSubmission, AUTO_SAVE_CONFIG } from '@/types/rsvp';
 import { RSVPService, RSVPValidation } from '@/lib/firestore';
 import { 
   captureRSVPError, 

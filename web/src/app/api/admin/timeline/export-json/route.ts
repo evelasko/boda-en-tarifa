@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminFirestore } from '@/lib/firebase-admin';
 import { requireAdmin } from '@/lib/admin-api-auth';
-import type { TimelineEvent } from '@/types/timeline';
 
 const COLLECTION = 'event_schedule';
 

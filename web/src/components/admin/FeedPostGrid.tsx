@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -66,6 +65,7 @@ export default function FeedPostGrid({
             className="w-full aspect-square relative overflow-hidden cursor-pointer"
           >
             {post.imageUrls.length > 0 ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={cloudinaryThumbnailUrl(post.imageUrls[0])}
                 alt={post.caption || `Foto de ${post.authorName}`}

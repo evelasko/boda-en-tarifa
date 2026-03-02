@@ -47,6 +47,7 @@ export default function NoticeList({
             <div className="flex items-start gap-3">
               {/* Avatar */}
               {notice.authorPhotoUrl ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   src={notice.authorPhotoUrl}
                   alt={notice.authorName}
@@ -128,6 +129,7 @@ export default function NoticeList({
               {/* Author */}
               <div className="flex items-center gap-3">
                 {detailNotice.authorPhotoUrl ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={detailNotice.authorPhotoUrl}
                     alt={detailNotice.authorName}

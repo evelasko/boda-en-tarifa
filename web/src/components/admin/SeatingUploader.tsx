@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Upload, Trash2, Loader2, Image as ImageIcon } from 'lucide-react';
-import { cloudinaryUrl, cloudinaryThumbnailUrl } from '@/lib/cloudinary';
+import { cloudinaryUrl } from '@/lib/cloudinary';
 import type { SeatingPayload } from '@/types/time-gated';
 
 interface SeatingUploaderProps {

@@ -162,6 +162,7 @@ export default function FeedPostTable({
                   <TableCell>
                     <button onClick={() => onViewDetail(post)} className="cursor-pointer">
                       {post.imageUrls.length > 0 ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img
                           src={cloudinaryThumbnailUrl(post.imageUrls[0], 80)}
                           alt=""

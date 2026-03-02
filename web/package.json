@@ -7,7 +7,7 @@
     "clean": "rm -rf .next",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint src/",
     "predeploy": "npm run lint",
     "deploy": "firebase deploy --only hosting"
   },
@@ -55,6 +55,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24",
     "@types/prismjs": "^1.26.6",
     "@types/react": "^19",

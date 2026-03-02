@@ -27,7 +27,7 @@ import FeedPostGrid from '@/components/admin/FeedPostGrid';
 import FeedPostTable from '@/components/admin/FeedPostTable';
 import FeedPostDetail from '@/components/admin/FeedPostDetail';
 import NoticeList from '@/components/admin/NoticeList';
-import type { FeedPost, Notice, ModerationStats as StatsType, FeedPostSource } from '@/types/moderation';
+import type { FeedPost, Notice, ModerationStats as StatsType } from '@/types/moderation';
 
 async function apiFetch(path: string, user: { getIdToken: () => Promise<string> }, options?: RequestInit) {
   const token = await user.getIdToken();

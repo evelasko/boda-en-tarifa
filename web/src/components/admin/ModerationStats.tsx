@@ -1,6 +1,6 @@
 'use client';
 
-import { Image, MessageSquare, Eye, EyeOff, Camera, Upload, Share2 } from 'lucide-react';
+import { Image as ImageIcon, MessageSquare, Eye, EyeOff, Camera, Upload } from 'lucide-react';
 import type { ModerationStats as Stats } from '@/types/moderation';
 
 interface ModerationStatsProps {
@@ -27,7 +27,7 @@ export default function ModerationStats({ stats, loading }: ModerationStatsProps
       <StatCard
         label="Publicaciones"
         value={stats.totalPosts}
-        icon={<Image className="h-4 w-4" />}
+        icon={<ImageIcon className="h-4 w-4" />}
       />
       <StatCard
         label="Visibles"

@@ -75,6 +75,7 @@ export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
         {user && (
           <div className="flex items-center gap-2">
             {user.photoURL ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={user.photoURL}
                 alt={user.displayName || 'Admin'}

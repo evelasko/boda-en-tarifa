@@ -46,6 +46,7 @@ export default function FeedPostDetail({
         {/* Image carousel */}
         {post.imageUrls.length > 0 && (
           <div className="relative rounded-lg overflow-hidden bg-charcoal/5">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={cloudinaryUrl(post.imageUrls[safeIndex])}
               alt={post.caption || `Foto de ${post.authorName}`}
@@ -92,6 +93,7 @@ export default function FeedPostDetail({
           {/* Author info */}
           <div className="flex items-center gap-3">
             {post.authorPhotoUrl ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={post.authorPhotoUrl}
                 alt={post.authorName}
