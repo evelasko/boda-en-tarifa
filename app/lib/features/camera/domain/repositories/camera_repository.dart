@@ -10,4 +10,12 @@ abstract class CameraRepository {
   Stream<List<Exposure>> watchExposures();
 
   FutureEither<int> getNextExposureNumber();
+
+  // MFC-53: Background sync & development trigger
+  FutureEither<String> uploadExposure(Exposure exposure);
+  FutureEither<void> markExposuresAsDeveloped(List<String> ids);
+  FutureEither<List<Exposure>> getUndevelopedExposures();
+  FutureEither<int> getUndevelopedCount();
+  FutureEither<List<Exposure>> getUnuploadedExposures();
+  Stream<List<Exposure>> watchUndevelopedExposures();
 }

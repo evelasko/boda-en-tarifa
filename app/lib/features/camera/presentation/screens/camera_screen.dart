@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../domain/usecases/check_development_trigger.dart';
 import '../providers/camera_providers.dart';
 import '../widgets/camera_viewfinder.dart';
+import '../widgets/development_animation.dart';
 import '../widgets/film_counter.dart';
 import '../widgets/shutter_button.dart';
 
@@ -17,6 +19,8 @@ class CameraScreen extends ConsumerStatefulWidget {
 class _CameraScreenState extends ConsumerState<CameraScreen>
     with WidgetsBindingObserver {
   bool _showFlash = false;
+  bool _showDevelopmentAnimation = false;
+  bool _isCapturing = false;
   PermissionStatus? _permissionStatus;
 
   @override
@@ -57,15 +61,50 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     setState(() => _permissionStatus = result);
   }
 
-  void _onCaptured() {
+  Future<void> _onCaptured() async {
+    if (_isCapturing) return;
+    _isCapturing = true;
+
+    // Show flash
     setState(() => _showFlash = true);
     Future.delayed(const Duration(milliseconds: 150), () {
       if (mounted) setState(() => _showFlash = false);
     });
+
+    // Check development trigger after capture
+    final result = await ref
+        .read(developmentTriggerCheckerProvider.notifier)
+        .checkAfterCapture();
+
+    if (mounted && result is DevelopmentTriggered) {
+      setState(() => _showDevelopmentAnimation = true);
+    }
+
+    _isCapturing = false;
+  }
+
+  void _onDevelopmentAnimationComplete() {
+    if (mounted) {
+      setState(() => _showDevelopmentAnimation = false);
+    }
+    // TODO(MFC-54): Navigate to Development Room gallery
   }
 
   @override
   Widget build(BuildContext context) {
+    // Eagerly init background sync registration and connectivity sync
+    ref.watch(cameraSyncRegistrationProvider);
+    ref.watch(cameraSyncOnConnectivityProvider);
+
+    // Listen for time-based development trigger
+    ref.listen(developmentTriggerCheckerProvider, (prev, next) {
+      if (next is DevelopmentTriggered &&
+          prev is! DevelopmentTriggered &&
+          !_showDevelopmentAnimation) {
+        setState(() => _showDevelopmentAnimation = true);
+      }
+    });
+
     if (_permissionStatus == null) {
       return const Scaffold(
         backgroundColor: Colors.black,
@@ -79,6 +118,9 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
         onRetry: _checkPermission,
       );
     }
+
+    final exposureCount = ref.watch(exposureCountProvider);
+    final rollFull = exposureCount >= 24;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -96,13 +138,29 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
             bottom: 48,
             left: 0,
             right: 0,
-            child: Center(child: ShutterButton(onCaptured: _onCaptured)),
+            child: Center(
+              child: IgnorePointer(
+                ignoring: rollFull,
+                child: Opacity(
+                  opacity: rollFull ? 0.4 : 1.0,
+                  child: ShutterButton(onCaptured: _onCaptured),
+                ),
+              ),
+            ),
           ),
           if (_showFlash)
             AnimatedOpacity(
               opacity: _showFlash ? 1.0 : 0.0,
               duration: const Duration(milliseconds: 100),
               child: const ColoredBox(color: Colors.white),
+            ),
+
+          // Full-screen development animation overlay
+          if (_showDevelopmentAnimation)
+            Positioned.fill(
+              child: DevelopmentAnimation(
+                onComplete: _onDevelopmentAnimationComplete,
+              ),
             ),
         ],
       ),

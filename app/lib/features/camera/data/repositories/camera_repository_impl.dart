@@ -9,24 +9,32 @@ import 'package:boda_en_tarifa_app/core/error/failures.dart';
 import '../../domain/entities/exposure.dart';
 import '../../domain/repositories/camera_repository.dart';
 import '../datasources/camera_device_data_source.dart';
+import '../datasources/camera_remote_data_source.dart';
 import '../datasources/exposure_local_data_source.dart';
 
 class CameraRepositoryImpl implements CameraRepository {
   final ExposureLocalDataSource _exposureLocalDataSource;
   final CameraDeviceDataSource _cameraDeviceDataSource;
+  final CameraRemoteDataSource _cameraRemoteDataSource;
+  final String _userUid;
 
   static const _uuid = Uuid();
 
   CameraRepositoryImpl({
     required ExposureLocalDataSource exposureLocalDataSource,
     required CameraDeviceDataSource cameraDeviceDataSource,
+    required CameraRemoteDataSource cameraRemoteDataSource,
+    required String userUid,
   })  : _exposureLocalDataSource = exposureLocalDataSource,
-        _cameraDeviceDataSource = cameraDeviceDataSource;
+        _cameraDeviceDataSource = cameraDeviceDataSource,
+        _cameraRemoteDataSource = cameraRemoteDataSource,
+        _userUid = userUid;
 
   @override
   FutureEither<Exposure> capturePhoto(CameraController controller) async {
     try {
-      final count = await _exposureLocalDataSource.getExposureCount();
+      // Count only undeveloped exposures for the current roll
+      final count = await _exposureLocalDataSource.getUndevelopedCount();
       final exposureNumber = count + 1;
 
       final localPath =
@@ -56,7 +64,7 @@ class CameraRepositoryImpl implements CameraRepository {
   @override
   FutureEither<int> getNextExposureNumber() async {
     try {
-      final count = await _exposureLocalDataSource.getExposureCount();
+      final count = await _exposureLocalDataSource.getUndevelopedCount();
       return Right(count + 1);
     } on CacheException catch (e, st) {
       return Left(CacheFailure(e.message, st));
@@ -64,4 +72,83 @@ class CameraRepositoryImpl implements CameraRepository {
       return Left(CacheFailure(e.toString(), st));
     }
   }
+
+  // ---------------------------------------------------------------------------
+  // MFC-53: Background sync & development trigger
+  // ---------------------------------------------------------------------------
+
+  @override
+  FutureEither<String> uploadExposure(Exposure exposure) async {
+    try {
+      final publicId = await _cameraRemoteDataSource.uploadExposure(
+        filePath: exposure.localPath,
+        userUid: _userUid,
+      );
+      await _exposureLocalDataSource.updateCloudinaryPublicId(
+        exposure.id,
+        publicId,
+      );
+      return Right(publicId);
+    } on ServerException catch (e, st) {
+      return Left(ServerFailure(e.message, st));
+    } on CacheException catch (e, st) {
+      return Left(CacheFailure(e.message, st));
+    } catch (e, st) {
+      return Left(ServerFailure(e.toString(), st));
+    }
+  }
+
+  @override
+  FutureEither<void> markExposuresAsDeveloped(List<String> ids) async {
+    try {
+      await _exposureLocalDataSource.markAsDeveloped(ids);
+      return const Right(null);
+    } on CacheException catch (e, st) {
+      return Left(CacheFailure(e.message, st));
+    } catch (e, st) {
+      return Left(CacheFailure(e.toString(), st));
+    }
+  }
+
+  @override
+  FutureEither<List<Exposure>> getUndevelopedExposures() async {
+    try {
+      final exposures =
+          await _exposureLocalDataSource.getUndevelopedExposures();
+      return Right(exposures);
+    } on CacheException catch (e, st) {
+      return Left(CacheFailure(e.message, st));
+    } catch (e, st) {
+      return Left(CacheFailure(e.toString(), st));
+    }
+  }
+
+  @override
+  FutureEither<int> getUndevelopedCount() async {
+    try {
+      final count = await _exposureLocalDataSource.getUndevelopedCount();
+      return Right(count);
+    } on CacheException catch (e, st) {
+      return Left(CacheFailure(e.message, st));
+    } catch (e, st) {
+      return Left(CacheFailure(e.toString(), st));
+    }
+  }
+
+  @override
+  FutureEither<List<Exposure>> getUnuploadedExposures() async {
+    try {
+      final exposures =
+          await _exposureLocalDataSource.getUnuploadedExposures();
+      return Right(exposures);
+    } on CacheException catch (e, st) {
+      return Left(CacheFailure(e.message, st));
+    } catch (e, st) {
+      return Left(CacheFailure(e.toString(), st));
+    }
+  }
+
+  @override
+  Stream<List<Exposure>> watchUndevelopedExposures() =>
+      _exposureLocalDataSource.watchUndevelopedExposures();
 }

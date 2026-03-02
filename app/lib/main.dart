@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 import 'app/app.dart';
+import 'core/background/background_tasks.dart';
 import 'core/database/app_database.dart';
 import 'core/map/mapbox_config.dart';
 import 'core/providers/core_providers.dart';
@@ -28,6 +29,8 @@ Future<void> main() async {
     db: appDatabase,
   );
   await remoteConfigService.initialize();
+
+  await BackgroundTaskManager.initialize();
 
   runApp(
     ProviderScope(
