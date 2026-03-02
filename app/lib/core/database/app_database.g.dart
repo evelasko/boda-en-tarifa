@@ -1540,7 +1540,7 @@ class CachedGuestsCompanion extends UpdateCompanion<CachedGuest> {
 }
 
 class $ExposuresTable extends Exposures
-    with TableInfo<$ExposuresTable, Exposure> {
+    with TableInfo<$ExposuresTable, ExposureRow> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1645,7 +1645,7 @@ class $ExposuresTable extends Exposures
   static const String $name = 'exposures';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Exposure> instance, {
+    Insertable<ExposureRow> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -1715,9 +1715,9 @@ class $ExposuresTable extends Exposures
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Exposure map(Map<String, dynamic> data, {String? tablePrefix}) {
+  ExposureRow map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Exposure(
+    return ExposureRow(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
@@ -1755,7 +1755,7 @@ class $ExposuresTable extends Exposures
   }
 }
 
-class Exposure extends DataClass implements Insertable<Exposure> {
+class ExposureRow extends DataClass implements Insertable<ExposureRow> {
   final String id;
   final String localPath;
   final String? cloudinaryPublicId;
@@ -1763,7 +1763,7 @@ class Exposure extends DataClass implements Insertable<Exposure> {
   final DateTime capturedAt;
   final bool isDeveloped;
   final bool isPublished;
-  const Exposure({
+  const ExposureRow({
     required this.id,
     required this.localPath,
     this.cloudinaryPublicId,
@@ -1801,12 +1801,12 @@ class Exposure extends DataClass implements Insertable<Exposure> {
     );
   }
 
-  factory Exposure.fromJson(
+  factory ExposureRow.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Exposure(
+    return ExposureRow(
       id: serializer.fromJson<String>(json['id']),
       localPath: serializer.fromJson<String>(json['localPath']),
       cloudinaryPublicId: serializer.fromJson<String?>(
@@ -1832,7 +1832,7 @@ class Exposure extends DataClass implements Insertable<Exposure> {
     };
   }
 
-  Exposure copyWith({
+  ExposureRow copyWith({
     String? id,
     String? localPath,
     Value<String?> cloudinaryPublicId = const Value.absent(),
@@ -1840,7 +1840,7 @@ class Exposure extends DataClass implements Insertable<Exposure> {
     DateTime? capturedAt,
     bool? isDeveloped,
     bool? isPublished,
-  }) => Exposure(
+  }) => ExposureRow(
     id: id ?? this.id,
     localPath: localPath ?? this.localPath,
     cloudinaryPublicId: cloudinaryPublicId.present
@@ -1851,8 +1851,8 @@ class Exposure extends DataClass implements Insertable<Exposure> {
     isDeveloped: isDeveloped ?? this.isDeveloped,
     isPublished: isPublished ?? this.isPublished,
   );
-  Exposure copyWithCompanion(ExposuresCompanion data) {
-    return Exposure(
+  ExposureRow copyWithCompanion(ExposuresCompanion data) {
+    return ExposureRow(
       id: data.id.present ? data.id.value : this.id,
       localPath: data.localPath.present ? data.localPath.value : this.localPath,
       cloudinaryPublicId: data.cloudinaryPublicId.present
@@ -1875,7 +1875,7 @@ class Exposure extends DataClass implements Insertable<Exposure> {
 
   @override
   String toString() {
-    return (StringBuffer('Exposure(')
+    return (StringBuffer('ExposureRow(')
           ..write('id: $id, ')
           ..write('localPath: $localPath, ')
           ..write('cloudinaryPublicId: $cloudinaryPublicId, ')
@@ -1900,7 +1900,7 @@ class Exposure extends DataClass implements Insertable<Exposure> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Exposure &&
+      (other is ExposureRow &&
           other.id == this.id &&
           other.localPath == this.localPath &&
           other.cloudinaryPublicId == this.cloudinaryPublicId &&
@@ -1910,7 +1910,7 @@ class Exposure extends DataClass implements Insertable<Exposure> {
           other.isPublished == this.isPublished);
 }
 
-class ExposuresCompanion extends UpdateCompanion<Exposure> {
+class ExposuresCompanion extends UpdateCompanion<ExposureRow> {
   final Value<String> id;
   final Value<String> localPath;
   final Value<String?> cloudinaryPublicId;
@@ -1942,7 +1942,7 @@ class ExposuresCompanion extends UpdateCompanion<Exposure> {
        localPath = Value(localPath),
        exposureNumber = Value(exposureNumber),
        capturedAt = Value(capturedAt);
-  static Insertable<Exposure> custom({
+  static Insertable<ExposureRow> custom({
     Expression<String>? id,
     Expression<String>? localPath,
     Expression<String>? cloudinaryPublicId,
@@ -4404,14 +4404,17 @@ class $$ExposuresTableTableManager
         RootTableManager<
           _$AppDatabase,
           $ExposuresTable,
-          Exposure,
+          ExposureRow,
           $$ExposuresTableFilterComposer,
           $$ExposuresTableOrderingComposer,
           $$ExposuresTableAnnotationComposer,
           $$ExposuresTableCreateCompanionBuilder,
           $$ExposuresTableUpdateCompanionBuilder,
-          (Exposure, BaseReferences<_$AppDatabase, $ExposuresTable, Exposure>),
-          Exposure,
+          (
+            ExposureRow,
+            BaseReferences<_$AppDatabase, $ExposuresTable, ExposureRow>,
+          ),
+          ExposureRow,
           PrefetchHooks Function()
         > {
   $$ExposuresTableTableManager(_$AppDatabase db, $ExposuresTable table)
@@ -4477,14 +4480,17 @@ typedef $$ExposuresTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $ExposuresTable,
-      Exposure,
+      ExposureRow,
       $$ExposuresTableFilterComposer,
       $$ExposuresTableOrderingComposer,
       $$ExposuresTableAnnotationComposer,
       $$ExposuresTableCreateCompanionBuilder,
       $$ExposuresTableUpdateCompanionBuilder,
-      (Exposure, BaseReferences<_$AppDatabase, $ExposuresTable, Exposure>),
-      Exposure,
+      (
+        ExposureRow,
+        BaseReferences<_$AppDatabase, $ExposuresTable, ExposureRow>,
+      ),
+      ExposureRow,
       PrefetchHooks Function()
     >;
 typedef $$PendingWritesTableCreateCompanionBuilder =

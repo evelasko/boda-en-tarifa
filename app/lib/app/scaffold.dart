@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:boda_en_tarifa_app/core/media/upload_banner.dart';
+import 'package:boda_en_tarifa_app/features/camera/presentation/providers/camera_providers.dart';
 
-class AppScaffold extends StatelessWidget {
+class AppScaffold extends ConsumerWidget {
   const AppScaffold({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.read(cameraControllerProvider);
     return Scaffold(
       body: Column(
         children: [

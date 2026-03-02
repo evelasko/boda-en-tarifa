@@ -54,6 +54,7 @@ class CachedGuests extends Table {
   Set<Column> get primaryKey => {uid};
 }
 
+@DataClassName('ExposureRow')
 class Exposures extends Table {
   TextColumn get id => text()();
   TextColumn get localPath => text()();
