@@ -19,13 +19,22 @@ function getAdminApp(): App {
     );
   }
 
-  // Support both a file path and inline JSON
+  // Support base64-encoded JSON, plain JSON, or a file path
   let credential;
   try {
-    const parsed = JSON.parse(serviceAccountKey);
-    credential = cert(parsed);
+    // Try parsing as JSON first (plain or base64-encoded)
+    let json: string;
+    try {
+      json = serviceAccountKey;
+      JSON.parse(json);
+    } catch {
+      // Not valid JSON — try base64 decoding
+      json = Buffer.from(serviceAccountKey, 'base64').toString('utf-8');
+      JSON.parse(json); // will throw if still not valid JSON
+    }
+    credential = cert(JSON.parse(json));
   } catch {
-    // Not JSON — treat as a file path
+    // Last resort — treat as a file path
     credential = cert(serviceAccountKey);
   }
 
