@@ -24,6 +24,25 @@
   --color-pink: #f588a3;
   --color-green: #95d266;
   --color-blue: #36c4e7;
+
+  /* shadcn/ui semantic tokens */
+  --color-background: #FAF6F2;
+  --color-foreground: #3A3A3A;
+  --color-primary: #3A3A3A;
+  --color-primary-foreground: #FAF6F2;
+  --color-secondary: #f0ebe5;
+  --color-secondary-foreground: #3A3A3A;
+  --color-muted: #f0ebe5;
+  --color-muted-foreground: #8a8580;
+  --color-accent: #f0ebe5;
+  --color-accent-foreground: #3A3A3A;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #FAF6F2;
+  --color-border: #c4b8ab;
+  --color-input: #c4b8ab;
+  --color-ring: #18696c;
+
+  --radius: 0.5rem;
   
   /* Typography Scale - Golden Ratio Based */
   --type-scale-ratio: 1.618;
