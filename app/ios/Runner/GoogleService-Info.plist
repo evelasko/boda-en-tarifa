@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>501055602355-k115u0bh2pm2a6iatprotnf2topm5t93.apps.googleusercontent.com</string>
+	<string>501055602355-1l4e1kac7tldsi7vqfi4qhl8e8pa4l7s.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.501055602355-k115u0bh2pm2a6iatprotnf2topm5t93</string>
+	<string>com.googleusercontent.apps.501055602355-1l4e1kac7tldsi7vqfi4qhl8e8pa4l7s</string>
 	<key>API_KEY</key>
 	<string>AIzaSyB_OnUTukpItlugzDPyUDM4zot88p6ykak</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.bodaEnTarifaApp</string>
+	<string>com.misfitcoders.plusone</string>
 	<key>PROJECT_ID</key>
 	<string>boda-en-tarifa</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:501055602355:ios:ba461870c32f6031e13ac6</string>
+	<string>1:501055602355:ios:cb34d3b6ade0e122e13ac6</string>
 </dict>
 </plist>

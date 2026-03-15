@@ -11,3 +11,18 @@
 #
 # The file should be accessible at:
 # https://bodaentarifa.com/.well-known/apple-developer-domain-association.txt
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": [
+            "2SKBCUTH6B.com.bodaentarifa.app",
+            "2SKBCUTH6B.com.misfitcoders.plusone",
+            "2SKBCUTH6B.com.misfitcoders.plusone.shareextension"
+            ],
+        "paths": ["/auth/*", "/invite/*", "/link/*"]
+      }
+    ]
+  }
+}
