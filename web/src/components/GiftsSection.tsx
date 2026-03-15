@@ -13,7 +13,7 @@ export function GiftsSection() {
     qr: '' 
   })
 
-  const accountNumber = 'ES00 0000 0000 0000 0000'
+  const accountNumber = 'ES81 0049 5156 7222 1658 4710'
   const bizumNumber = ['609971307', '655433018']
   const cryptoAddresses = {
     ether: { address:'0x9203EF2BeEd6ffc61C5165e1cd22764b304D7C4d', qr: '/graphics/ether.svg'}, 
@@ -71,7 +71,7 @@ export function GiftsSection() {
                 Opción tradicional de transferencia bancaria
               </p>
               <button
-                onClick={() => copyToClipboard(accountNumber, 'Número de cuenta copiado')}
+                onClick={() => copyToClipboard(accountNumber.replace(/\s/g, ''), 'Número de cuenta copiado')}
                 className="w-full bg-sand/20 hover:bg-sand/30 text-white px-4 py-2 rounded-lg transition-colors duration-200 type-label"
               >
                 Copiar número de cuenta
