@@ -41,7 +41,7 @@ This repository uses a root `justfile` as the canonical command layer for local 
 | App | `app-pub-get`, `app-analyze`, `app-test`, `app-run`, `app-run-emu`, `app-build-android`, `app-build-ios`, `app-gen` | Flutter local and build workflows | Flutter/Dart toolchain |
 | Quality | `check`, `check-full`, `test`, `test-int`, `qa-smoke`, `qa-simulator-prep` | Monorepo validation workflows | Lint/build/test tools + emulators for integration |
 | Firebase | `fb-status`, `fb-use`, `fb-deploy-*` | Firebase project and deploy operations | Firebase CLI auth + project access |
-| Ops | `ops-magic-links*`, `ops-linear-*` | Operational helper scripts | service account, `LINEAR_API_KEY`, Python |
+| Ops | `ops-magic-links*`, `ops-magic-links-emulator*`, `ops-linear-*` | Operational helper scripts | production magic links: service account; emulator links: running emulators + `FIRESTORE_EMULATOR_HOST` / `FIREBASE_AUTH_EMULATOR_HOST` (set by `just`); Linear: `LINEAR_API_KEY`, Python |
 | Golden paths | `flow-*` | Composite “one command” workflows | combines prerequisites from composed recipes |
 | Menus | `menu`, `menu-dev`, `menu-data`, `menu-qa`, `menu-deploy` | Guided TUI actions for humans | `gum` |
 

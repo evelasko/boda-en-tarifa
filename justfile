@@ -25,7 +25,7 @@ help:
   @echo "  check | check-full | test | test-int | qa-smoke | qa-simulator-prep"
   @echo "Firebase and ops:"
   @echo "  fb-status fb-use <alias> fb-deploy-all fb-deploy-functions fb-deploy-hosting fb-deploy-remoteconfig fb-deploy-rules"
-  @echo "  ops-magic-links ops-magic-links-dry ops-guest-audit ops-guest-backup ops-linear-list ops-linear-get <id> ops-linear-id <id>"
+  @echo "  ops-magic-links ops-magic-links-dry ops-magic-links-emulator ops-magic-links-emulator-dry ops-guest-audit ops-guest-backup ops-linear-list ops-linear-get <id> ops-linear-id <id>"
   @echo "Golden path flows:"
   @echo "  flow-dev-app flow-dev-web flow-test-functions flow-qa-smoke flow-release-web flow-release-functions"
   @echo "Menus:"
@@ -49,7 +49,7 @@ env-check:
   @echo "Project: {{PROJECT_ID}}"
   @echo "Emulators: firestore={{EMULATOR_HOST}}:{{FIRESTORE_PORT}}, auth={{EMULATOR_HOST}}:{{AUTH_PORT}}, functions={{EMULATOR_HOST}}:{{FUNCTIONS_PORT}}"
   @if [ -z "${LINEAR_API_KEY:-}" ]; then echo "  ⚠️  LINEAR_API_KEY missing (needed for ops-linear-*)"; else echo "  ✅ LINEAR_API_KEY is set"; fi
-  @if [ -z "${GOOGLE_APPLICATION_CREDENTIALS:-}" ]; then echo "  ⚠️  GOOGLE_APPLICATION_CREDENTIALS missing (needed for ops-magic-links, ops-guest-audit, ops-guest-backup)"; else echo "  ✅ GOOGLE_APPLICATION_CREDENTIALS is set"; fi
+  @if [ -z "${GOOGLE_APPLICATION_CREDENTIALS:-}" ]; then echo "  ⚠️  GOOGLE_APPLICATION_CREDENTIALS missing (needed for ops-magic-links, ops-guest-audit, ops-guest-backup; not required for ops-magic-links-emulator)"; else echo "  ✅ GOOGLE_APPLICATION_CREDENTIALS is set"; fi
 
 setup-all: setup-web setup-functions setup-scripts setup-app
 
@@ -257,6 +257,13 @@ ops-magic-links:
 
 ops-magic-links-dry:
   npm --prefix scripts run generate-links:dry
+
+# Magic links for seeded Auth users (emulators only; set FIRESTORE_/FIREBASE_AUTH_ emulator hosts).
+ops-magic-links-emulator *args:
+  FIRESTORE_EMULATOR_HOST={{EMULATOR_HOST}}:{{FIRESTORE_PORT}} FIREBASE_AUTH_EMULATOR_HOST={{EMULATOR_HOST}}:{{AUTH_PORT}} npm --prefix scripts run generate-links:emulator -- --project {{PROJECT_ID}} {{args}}
+
+ops-magic-links-emulator-dry *args:
+  FIRESTORE_EMULATOR_HOST={{EMULATOR_HOST}}:{{FIRESTORE_PORT}} FIREBASE_AUTH_EMULATOR_HOST={{EMULATOR_HOST}}:{{AUTH_PORT}} npm --prefix scripts run generate-links:emulator:dry -- --project {{PROJECT_ID}} {{args}}
 
 ops-guest-audit:
   npm --prefix scripts run audit:guests

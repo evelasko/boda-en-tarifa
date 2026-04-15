@@ -11,6 +11,8 @@ From repository root, you can run these workflows without `cd`:
 - `just data-reset CONFIRM=1`
 - `just ops-magic-links`
 - `just ops-magic-links-dry`
+- `just ops-magic-links-emulator` (requires emulators + seed; no service account)
+- `just ops-magic-links-emulator-dry`
 - `just ops-guest-audit`
 - `just ops-guest-backup`
 
@@ -81,6 +83,34 @@ flutter run \
 ```
 
 The app keeps production-safe defaults when `USE_FIREBASE_EMULATORS` is not set to `true`.
+
+### Magic links for seeded emulator users (iOS simulator / auth flow)
+
+After emulators are running and data is seeded, generate custom-token login URLs for every Auth user in the seed dataset (same UIDs as `seed-emulator.ts`):
+
+```bash
+# From repo root (ports match justfile defaults)
+just ops-magic-links-emulator
+
+# Dry-run: list uid / email / name without minting tokens
+just ops-magic-links-emulator-dry
+
+# Single guest by email
+just ops-magic-links-emulator -- --guest-email ana.mar@example.test
+
+# If you seeded with --include-migration-case, include the migrated Auth user too
+just ops-magic-links-emulator -- --include-migration-case
+```
+
+Or with npm only:
+
+```bash
+export FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
+export FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099
+npm --prefix scripts run generate-links:emulator -- --project demo-boda-en-tarifa
+```
+
+CSV columns (normal run): `uid`, `email`, `fullName`, `magicLinkUrl`. Open `magicLinkUrl` on the device or paste into the simulator to exercise the magic-link auth path. Email/password sign-in for seeded users still uses password `Test1234!` from the seed script.
 
 ### Suggested seeded smoke checks
 

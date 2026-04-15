@@ -1,9 +1,9 @@
 # Magic Link Authentication — End-to-End Integration Spec
 
-> **Version:** 1.0
-> **Date:** 2026-02-28
+> **Version:** 1.1
+> **Date:** 2026-04-15
 > **Issue:** MFC-17
-> **Workstreams:** Dashboard (web), Firebase Cloud Functions, Flutter App
+> **Workstreams:** Dashboard (web), Firebase Cloud Functions, Flutter App, Ops scripts
 
 This document describes the complete Magic Link authentication flow from link generation through profile claiming. It is the single source of truth referenced by all three workstreams.
 
@@ -11,6 +11,9 @@ For detailed implementation patterns, see:
 
 - `app/specs/technical-architecture.md` — Sections 10.1 (Claim Your Profile), 10.2 (Magic Link via Custom Token), 10.3 (Social Auth), 10.4 (Access Control)
 - `app/specs/developer-journeys.md` — Epic 1 (Onboarding, Authentication & Permissions)
+- `firebase/docs/firestore-data-model.md` — `guests/` and `magic_link_issues/` schemas
+- `docs/phone-magic-link-rollout-runbook.md` — staged rollout and rollback
+- `specs/testing-policy.md` — §8.1 magic-link verification checklist
 
 ---
 
@@ -18,7 +21,7 @@ For detailed implementation patterns, see:
 
 The Magic Link system uses **Firebase Custom Tokens** (not Firebase Email Link Auth) to achieve zero-friction onboarding. An admin generates a personalized deep link for each guest, shares it via WhatsApp/SMS, and the guest taps the link to land directly inside the app — authenticated and ready for onboarding.
 
-This is a **profile-claiming** process: guests are pre-registered in the Firestore `guests/` collection before any authentication happens. Authentication simply binds a Firebase Auth identity to an existing guest record.
+This is a **profile-claiming** process: guests are pre-registered in the Firestore `guests/` collection (document ID **equals** the guest’s Firebase Auth UID) before sign-in. Magic links mint a **custom token for that UID**; delivery is via WhatsApp/SMS using `phoneE164` and/or `whatsappNumber` on the guest doc — **email is optional** and not used for allowlist matching.
 
 ---
 
@@ -30,7 +33,7 @@ This is a **profile-claiming** process: guests are pre-registered in the Firesto
 │                                                                         │
 │  ┌───────────┐    ┌──────────────┐    ┌──────────────┐    ┌───────────┐ │
 │  │ Dashboard │───▶│ generateLink │───▶│  Guest taps  │───▶│ Flutter   │ │
-│  │ (Admin)   │    │ Cloud Fn     │    │  deep link   │    │ App       │ │
+│  │ (Admin)   │    │ (Fn or API)  │    │  deep link   │    │ App       │ │
 │  └───────────┘    └──────────────┘    └──────────────┘    └─────┬─────┘ │
 │                                                                 │       │
 │                                                                 ▼       │
@@ -39,18 +42,18 @@ This is a **profile-claiming** process: guests are pre-registered in the Firesto
 │                                                                 │       │
 │                                                                 ▼       │
 │                                                          ┌────────────┐ │
-│                                                          │onUserCreate│ │
-│                                                          │ Cloud Fn   │ │
+│                                                          │beforeUser  │ │
+│                                                          │Created     │ │
 │                                                          └─────┬──────┘ │
 │                                                                │        │
 │                                              ┌─────────────────┼───┐    │
 │                                              │                 │   │    │
 │                                              ▼                 ▼   │    │
-│                                        Email match?      No match  │    │
-│                                        profileClaimed    authorized│    │
-│                                        = true            = false   │    │
-│                                        authorized                  │    │
-│                                        = true                      │    │
+│                                        guests/{uid}      No doc    │    │
+│                                        exists?           authorized│    │
+│                                        profileClaimed    = false   │    │
+│                                        + claims          │         │    │
+│                                        authorized=true │         │    │
 │                                              │                     │    │
 │                                              ▼                     ▼    │
 │                                        Setup Wizard     "Invitation"    │
@@ -59,13 +62,14 @@ This is a **profile-claiming** process: guests are pre-registered in the Firesto
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Stage 1 — Magic Link Generation (Dashboard)
+### Stage 1 — Magic Link Generation (Dashboard or ops)
 
-1. An admin (the couple or best man) opens the admin dashboard and selects a guest from the Firestore `guests/` allowlist.
-2. The dashboard calls the `generateMagicLink` Cloud Function, passing the guest's UID.
-3. The Cloud Function uses the Firebase Admin SDK to mint a Custom Auth Token scoped to that guest's UID.
-4. The Cloud Function constructs a deep link URL (see Section 3) and returns it.
-5. The admin copies the link and shares it via WhatsApp/SMS (or any messaging channel).
+1. An admin opens the dashboard guest list (or runs ops scripts against production with a service account).
+2. **Dashboard path:** Next.js calls `POST /api/admin/guests/{uid}/magic-link` with an admin ID token (same issuance semantics as the callable).
+3. **Callable path:** Admin client calls the `generateMagicLink` HTTPS callable with `{ guestUid }`.
+4. The generator validates the caller is an admin, loads `guests/{guestUid}`, applies **rate limits**, optionally **revokes** prior active issuance rows for that guest, writes a row to `magic_link_issues/{linkId}`, and calls `createCustomToken(guestUid, { magicLinkId: linkId })`.
+5. The response includes `deepLinkUrl` (and on the web route, optional `whatsappShareUrl` / `smsShareUrl` when phone fields are present).
+6. The admin shares the link via WhatsApp/SMS (prefilled share URLs) or copy-paste.
 
 ### Stage 2 — Deep Link Handling (Flutter App)
 
@@ -74,22 +78,23 @@ This is a **profile-claiming** process: guests are pre-registered in the Firesto
 3. If the app is not installed, the link falls back to the web domain, which redirects to the appropriate app store.
 4. The app extracts the `token` query parameter from the deep link URL.
 5. The app calls `FirebaseAuth.instance.signInWithCustomToken(token)`.
-6. On success, Firebase Auth creates or signs in the user, triggering the `onUserCreate` Cloud Function.
+6. On success, Firebase Auth creates or updates the user. Firebase invokes the **blocking** Identity trigger **`beforeUserCreated`** (implemented in this repo as the exported Cloud Function `onUserCreate`) **before** the user record is committed.
 
-### Stage 3 — Cloud Function Validation (onUserCreate)
+### Stage 3 — Blocking validation (`beforeUserCreated` / `onUserCreate`)
 
-1. The `onUserCreate` function fires when Firebase Auth creates or signs in a user.
-2. It reads the authenticated user's `uid` from the Auth record.
-3. It queries the `guests/` collection for `guests/{uid}`.
-4. **If a match is found** and `profileClaimed` is `false`:
-   - Sets `profileClaimed = true` on the guest document.
-   - Sets custom claim `{ "authorized": true }` on the Auth user.
-5. **If a match is found** and `profileClaimed` is already `true`:
-   - Leaves the document unchanged (returning user or profile merge scenario).
-   - Ensures custom claim `{ "authorized": true }` is set.
-6. **If no match is found**:
-   - Sets custom claim `{ "authorized": false }`.
-   - The client will show the "Invitation not found" screen.
+1. The function runs for each new user sign-up attempt (including the first sign-in via custom token for that UID).
+2. It reads `uid` from the blocking event payload.
+3. It loads **`guests/{uid}`** by document ID (no email query).
+4. **If the document exists** and `profileClaimed` is `false`:
+   - Updates the guest document: `profileClaimed: true`, `updatedAt: serverTimestamp()`.
+   - Returns `{ customClaims: { authorized: true } }` (and `admin: true` if `guests.isAdmin === true`).
+5. **If the document exists** and `profileClaimed` is already `true`:
+   - Does not change the guest document.
+   - Returns `{ customClaims: { authorized: true } }` (and `admin` when applicable).
+6. **If the document does not exist**:
+   - Returns `{ customClaims: { authorized: false } }`.
+   - The client should treat missing allowlist as **no access** (see §5.4).
+7. **Issuance lifecycle (best-effort):** After a successful allowlist match, the function finds the newest **active** `magic_link_issues` row for that `guestUid` (`usedAt == null`, `revokedAt == null`) and sets `usedAt` to an ISO timestamp for audit. Failures here are logged but do **not** block sign-in.
 
 ### Stage 4 — Profile Claiming (Flutter App)
 
@@ -119,15 +124,34 @@ https://bodaentarifa.com/login?token={customAuthToken}&name={guestName}
 | `token`   | string | Yes      | Firebase Custom Auth Token (JWT, signed by Admin SDK) |
 | `name`    | string | No       | URL-encoded guest name for personalization             |
 
-### Token Specification
+### Token specification
 
-| Property         | Value                                              |
-|------------------|----------------------------------------------------|
-| Format           | JWT signed by Firebase Admin SDK service account   |
-| Lifetime         | 72 hours (recommended default)                     |
-| Configuration    | Via environment variable `MAGIC_LINK_TOKEN_TTL_HOURS` or Firebase Remote Config `magic_link_token_ttl_hours` |
-| Scope            | Contains the guest's `uid` as the token subject    |
-| Single-use       | No (token can be reused within its lifetime)       |
+| Property | Value |
+|----------|--------|
+| Format | JWT signed by the Firebase Admin SDK (custom token) |
+| Subject | The guest’s Firebase Auth `uid` |
+| Additional claims | `magicLinkId`: UUID of the `magic_link_issues` row created at issuance (for correlation and future strict policies) |
+| **Firebase-enforced expiry** | Custom tokens have a **fixed maximum lifetime of one hour** from minting (Firebase Auth platform limit). Guests must sign in within that window. |
+| **Operational “link validity” window** | Server-side `expiresAt` on `magic_link_issues` defaults to **`MAGIC_LINK_TTL_MINUTES`** (default **60**) from issuance, aligned with the hour cap. Tune via environment variables on Functions and the Next.js admin API. |
+| Reuse within one hour | The same JWT can be used for multiple `signInWithCustomToken` attempts until Firebase rejects it as expired. Issuance rows track `usedAt` for audit; optional `singleUse` flag is stored for policy documentation. |
+
+### Issuance audit collection (`magic_link_issues`)
+
+Each generation creates **`magic_link_issues/{linkId}`** (UUID) with at least:
+
+| Field | Purpose |
+|-------|---------|
+| `guestUid` | Guest UID / token subject |
+| `issuedBy` | Admin UID who minted the link |
+| `issuedAt` / `expiresAt` | ISO timestamps for auditing and cleanup hints |
+| `usedAt` / `revokedAt` / `revokedReason` | Lifecycle: consumed sign-in, or superseded when a newer link is issued |
+| `singleUse` | Mirrors env `MAGIC_LINK_SINGLE_USE_ENABLED` (reserved for stricter policies) |
+
+**Rate limits** (callable and web): counts of rows in `magic_link_issues` with `issuedAt` within `MAGIC_LINK_RATE_LIMIT_WINDOW_MINUTES` per guest and per admin; exceeding limits returns **resource exhausted** / HTTP 429.
+
+**Revoke previous:** When `MAGIC_LINK_REVOKE_PREVIOUS_ENABLED` is true (default), active rows for that guest are marked `revokedAt` / `revokedReason: superseded` before inserting the new row. **Note:** Older JWTs may remain valid until Firebase’s one-hour custom-token expiry unless additional validation is added at sign-in.
+
+Canonical Firestore field definitions: `firebase/docs/firestore-data-model.md` (including `magic_link_issues`).
 
 ### Domain Configuration
 
@@ -185,15 +209,15 @@ For the deep link to open the app automatically:
 
 ## 4. Data Contracts
 
-### 4.1 generateMagicLink Cloud Function
+### 4.1 `generateMagicLink` (HTTPS callable, Cloud Functions)
 
-**Caller:** Dashboard (web)
+**Caller:** Tooling that uses the Firebase client SDK with an authenticated user whose ID token includes **`admin: true`** (e.g. future automation). The **dashboard UI** uses the Next.js route in §4.2 instead of this callable.
 
-**Input (HTTPS callable):**
+**Input:**
 
 ```typescript
 interface GenerateMagicLinkRequest {
-  guestUid: string;  // UID of the guest from the guests/ collection
+  guestUid: string;  // Document ID in guests/ (Firebase Auth UID for that guest)
 }
 ```
 
@@ -201,65 +225,75 @@ interface GenerateMagicLinkRequest {
 
 ```typescript
 interface GenerateMagicLinkResponse {
-  deepLinkUrl: string;  // Full URL: https://bodaentarifa.com/login?token=...&name=...
-  expiresAt: string;    // ISO-8601 timestamp of token expiration
+  deepLinkUrl: string;   // https://{DEEP_LINK_DOMAIN}/login?token=...&name=...
+  issuedAt: string;      // ISO-8601 when the row was written
+  expiresAt: string;     // ISO-8601 operational expiry (see §3)
+  linkId: string;        // UUID; document ID in magic_link_issues/
 }
 ```
 
-**Behavior:**
+**Behavior (summary):**
 
-1. Validates the caller has admin privileges (`context.auth.token.admin === true`).
-2. Reads the guest document from `guests/{guestUid}` to retrieve `fullName` and phone delivery metadata.
-3. Calls `admin.auth().createCustomToken(guestUid)` to mint a Custom Auth Token.
-4. Constructs the deep link URL with the token and URL-encoded guest name.
-5. Returns the URL and expiration timestamp.
+1. Requires `request.auth` and `request.auth.token.admin === true`.
+2. Loads `guests/{guestUid}`; errors if missing.
+3. Enforces per-guest and per-admin **rate limits** via `magic_link_issues` counts (env: `MAGIC_LINK_RATE_LIMIT_*`).
+4. Optionally revokes prior active issuance rows (`MAGIC_LINK_REVOKE_PREVIOUS_ENABLED`, default true).
+5. Creates `magic_link_issues/{linkId}` then `createCustomToken(guestUid, { magicLinkId: linkId })`.
+6. Returns `deepLinkUrl`, `issuedAt`, `expiresAt`, `linkId`.
+
+**Environment variables (Functions):** `MAGIC_LINK_TTL_MINUTES`, `MAGIC_LINK_REVOKE_PREVIOUS_ENABLED`, `MAGIC_LINK_SINGLE_USE_ENABLED`, `MAGIC_LINK_RATE_LIMIT_WINDOW_MINUTES`, `MAGIC_LINK_RATE_LIMIT_PER_GUEST`, `MAGIC_LINK_RATE_LIMIT_PER_ADMIN`, `DEEP_LINK_DOMAIN`.
 
 **Errors:**
 
-| Code                  | Condition                              |
-|-----------------------|----------------------------------------|
-| `unauthenticated`     | Caller is not authenticated            |
-| `permission-denied`   | Caller does not have admin claim       |
-| `not-found`           | No guest document for the given UID    |
-| `internal`            | Token generation failed                |
+| Code | Condition |
+|------|-----------|
+| `unauthenticated` | Caller is not authenticated |
+| `permission-denied` | Caller does not have `admin` custom claim |
+| `invalid-argument` | Missing or invalid `guestUid` |
+| `not-found` | No `guests/{guestUid}` document |
+| `resource-exhausted` | Rate limit exceeded |
+| `internal` | Token mint or Firestore batch failed |
 
-### 4.2 onUserCreate Cloud Function
+### 4.2 Admin API — `POST /api/admin/guests/{uid}/magic-link` (Next.js)
 
-**Trigger:** `auth.user().onCreate` (Firebase Authentication)
+**Caller:** Web admin UI (Bearer ID token; admin allowlist in `config/admins`).
 
-**Input (from trigger):**
+**Output (JSON):** Same minting and `magic_link_issues` behavior as §4.1, plus delivery helpers when guest phone fields exist:
 
-```typescript
-interface UserRecord {
-  uid: string;
-  phoneNumber: string | undefined;
-  displayName: string | undefined;
-  // ... other Firebase Auth fields
-}
-```
+| Field | Description |
+|-------|-------------|
+| `magicLinkUrl` | Login URL with `token` query param |
+| `issuedAt`, `expiresAt`, `linkId` | Issuance metadata (parity with callable) |
+| `whatsappShareUrl` | `https://wa.me/{whatsappNumber}?text=...` when `whatsappNumber` is set (digits without `+`, see data model) |
+| `smsShareUrl` | `sms:{phoneE164}?body=...` when `phoneE164` is set (E.164 with `+`) |
+
+**HTTP errors:** `401` / `403` for auth; `404` guest missing; `429` rate limit; `500` on failure.
+
+Uses the same **`MAGIC_LINK_*`** environment variables as the Functions deployment where the admin app runs.
+
+### 4.3 `onUserCreate` — blocking `beforeUserCreated` (Identity)
+
+**Trigger:** Firebase Authentication **blocking** event **`beforeUserCreated`** (Gen2 Identity API). In code the export is named `onUserCreate`.
+
+**Input (from trigger):** Blocking identity event payload including at least `uid` (and optionally `email`, `phoneNumber`, etc.). **Allowlist logic uses only `uid` vs `guests/{uid}`.**
 
 **Behavior:**
 
-1. Reads `uid` from the `UserRecord`.
-2. Queries `guests/` collection document `guests/{uid}`.
-3. **Match found, `profileClaimed == false`:**
-   - Updates guest document: `{ profileClaimed: true, updatedAt: serverTimestamp() }`
-   - Sets custom claims: `admin.auth().setCustomUserClaims(uid, { authorized: true })`
-4. **Match found, `profileClaimed == true`:**
-   - Sets custom claims: `admin.auth().setCustomUserClaims(uid, { authorized: true })`
-   - Does not modify the guest document (profile already claimed).
-5. **No match:**
-   - Sets custom claims: `admin.auth().setCustomUserClaims(uid, { authorized: false })`
+1. Loads `guests/{uid}` by document ID.
+2. **Document exists:** update `profileClaimed` on first claim; return `{ customClaims: { authorized: true, admin?: true } }` from the blocking handler (Firebase applies these claims to the new user — **not** a separate `setCustomUserClaims` call in this flow).
+3. **Document missing:** return `{ customClaims: { authorized: false } }`.
+4. Best-effort: mark the latest active `magic_link_issues` row as used (`usedAt`), see Stage 3.
 
 **Writes:**
 
-| Target                    | Field              | Value                          |
-|---------------------------|--------------------|--------------------------------|
-| `guests/{guestUid}`       | `profileClaimed`   | `true`                         |
-| `guests/{guestUid}`       | `updatedAt`        | `serverTimestamp()`            |
-| Firebase Auth custom claims | `authorized`     | `true` or `false`              |
+| Target | Field | Value |
+|--------|--------|--------|
+| `guests/{uid}` | `profileClaimed` | `true` on first successful claim |
+| `guests/{uid}` | `updatedAt` | `serverTimestamp()` |
+| `magic_link_issues/*` | `usedAt`, `updatedAt` | Set when an active row is found (audit) |
+| Auth user (via blocking return) | `authorized`, `admin` | Booleans as above |
 
-### 4.3 Flutter App — Deep Link Consumption
+### 4.4 Flutter App — Deep Link Consumption
 
 **Reads from deep link URL:**
 
@@ -283,13 +317,21 @@ interface UserRecord {
 | `guests/{uid}`     | `fullName`      | Display in app UI                                |
 | `guests/{uid}`     | All fields      | Populate profile and settings                    |
 
+### 4.5 Ops script — `scripts/generate-magic-links.ts`
+
+**Caller:** Operators with a service account JSON (`GOOGLE_APPLICATION_CREDENTIALS` or path argument).
+
+**Behavior:** Queries Firestore for unclaimed guests (optional filter `--guest-email` or `--guest-phone`), mints `createCustomToken(uid)` **without** `magic_link_issues` rows or rate-limit counters. Outputs CSV columns including `whatsappShareUrl`, `smsShareUrl`, and `magicLinkUrl` for bulk send workflows.
+
+**Note:** For parity with §4.1–4.2 (audit + rate limits + revoke), prefer the **admin API** or **`generateMagicLink`** callable; use this script when you explicitly want a lightweight bulk export. Custom tokens are still bound by Firebase’s **one-hour** expiry.
+
 ---
 
 ## 5. Error Scenarios
 
 ### 5.1 Token Expired
 
-**Condition:** The Custom Auth Token has exceeded its configured lifetime (default: 72 hours).
+**Condition:** The Custom Auth Token has exceeded Firebase’s maximum lifetime (**one hour** from minting), or the client attempts sign-in after that window.
 
 **System behavior:** `signInWithCustomToken()` throws `FirebaseAuthException` with code `invalid-custom-token` or the token's internal expiry check fails.
 
@@ -309,11 +351,13 @@ interface UserRecord {
 
 **Logging:** `AuthFailure("Invalid token: ${errorCode}", stackTrace)` logged at `error` level. Include the raw error code for debugging but never log the token value.
 
-### 5.3 Profile Already Claimed by Another Auth Method
+### 5.3 Profile Already Claimed (same UID)
 
-**Condition:** A guest has already authenticated via Google or Apple Sign-In, and now taps a Magic Link.
+**Condition:** The guest already claimed their profile (`profileClaimed == true` on `guests/{uid}`) and taps another valid magic link or returns via the same UID (e.g. previously signed in with Google/Apple **using the same Firebase Auth UID** as the pre-created guest document).
 
-**System behavior:** `signInWithCustomToken()` creates a new Auth user with the guest's UID. If a user with that UID already exists, Firebase Auth updates the existing user. The `onUserCreate` function finds `profileClaimed == true` and sets `authorized: true` without modifying the guest document.
+**System behavior:** `signInWithCustomToken()` targets the same `uid`. **`beforeUserCreated`** finds `guests/{uid}`, leaves `profileClaimed` unchanged, and returns `authorized: true`.
+
+**Note:** Social sign-in for a UID that **does not** match a pre-created `guests/{uid}` document will yield `authorized: false` under the UID-first allowlist (unless a separate admin migration creates that document).
 
 **User-facing:** The app detects the profile is already claimed and the user has completed onboarding. It navigates directly to the Home tab. If the user has not completed onboarding (edge case), it shows the Setup Wizard.
 
@@ -347,26 +391,35 @@ The retry button re-attempts the `signInWithCustomToken()` call with the same to
 
 **Logging:** `NetworkFailure("Token exchange failed: ${error}", stackTrace)` logged at `warning` level.
 
+### 5.6 Link generation rate limited
+
+**Condition:** Too many `magic_link_issues` rows were created for the same guest or the same admin inside the configured sliding window.
+
+**System behavior:** `generateMagicLink` responds with `resource-exhausted`; the admin API responds with **HTTP 429**.
+
+**User-facing:** Admin UI should show a “try again later” message; backoff before bulk re-sends.
+
 ---
 
 ## 6. Workstream Responsibilities
 
 ### Dashboard (web)
 
-| Responsibility                        | Details                                                    |
-|---------------------------------------|------------------------------------------------------------|
-| Guest list UI                         | Display guests from `guests/` collection with claim status |
-| Link generation trigger               | Call `generateMagicLink` Cloud Function with guest UID     |
-| Link display and copy                 | Show generated URL, provide copy-to-clipboard button       |
-| Link sharing                          | Optional: direct WhatsApp share via `https://wa.me/?text=` |
-| Admin authentication                  | Google/Apple sign-in, must have `admin: true` custom claim |
+| Responsibility | Details |
+|----------------|---------|
+| Guest list UI | Display guests from `guests/` with claim status; search by name, email, or phone |
+| Link generation | `POST /api/admin/guests/{uid}/magic-link` (primary UI path) |
+| Link display | Show URL, copy; open WhatsApp / SMS when share URLs are returned |
+| Guest CRUD | Collect optional `email`, `phoneE164` (E.164), `whatsappNumber` (international digits without `+` for `wa.me`) per `firebase/docs/firestore-data-model.md` |
+| Admin authentication | Firebase sign-in + `config/admins` allowlist for dashboard admin API |
 
 ### Firebase Cloud Functions
 
-| Function             | Trigger           | Input               | Output / Side Effects                      |
-|----------------------|-------------------|----------------------|--------------------------------------------|
-| `generateMagicLink`  | HTTPS callable    | `{ guestUid }`       | `{ deepLinkUrl, expiresAt }`               |
-| `onUserCreate`       | `auth.user().onCreate` | `UserRecord`    | Sets custom claims, updates `profileClaimed` |
+| Function | Trigger | Input | Output / Side Effects |
+|----------|---------|-------|------------------------|
+| `generateMagicLink` | HTTPS callable | `{ guestUid }` | `{ deepLinkUrl, issuedAt, expiresAt, linkId }` + `magic_link_issues` row |
+| `onUserCreate` | `beforeUserCreated` (blocking) | Identity event (`uid`, …) | Returns `customClaims`; updates `guests/{uid}`; marks `magic_link_issues` used (best-effort) |
+| `cleanupExpiredMagicLinks` | Scheduled | — | Deletes stale **unauthorized** Auth users; respects `MAGIC_LINK_CLEANUP_DRY_RUN`; consults `magic_link_issues` for pending unexpired links |
 
 ### Flutter App
 
@@ -374,10 +427,19 @@ The retry button re-attempts the `signInWithCustomToken()` call with the same to
 |---------------------------------|--------------------------------------------------------------|
 | Deep link interception          | `app_links` package, handle cold start and warm start        |
 | Token extraction and exchange   | Parse `token` from URL, call `signInWithCustomToken()`       |
-| Claims check                    | Read `authorized` from ID token claims                       |
+| Claims check                    | Read `authorized` from ID token claims (and/or infer from `guests/{uid}` after sign-in, per app implementation) |
 | Onboarding routing              | New user → Setup Wizard; returning user → Home               |
 | Error screens                   | Token expired, invalid token, not found, network failure     |
 | Local onboarding flag           | Store completion in Drift/SharedPreferences                  |
+
+### Ops / scripts
+
+| Responsibility | Details |
+|----------------|---------|
+| Bulk link CSV | `scripts/generate-magic-links.ts` — optional `--guest-email` / `--guest-phone`; see `scripts/README.md` |
+| Preflight audit | `scripts/audit-guests.ts` — phone + UID consistency checks |
+| Guest backup | `scripts/export-guests-backup.ts` — JSON export before cutover |
+| Justfile shortcuts | `just ops-guest-audit`, `just ops-guest-backup`, `just ops-magic-links*` |
 
 ---
 
@@ -391,7 +453,7 @@ guests/{uid}
 ├── phoneE164: string?         # Canonical phone number for SMS delivery
 ├── fullName: string           # Display name
 ├── photoUrl: string?          # Profile photo (may be pre-set by couple)
-├── whatsappNumber: string?    # For contact preference
+├── whatsappNumber: string?    # International digits without + (WhatsApp / wa.me)
 ├── funFact: string?           # Personalization
 ├── relationToGrooms: string   # e.g., "friend", "family"
 ├── relationshipStatus: string # "soltero" | "enPareja" | "buscando"
@@ -401,14 +463,24 @@ guests/{uid}
 └── updatedAt: timestamp       # Updated on profile claim or edit
 ```
 
-Fields protected from client-side modification (enforced by Firestore rules): `email`, `phoneE164`, `uid`, `side`, `relationToGrooms`, `profileClaimed`, `createdAt`.
+Fields intended as **admin-only** (immutable by guest) are listed in `firebase/docs/firestore-data-model.md`. Firestore security rules in `firebase/firestore.rules` must stay aligned with that list (including `phoneE164` where applicable).
 
 ---
 
 ## 8. Security Considerations
 
-- **Custom Tokens vs. Email Link Auth:** This system deliberately uses Firebase Custom Tokens rather than Firebase Email Link Auth. Custom Tokens allow frictionless sharing via WhatsApp (no email inbox required) and give full control over the token's scope and lifetime.
-- **Token in URL:** The Custom Auth Token is passed as a query parameter. While this means it appears in browser history if the fallback page is visited, the token is short-lived (72h default) and scoped to a single guest UID.
+- **Custom Tokens vs. Email Link Auth:** This system deliberately uses Firebase Custom Tokens rather than Firebase Email Link Auth. Custom Tokens allow frictionless sharing via WhatsApp/SMS (no inbox required). **Phone numbers are for delivery and guest metadata only; allowlist is UID + `guests/{uid}`.**
+- **Token in URL:** The custom token is passed as the `token` query parameter. It appears in browser history or referrer logs if the user opens the link in a web view — mitigate with **short mint-to-use time**, ops discipline, and optional revoke/resend.
+- **Firebase custom token TTL:** Maximum **one hour** from minting. Operational `expiresAt` on `magic_link_issues` should match how you communicate freshness to guests.
+- **Issuance audit:** `magic_link_issues` supports rate limiting, superseded links, cleanup hints, and post-incident forensics.
 - **No password storage:** No passwords are ever created, stored, or transmitted.
-- **Allowlist enforcement:** Both the Cloud Function (custom claims) and Firestore rules (document-level access) enforce the guest allowlist. A user cannot access app data without a matching guest document.
-- **Admin-only link generation:** The `generateMagicLink` function validates the caller's `admin` custom claim before minting tokens.
+- **Allowlist enforcement:** Blocking `beforeUserCreated` sets `authorized` from `guests/{uid}`. Firestore rules still require authenticated reads/writes; guests without a document cannot be meaningfully authorized for app data.
+- **Admin-only link generation:** Callable requires `admin` JWT claim; Next.js route uses server-side admin verification (`requireAdmin` + `config/admins`).
+
+### Remote Config rollout keys (product / ops coordination)
+
+Template defaults live in `firebase/remoteconfig.template.json` (see `firebase/docs/remote-config-keys.md`):
+
+- `auth_uid_first_enabled` — documents UID-first policy for humans and tooling.
+- `auth_single_use_links_enabled` — feature gate for stricter single-use semantics when implemented end-to-end.
+- `auth_link_ttl_minutes` — suggested default minutes for ops playbooks (must not exceed Firebase’s one-hour custom-token cap).

@@ -34,9 +34,11 @@ target 'Runner' do
   target 'RunnerTests' do
     inherit! :search_paths
   end
-  # target 'ShareExtension' do
-  #   inherit! :search_paths
-  # end
+  # Must match the Xcode share extension target name exactly so the extension
+  # can import the receive_sharing_intent Swift module (see plugin README).
+  target 'ShareExtension' do
+    inherit! :search_paths
+  end
 end
 
 post_install do |installer|
