@@ -30,13 +30,14 @@
 
 ### `guests`
 
-Pre-populated by admins before the event. Each document represents one invited guest. The `profileClaimed` field transitions from `false` to `true` when the `onUserCreate` Cloud Function validates the guest's email against the allowlist.
+Pre-populated by admins before the event. Each document represents one invited guest. The `profileClaimed` field transitions from `false` to `true` when the `onUserCreate` Cloud Function validates the guest UID against the allowlist.
 
 **Document ID**: Guest UID (matches Firebase Auth UID)
 
 | Field | Type | Required | Purpose | Constraints |
 |---|---|---|---|---|
-| `email` | string | Yes | Guest's email, used for allowlist matching during auth | Unique across collection; lowercase |
+| `email` | string | No | Guest email metadata (optional post-migration) | Lowercase when present |
+| `phoneE164` | string | No | Canonical guest phone for SMS delivery | E.164 with leading `+` (e.g., `+34612345678`) |
 | `fullName` | string | Yes | Display name shown in directory, feed posts, notices | Max 100 characters |
 | `photoUrl` | string | No | Cloudinary public ID or full URL for profile photo | Null until guest uploads a photo |
 | `whatsappNumber` | string | No | International format phone number for WhatsApp deep links | No `+` prefix (e.g., `"34612345678"`) |
@@ -51,7 +52,7 @@ Pre-populated by admins before the event. Each document represents one invited g
 | `updatedAt` | timestamp | Yes | Last modification time | Server timestamp; updated on every write |
 
 **Field editability**:
-- **Admin-only (immutable by guest)**: `email`, `relationToGrooms`, `side`
+- **Admin-only (immutable by guest)**: `email`, `phoneE164`, `relationToGrooms`, `side`
 - **System-managed**: `profileClaimed`, `createdAt`, `updatedAt`
 - **Guest-editable**: `fullName`, `photoUrl`, `whatsappNumber`, `funFact`, `relationshipStatus`, `isDirectoryVisible`, `contactPreference`
 
@@ -156,6 +157,25 @@ Content that becomes visible to guests at a specific time. Firestore security ru
 ```
 
 > The `seatingChart` content type primarily references the `seating` collection for per-guest assignments. The `content` map holds supplementary metadata only.
+
+---
+
+### `magic_link_issues`
+
+Operational audit trail for issued magic links and lifecycle actions (revoked/used).
+
+**Document ID**: `linkId` (UUID generated at issuance)
+
+| Field | Type | Required | Purpose | Constraints |
+|---|---|---|---|---|
+| `guestUid` | string | Yes | Guest associated to the issued link | Must match `guests/{uid}` |
+| `issuedBy` | string | Yes | Admin UID that generated the link | Must be an admin user |
+| `issuedAt` | string | Yes | ISO timestamp when link was generated | UTC ISO-8601 |
+| `expiresAt` | string | Yes | ISO timestamp when link should be considered expired | UTC ISO-8601 |
+| `usedAt` | string/null | Yes | ISO timestamp when login consumed the link | `null` until consumed |
+| `revokedAt` | string/null | Yes | ISO timestamp when link was revoked | `null` when active |
+| `revokedReason` | string/null | Yes | Reason code for revocation | e.g., `superseded` |
+| `singleUse` | bool | Yes | Indicates whether issuance expected one-time use | Controlled by config |
 
 ---
 

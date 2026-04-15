@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminFirestore } from '@/lib/firebase-admin';
 import { requireAdmin } from '@/lib/admin-api-auth';
+import { normalizeE164Phone, normalizeWhatsappNumber } from '@/lib/phone';
 import type { UpdateGuestInput } from '@/types/guest';
 
 const GUESTS_COLLECTION = 'guests';
@@ -28,9 +29,10 @@ export async function PUT(
       );
     }
 
-    if (body.email) {
+    if (body.email?.trim()) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(body.email)) {
+      const normalizedEmail = body.email.trim().toLowerCase();
+      if (!emailRegex.test(normalizedEmail)) {
         return NextResponse.json(
           { error: 'El formato del email no es válido' },
           { status: 400 }
@@ -39,7 +41,7 @@ export async function PUT(
 
       const existingQuery = await adminFirestore
         .collection(GUESTS_COLLECTION)
-        .where('email', '==', body.email.trim().toLowerCase())
+        .where('email', '==', normalizedEmail)
         .get();
 
       const otherWithSameEmail = existingQuery.docs.find((d) => d.id !== uid);
@@ -58,11 +60,31 @@ export async function PUT(
       updatedAt: new Date().toISOString(),
     };
 
-    if (guestFields.email) {
+    if (guestFields.email !== undefined) {
       updateData.email = guestFields.email.trim().toLowerCase();
     }
     if (guestFields.fullName) {
       updateData.fullName = guestFields.fullName.trim();
+    }
+    if (guestFields.phoneE164 !== undefined) {
+      const normalized = normalizeE164Phone(guestFields.phoneE164);
+      if (guestFields.phoneE164 && !normalized) {
+        return NextResponse.json(
+          { error: 'El teléfono debe estar en formato internacional válido' },
+          { status: 400 }
+        );
+      }
+      updateData.phoneE164 = normalized ?? '';
+    }
+    if (guestFields.whatsappNumber !== undefined) {
+      const normalized = normalizeWhatsappNumber(guestFields.whatsappNumber);
+      if (guestFields.whatsappNumber && !normalized) {
+        return NextResponse.json(
+          { error: 'El WhatsApp debe ser un número internacional válido' },
+          { status: 400 }
+        );
+      }
+      updateData.whatsappNumber = normalized ?? '';
     }
 
     // Remove undefined values

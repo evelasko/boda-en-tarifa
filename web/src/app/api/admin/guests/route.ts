@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminFirestore } from '@/lib/firebase-admin';
 import { requireAdmin } from '@/lib/admin-api-auth';
+import { normalizeE164Phone, normalizeWhatsappNumber } from '@/lib/phone';
 import type { Guest, GuestWithRSVP, CreateGuestInput } from '@/types/guest';
 import type { AttendanceStatus } from '@/types/rsvp';
 
@@ -43,6 +44,7 @@ export async function GET(request: NextRequest) {
         email: raw.email ?? '',
         fullName: raw.fullName ?? '',
         photoUrl: raw.photoUrl,
+        phoneE164: raw.phoneE164,
         whatsappNumber: raw.whatsappNumber,
         funFact: raw.funFact,
         relationToGrooms: raw.relationToGrooms ?? '',
@@ -69,7 +71,9 @@ export async function GET(request: NextRequest) {
       guests = guests.filter(
         (g) =>
           g.fullName.toLowerCase().includes(search) ||
-          g.email.toLowerCase().includes(search)
+          g.email.toLowerCase().includes(search) ||
+          (g.phoneE164 ?? '').toLowerCase().includes(search) ||
+          (g.whatsappNumber ?? '').toLowerCase().includes(search)
       );
     }
 
@@ -90,43 +94,56 @@ export async function POST(request: NextRequest) {
   try {
     const body: CreateGuestInput = await request.json();
 
-    if (!body.fullName?.trim() || !body.email?.trim() || !body.side || !body.relationToGrooms?.trim() || !body.relationshipStatus) {
+    if (!body.fullName?.trim() || !body.side || !body.relationToGrooms?.trim() || !body.relationshipStatus) {
       return NextResponse.json(
-        { error: 'Faltan campos obligatorios: fullName, email, side, relationToGrooms, relationshipStatus' },
+        { error: 'Faltan campos obligatorios: fullName, side, relationToGrooms, relationshipStatus' },
         { status: 400 }
       );
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(body.email)) {
+    const normalizedEmail = body.email?.trim() ? body.email.trim().toLowerCase() : '';
+    const normalizedPhoneE164 = normalizeE164Phone(body.phoneE164);
+    const normalizedWhatsapp = normalizeWhatsappNumber(body.whatsappNumber);
+
+    if (!normalizedEmail && !normalizedPhoneE164 && !normalizedWhatsapp) {
       return NextResponse.json(
-        { error: 'El formato del email no es válido' },
+        { error: 'Debes proporcionar al menos un email o un teléfono válido' },
         { status: 400 }
       );
     }
 
-    const existingQuery = await adminFirestore
-      .collection(GUESTS_COLLECTION)
-      .where('email', '==', body.email.trim().toLowerCase())
-      .get();
+    if (normalizedEmail) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(normalizedEmail)) {
+        return NextResponse.json(
+          { error: 'El formato del email no es válido' },
+          { status: 400 }
+        );
+      }
+      const existingQuery = await adminFirestore
+        .collection(GUESTS_COLLECTION)
+        .where('email', '==', normalizedEmail)
+        .get();
 
-    if (!existingQuery.empty) {
-      return NextResponse.json(
-        { error: 'Ya existe un invitado con este email' },
-        { status: 400 }
-      );
+      if (!existingQuery.empty) {
+        return NextResponse.json(
+          { error: 'Ya existe un invitado con este email' },
+          { status: 400 }
+        );
+      }
     }
 
     const now = new Date().toISOString();
     const docRef = adminFirestore.collection(GUESTS_COLLECTION).doc();
     const guest: Omit<Guest, 'uid'> = {
       fullName: body.fullName.trim(),
-      email: body.email.trim().toLowerCase(),
+      email: normalizedEmail,
       side: body.side,
       relationToGrooms: body.relationToGrooms.trim(),
       relationshipStatus: body.relationshipStatus,
       isDirectoryVisible: body.isDirectoryVisible ?? true,
-      whatsappNumber: body.whatsappNumber?.trim() || '',
+      phoneE164: normalizedPhoneE164 ?? '',
+      whatsappNumber: normalizedWhatsapp ?? '',
       profileClaimed: false,
       createdAt: now,
       updatedAt: now,

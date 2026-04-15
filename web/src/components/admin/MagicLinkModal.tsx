@@ -10,13 +10,15 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Check, Copy, Loader2 } from 'lucide-react';
+import { Check, Copy, Loader2, MessageCircle, Send } from 'lucide-react';
 
 interface MagicLinkModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   guestName: string;
   magicLinkUrl: string | null;
+  whatsappShareUrl: string | null;
+  smsShareUrl: string | null;
   loading: boolean;
   error: string | null;
 }
@@ -26,6 +28,8 @@ export default function MagicLinkModal({
   onOpenChange,
   guestName,
   magicLinkUrl,
+  whatsappShareUrl,
+  smsShareUrl,
   loading,
   error,
 }: MagicLinkModalProps) {
@@ -100,6 +104,45 @@ export default function MagicLinkModal({
             {copied && (
               <p className="text-xs text-sage font-medium">Copiado al portapapeles</p>
             )}
+
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={!whatsappShareUrl}
+                asChild={Boolean(whatsappShareUrl)}
+              >
+                {whatsappShareUrl ? (
+                  <a href={whatsappShareUrl} target="_blank" rel="noreferrer">
+                    <MessageCircle className="mr-1.5 h-4 w-4" />
+                    Compartir por WhatsApp
+                  </a>
+                ) : (
+                  <span>
+                    <MessageCircle className="mr-1.5 h-4 w-4 inline-block" />
+                    WhatsApp no disponible
+                  </span>
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={!smsShareUrl}
+                asChild={Boolean(smsShareUrl)}
+              >
+                {smsShareUrl ? (
+                  <a href={smsShareUrl}>
+                    <Send className="mr-1.5 h-4 w-4" />
+                    Enviar por SMS
+                  </a>
+                ) : (
+                  <span>
+                    <Send className="mr-1.5 h-4 w-4 inline-block" />
+                    SMS no disponible
+                  </span>
+                )}
+              </Button>
+            </div>
           </div>
         )}
 

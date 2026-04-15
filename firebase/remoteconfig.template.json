@@ -48,6 +48,27 @@
       },
       "description": "Deadline for automatic film development in the Unfiltered Camera feature. ISO 8601 timestamp in Europe/Madrid timezone.",
       "valueType": "STRING"
+    },
+    "auth_uid_first_enabled": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "Feature flag for UID-first guest authorization in beforeUserCreated.",
+      "valueType": "BOOLEAN"
+    },
+    "auth_single_use_links_enabled": {
+      "defaultValue": {
+        "value": "false"
+      },
+      "description": "Feature flag for enforcing single-use magic links.",
+      "valueType": "BOOLEAN"
+    },
+    "auth_link_ttl_minutes": {
+      "defaultValue": {
+        "value": "60"
+      },
+      "description": "Default magic-link TTL in minutes used by operational tooling.",
+      "valueType": "NUMBER"
     }
   }
 }

@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "generate-links": "tsx generate-magic-links.ts",
-    "generate-links:dry": "tsx generate-magic-links.ts --dry-run"
+    "generate-links:dry": "tsx generate-magic-links.ts --dry-run",
+    "audit:guests": "tsx audit-guests.ts",
+    "backup:guests": "tsx export-guests-backup.ts",
+    "seed:emulator": "tsx seed-emulator.ts",
+    "clear:emulator": "tsx clear-emulator.ts"
   },
   "dependencies": {
     "firebase-admin": "^13.6.0"

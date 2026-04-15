@@ -2,7 +2,7 @@
 
 > **Project:** Boda en Tarifa (Flutter + Next.js + Firebase)
 > **Date:** March 2026
-> **Bundle IDs:** `com.example.bodaEnTarifaApp` (iOS) / `com.example.boda_en_tarifa_app` (Android)
+> **Bundle IDs:** `com.example.bodaEnTarifaApp` (iOS) / `com.misfitcoders.plusone` (Android)
 > **Domain:** `bodaentarifa.com`
 
 This guide covers every step required to fully configure deep linking (Universal Links on iOS, App Links on Android) and push notifications (Firebase Cloud Messaging + local notifications) for both platforms. It reflects the current state of the codebase and identifies what is already done vs. what remains.
@@ -210,7 +210,7 @@ Create the file `web/public/.well-known/assetlinks.json`:
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "com.example.boda_en_tarifa_app",
+      "package_name": "com.misfitcoders.plusone",
       "sha256_cert_fingerprints": [
         "YOUR_SHA256_FINGERPRINT_HERE"
       ]
@@ -349,17 +349,17 @@ This only works if the associated-domains validation can be completed (which req
 adb shell am start -a android.intent.action.VIEW \
   -c android.intent.category.BROWSABLE \
   -d "https://bodaentarifa.com/login?token=test123&name=TestGuest" \
-  com.example.boda_en_tarifa_app
+  com.misfitcoders.plusone
 ```
 
 ### 6.4 Verify App Link Verification (Android)
 
 ```bash
 # Check verification status
-adb shell pm get-app-links com.example.boda_en_tarifa_app
+adb shell pm get-app-links com.misfitcoders.plusone
 
 # Force re-verify
-adb shell pm verify-app-links --re-verify com.example.boda_en_tarifa_app
+adb shell pm verify-app-links --re-verify com.misfitcoders.plusone
 ```
 
 ---
@@ -372,7 +372,7 @@ Your Firebase project `boda-en-tarifa` (ID: `501055602355`) is already configure
 
 1. Go to **Project Settings > General**.
 2. Confirm both apps are listed:
-   - Android: `com.example.boda_en_tarifa_app`
+   - Android: `com.misfitcoders.plusone`
    - iOS: `com.example.bodaEnTarifaApp`
 
 ### 7.2 Enable Cloud Messaging API

@@ -16,7 +16,7 @@ For detailed implementation patterns, see:
 
 ## 1. Overview
 
-The Magic Link system uses **Firebase Custom Tokens** (not Firebase Email Link Auth) to achieve zero-friction onboarding. An admin generates a personalized deep link for each guest, shares it via WhatsApp or email, and the guest taps the link to land directly inside the app — authenticated and ready for onboarding.
+The Magic Link system uses **Firebase Custom Tokens** (not Firebase Email Link Auth) to achieve zero-friction onboarding. An admin generates a personalized deep link for each guest, shares it via WhatsApp/SMS, and the guest taps the link to land directly inside the app — authenticated and ready for onboarding.
 
 This is a **profile-claiming** process: guests are pre-registered in the Firestore `guests/` collection before any authentication happens. Authentication simply binds a Firebase Auth identity to an existing guest record.
 
@@ -65,7 +65,7 @@ This is a **profile-claiming** process: guests are pre-registered in the Firesto
 2. The dashboard calls the `generateMagicLink` Cloud Function, passing the guest's UID.
 3. The Cloud Function uses the Firebase Admin SDK to mint a Custom Auth Token scoped to that guest's UID.
 4. The Cloud Function constructs a deep link URL (see Section 3) and returns it.
-5. The admin copies the link and shares it via WhatsApp, email, or any messaging channel.
+5. The admin copies the link and shares it via WhatsApp/SMS (or any messaging channel).
 
 ### Stage 2 — Deep Link Handling (Flutter App)
 
@@ -79,8 +79,8 @@ This is a **profile-claiming** process: guests are pre-registered in the Firesto
 ### Stage 3 — Cloud Function Validation (onUserCreate)
 
 1. The `onUserCreate` function fires when Firebase Auth creates or signs in a user.
-2. It reads the authenticated user's email from the Auth record.
-3. It queries the `guests/` collection for a document where `email` matches.
+2. It reads the authenticated user's `uid` from the Auth record.
+3. It queries the `guests/` collection for `guests/{uid}`.
 4. **If a match is found** and `profileClaimed` is `false`:
    - Sets `profileClaimed = true` on the guest document.
    - Sets custom claim `{ "authorized": true }` on the Auth user.
@@ -209,7 +209,7 @@ interface GenerateMagicLinkResponse {
 **Behavior:**
 
 1. Validates the caller has admin privileges (`context.auth.token.admin === true`).
-2. Reads the guest document from `guests/{guestUid}` to retrieve `email` and `fullName`.
+2. Reads the guest document from `guests/{guestUid}` to retrieve `fullName` and phone delivery metadata.
 3. Calls `admin.auth().createCustomToken(guestUid)` to mint a Custom Auth Token.
 4. Constructs the deep link URL with the token and URL-encoded guest name.
 5. Returns the URL and expiration timestamp.
@@ -232,7 +232,7 @@ interface GenerateMagicLinkResponse {
 ```typescript
 interface UserRecord {
   uid: string;
-  email: string | undefined;
+  phoneNumber: string | undefined;
   displayName: string | undefined;
   // ... other Firebase Auth fields
 }
@@ -240,8 +240,8 @@ interface UserRecord {
 
 **Behavior:**
 
-1. Reads `email` from the `UserRecord`.
-2. Queries `guests/` collection: `where("email", "==", email)`.
+1. Reads `uid` from the `UserRecord`.
+2. Queries `guests/` collection document `guests/{uid}`.
 3. **Match found, `profileClaimed == false`:**
    - Updates guest document: `{ profileClaimed: true, updatedAt: serverTimestamp() }`
    - Sets custom claims: `admin.auth().setCustomUserClaims(uid, { authorized: true })`
@@ -319,18 +319,18 @@ interface UserRecord {
 
 **Logging:** `info` level log noting profile merge: `"Profile already claimed for UID {uid}, skipping claim step"`.
 
-### 5.4 Email Not in Firestore Allowlist
+### 5.4 UID Not in Firestore Allowlist
 
-**Condition:** The authenticated email does not match any document in the `guests/` collection. This can happen if a social auth user signs in with an unregistered email.
+**Condition:** The authenticated UID does not match any document in the `guests/` collection.
 
 **System behavior:** `onUserCreate` sets custom claim `{ authorized: false }`.
 
 **User-facing:** A hard wall screen:
 > "Invitation not found. This app is for invited guests of Enrique & Manuel's wedding. If you believe this is an error, please contact us."
 >
-> [Contact the couple] (opens WhatsApp or email)
+> [Contact the couple] (opens WhatsApp)
 
-**Logging:** `AuthFailure("Email not in allowlist: ${email}", stackTrace)` logged at `warning` level.
+**Logging:** `AuthFailure("UID not in allowlist: ${uid}", stackTrace)` logged at `warning` level.
 
 ### 5.5 Network Failure During Token Exchange
 
@@ -387,7 +387,8 @@ Reference: `app/specs/technical-architecture.md` Section 7.1
 
 ```
 guests/{uid}
-├── email: string              # Used for allowlist matching
+├── email: string?             # Optional metadata (not auth-critical)
+├── phoneE164: string?         # Canonical phone number for SMS delivery
 ├── fullName: string           # Display name
 ├── photoUrl: string?          # Profile photo (may be pre-set by couple)
 ├── whatsappNumber: string?    # For contact preference
@@ -400,7 +401,7 @@ guests/{uid}
 └── updatedAt: timestamp       # Updated on profile claim or edit
 ```
 
-Fields protected from client-side modification (enforced by Firestore rules): `email`, `uid`, `side`, `relationToGrooms`, `profileClaimed`, `createdAt`.
+Fields protected from client-side modification (enforced by Firestore rules): `email`, `phoneE164`, `uid`, `side`, `relationToGrooms`, `profileClaimed`, `createdAt`.
 
 ---
 

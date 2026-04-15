@@ -19,11 +19,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Upload, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { normalizeE164Phone } from '@/lib/phone';
 import type { CSVGuestRow, CSVValidationResult } from '@/types/guest';
 
 const VALID_SIDES = ['novioA', 'novioB', 'ambos'];
 const VALID_STATUSES = ['soltero', 'enPareja', 'buscando'];
-const REQUIRED_HEADERS = ['fullName', 'email', 'side', 'relationToGrooms', 'relationshipStatus'];
+const REQUIRED_HEADERS = ['fullName', 'side', 'relationToGrooms', 'relationshipStatus'];
 
 interface CSVImportModalProps {
   open: boolean;
@@ -115,6 +116,7 @@ export default function CSVImportModal({
       const data: CSVGuestRow = {
         fullName: cols[headerMap['fullName']] || '',
         email: cols[headerMap['email']] || '',
+        phoneE164: cols[headerMap['phoneE164']] || '',
         side: cols[headerMap['side']] || '',
         relationToGrooms: cols[headerMap['relationToGrooms']] || '',
         relationshipStatus: cols[headerMap['relationshipStatus']] || '',
@@ -122,13 +124,19 @@ export default function CSVImportModal({
 
       const errors: string[] = [];
       if (!data.fullName.trim()) errors.push('Nombre vacío');
-      if (!data.email.trim()) errors.push('Email vacío');
-      else if (!emailRegex.test(data.email.trim())) errors.push('Email inválido');
-      else {
+      if (data.email?.trim()) {
+        if (!emailRegex.test(data.email.trim())) errors.push('Email inválido');
         const lowerEmail = data.email.trim().toLowerCase();
         if (existingEmails.has(lowerEmail)) errors.push('Email ya registrado');
         if (seenEmails.has(lowerEmail)) errors.push('Email duplicado en CSV');
         seenEmails.add(lowerEmail);
+      }
+      const normalizedPhone = normalizeE164Phone(data.phoneE164);
+      if (data.phoneE164?.trim() && !normalizedPhone) {
+        errors.push('phoneE164 inválido');
+      }
+      if (!data.email?.trim() && !normalizedPhone) {
+        errors.push('Requiere email o phoneE164 válido');
       }
       if (!data.side.trim()) errors.push('Lado vacío');
       else if (!VALID_SIDES.includes(data.side.trim())) errors.push(`Lado inválido: ${data.side}`);
@@ -246,9 +254,11 @@ export default function CSVImportModal({
             <div className="bg-cream/50 rounded p-4 text-sm text-charcoal/60">
               <p className="font-medium mb-1">Formato esperado del CSV:</p>
               <code className="block bg-white rounded p-2 text-xs font-mono border">
-                fullName,email,side,relationToGrooms,relationshipStatus
+                fullName,email,phoneE164,side,relationToGrooms,relationshipStatus
                 <br />
-                Juan García,juan@email.com,novioA,Primo,soltero
+                Juan García,juan@email.com,,novioA,Primo,soltero
+                <br />
+                Ana Mar,,+34600111222,novioB,Amiga,enPareja
               </code>
               <p className="mt-2">
                 Valores válidos para <strong>side</strong>: novioA, novioB, ambos

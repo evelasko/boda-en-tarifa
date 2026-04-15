@@ -9,6 +9,7 @@ export interface Guest {
   email: string;
   fullName: string;
   photoUrl?: string;
+  phoneE164?: string;
   whatsappNumber?: string;
   funFact?: string;
   relationToGrooms: string;
@@ -35,11 +36,12 @@ export interface GuestWithSeating extends GuestWithRSVP {
 
 export interface CreateGuestInput {
   fullName: string;
-  email: string;
+  email?: string;
   side: GuestSide;
   relationToGrooms: string;
   relationshipStatus: RelationshipStatus;
   isDirectoryVisible?: boolean;
+  phoneE164?: string;
   whatsappNumber?: string;
 }
 
@@ -50,6 +52,7 @@ export interface UpdateGuestInput {
   relationToGrooms?: string;
   relationshipStatus?: RelationshipStatus;
   isDirectoryVisible?: boolean;
+  phoneE164?: string;
   whatsappNumber?: string;
   tableName?: string;
   seatNumber?: number;
@@ -57,7 +60,8 @@ export interface UpdateGuestInput {
 
 export interface CSVGuestRow {
   fullName: string;
-  email: string;
+  email?: string;
+  phoneE164?: string;
   side: string;
   relationToGrooms: string;
   relationshipStatus: string;

@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.boda_en_tarifa_app"
+    namespace = "com.misfitcoders.plusone"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

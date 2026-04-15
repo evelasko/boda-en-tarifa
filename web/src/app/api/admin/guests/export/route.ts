@@ -63,11 +63,13 @@ export async function GET(request: NextRequest) {
     if (search) {
       guests = guests.filter(
         (g) => g.fullName.toLowerCase().includes(search) || g.email.toLowerCase().includes(search)
+          || (g.phoneE164 ?? '').toLowerCase().includes(search)
+          || (g.whatsappNumber ?? '').toLowerCase().includes(search)
       );
     }
 
     const headers = [
-      'UID', 'Nombre Completo', 'Email', 'Lado', 'Relación con Novios',
+      'UID', 'Nombre Completo', 'Email', 'PhoneE164', 'Lado', 'Relación con Novios',
       'Estado Sentimental', 'Perfil Reclamado', 'Visible en Directorio',
       'WhatsApp', 'Estado RSVP', 'Mesa', 'Asiento',
     ];
@@ -76,6 +78,7 @@ export async function GET(request: NextRequest) {
       g.uid,
       escapeCSV(g.fullName),
       escapeCSV(g.email),
+      escapeCSV(g.phoneE164 || ''),
       g.side,
       escapeCSV(g.relationToGrooms),
       g.relationshipStatus,

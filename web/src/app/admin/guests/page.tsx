@@ -73,6 +73,8 @@ export default function GuestsPage() {
   const [magicLinkOpen, setMagicLinkOpen] = useState(false);
   const [magicLinkGuest, setMagicLinkGuest] = useState<string>('');
   const [magicLinkUrl, setMagicLinkUrl] = useState<string | null>(null);
+  const [magicLinkWhatsappShareUrl, setMagicLinkWhatsappShareUrl] = useState<string | null>(null);
+  const [magicLinkSmsShareUrl, setMagicLinkSmsShareUrl] = useState<string | null>(null);
   const [magicLinkLoading, setMagicLinkLoading] = useState(false);
   const [magicLinkError, setMagicLinkError] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<GuestWithRSVP | null>(null);
@@ -217,6 +219,8 @@ export default function GuestsPage() {
     if (!user) return;
     setMagicLinkGuest(guest.fullName);
     setMagicLinkUrl(null);
+    setMagicLinkWhatsappShareUrl(null);
+    setMagicLinkSmsShareUrl(null);
     setMagicLinkError(null);
     setMagicLinkLoading(true);
     setMagicLinkOpen(true);
@@ -228,6 +232,8 @@ export default function GuestsPage() {
       if (!res.ok) throw new Error('Error generating magic link');
       const data = await res.json();
       setMagicLinkUrl(data.magicLinkUrl);
+      setMagicLinkWhatsappShareUrl(data.whatsappShareUrl ?? null);
+      setMagicLinkSmsShareUrl(data.smsShareUrl ?? null);
     } catch {
       setMagicLinkError('Error al generar el magic link');
     } finally {
@@ -239,7 +245,16 @@ export default function GuestsPage() {
     if (!user || selectedIds.size === 0) return;
 
     const selectedGuests = guests.filter((g) => selectedIds.has(g.uid));
-    const results: Array<{ uid: string; fullName: string; email: string; magicLinkUrl: string }> = [];
+    const results: Array<{
+      uid: string;
+      fullName: string;
+      email: string;
+      phoneE164: string;
+      whatsappNumber: string;
+      whatsappShareUrl: string;
+      smsShareUrl: string;
+      magicLinkUrl: string;
+    }> = [];
 
     for (const guest of selectedGuests) {
       try {
@@ -252,6 +267,10 @@ export default function GuestsPage() {
             uid: guest.uid,
             fullName: guest.fullName,
             email: guest.email,
+            phoneE164: data.guestPhoneE164 ?? guest.phoneE164 ?? '',
+            whatsappNumber: data.guestWhatsappNumber ?? guest.whatsappNumber ?? '',
+            whatsappShareUrl: data.whatsappShareUrl ?? '',
+            smsShareUrl: data.smsShareUrl ?? '',
             magicLinkUrl: data.magicLinkUrl,
           });
         }
@@ -262,8 +281,11 @@ export default function GuestsPage() {
 
     if (results.length > 0) {
       const csv = [
-        'uid,fullName,email,magicLinkUrl',
-        ...results.map((r) => `${r.uid},"${r.fullName}",${r.email},${r.magicLinkUrl}`),
+        'uid,fullName,email,phoneE164,whatsappNumber,whatsappShareUrl,smsShareUrl,magicLinkUrl',
+        ...results.map(
+          (r) =>
+            `${r.uid},"${r.fullName}",${r.email},${r.phoneE164},${r.whatsappNumber},${r.whatsappShareUrl},${r.smsShareUrl},${r.magicLinkUrl}`
+        ),
       ].join('\n');
       downloadCSV(csv, `magic-links-${new Date().toISOString().slice(0, 10)}.csv`);
     }
@@ -345,7 +367,7 @@ export default function GuestsPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-charcoal/40" />
           <Input
-            placeholder="Buscar por nombre o email..."
+            placeholder="Buscar por nombre, email o teléfono..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -463,6 +485,8 @@ export default function GuestsPage() {
         onOpenChange={setMagicLinkOpen}
         guestName={magicLinkGuest}
         magicLinkUrl={magicLinkUrl}
+        whatsappShareUrl={magicLinkWhatsappShareUrl}
+        smsShareUrl={magicLinkSmsShareUrl}
         loading={magicLinkLoading}
         error={magicLinkError}
       />

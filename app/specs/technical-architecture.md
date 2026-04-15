@@ -932,11 +932,11 @@ Since guests are pre-registered in Firestore, authentication is a profile-claimi
 
 ### 10.3 Social Auth (Google / Apple)
 
-Standard `google_sign_in` and `sign_in_with_apple` packages → Firebase credential. Same Cloud Function validation via email match.
+Standard `google_sign_in` and `sign_in_with_apple` packages → Firebase credential. Same Cloud Function validation via UID allowlist (`guests/{uid}`).
 
 ### 10.4 Access Control
 
-If a user authenticates with an email not in the pre-loaded guest list, the Cloud Function sets a custom claim `{ "authorized": false }` and the client shows an "Invitation not found" screen. Firestore rules additionally check `request.auth != null` (authorized users always have a matching guest doc).
+If a user authenticates with a UID not present in the pre-loaded guest list, the Cloud Function sets a custom claim `{ "authorized": false }` and the client shows an "Invitation not found" screen. Firestore rules additionally check `request.auth != null` (authorized users always have a matching guest doc).
 
 ---
 
@@ -1211,7 +1211,7 @@ class WeatherRepositoryImpl implements WeatherRepository {
 
 | Concern | Mitigation |
 |---|---|
-| Unauthorized access | Firebase Auth + Firestore rules. Only pre-registered emails can claim profiles. |
+| Unauthorized access | Firebase Auth + Firestore rules. Only pre-registered guest UIDs can claim profiles. |
 | Time-gate bypass | Server-side enforcement via Firestore `request.time` rules. |
 | Photo content | Cloudinary unsigned preset restricted to allowed formats/sizes. No moderation needed (trusted guest list). |
 | EXIF / location data | Stripped client-side before upload to protect guest privacy. |
@@ -1278,7 +1278,7 @@ All functions are 2nd generation (Cloud Functions for Firebase v2), written in T
 
 | Function | Trigger | Description |
 |---|---|---|
-| `onUserCreate` | `auth.user().onCreate` | Validates new user email against `guests` collection. Sets `profileClaimed = true` if match, sets custom claims. Denies unauthorized emails. |
+| `onUserCreate` | `auth.user().onCreate` | Validates new user UID against `guests/{uid}`. Sets `profileClaimed = true` if match, sets custom claims. Denies unauthorized UIDs. |
 | `sendEventReminder` | `scheduler.onSchedule` | Sends FCM to `wedding` topic at configured times before each event. |
 | `sendContentUnlockNotification` | `scheduler.onSchedule` | Sends FCM when time-gated content unlocks (cocktail menu, seating, banquet). |
 | `triggerFilmDevelopment` | `scheduler.onSchedule` | At 05:00 AM May 31st, sends FCM to all users who haven't used all 24 exposures, notifying them their film is developed. |

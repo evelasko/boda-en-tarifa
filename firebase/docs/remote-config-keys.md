@@ -232,3 +232,15 @@ A JSON object with three keys:
 **Purpose:** Deadline for automatic film "development" in the Unfiltered Camera feature. When reached, any user who hasn't completed 24 exposures has their film automatically revealed.
 
 **Default:** `2026-05-31T05:00:00+02:00` (5:00 AM on May 31, Europe/Madrid)
+
+---
+
+## Auth rollout keys
+
+These keys support safe rollout and incident rollback for phone-delivered magic-link auth.
+
+| Key | Type | Default | Purpose |
+|-----|------|---------|---------|
+| `auth_uid_first_enabled` | boolean | `true` | Controls UID-first guest authorization behavior |
+| `auth_single_use_links_enabled` | boolean | `false` | Feature gate for strict single-use semantics |
+| `auth_link_ttl_minutes` | number | `60` | Suggested default TTL used by tooling and ops playbooks |

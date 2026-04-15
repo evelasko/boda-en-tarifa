@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { normalizeE164Phone, normalizeWhatsappNumber } from '@/lib/phone';
 import type { GuestWithRSVP, CreateGuestInput, GuestSide, RelationshipStatus } from '@/types/guest';
 
 interface GuestFormModalProps {
@@ -41,6 +42,7 @@ export default function GuestFormModal({
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneE164, setPhoneE164] = useState('');
   const [side, setSide] = useState<GuestSide>('ambos');
   const [relationToGrooms, setRelationToGrooms] = useState('');
   const [relationshipStatus, setRelationshipStatus] = useState<RelationshipStatus>('soltero');
@@ -60,6 +62,7 @@ export default function GuestFormModal({
         setRelationToGrooms(guest.relationToGrooms);
         setRelationshipStatus(guest.relationshipStatus);
         setIsDirectoryVisible(guest.isDirectoryVisible);
+        setPhoneE164(guest.phoneE164 || '');
         setWhatsappNumber(guest.whatsappNumber || '');
         setTableName(existingSeating?.tableName || '');
         setSeatNumber(existingSeating?.seatNumber?.toString() || '');
@@ -70,6 +73,7 @@ export default function GuestFormModal({
         setRelationToGrooms('');
         setRelationshipStatus('soltero');
         setIsDirectoryVisible(true);
+        setPhoneE164('');
         setWhatsappNumber('');
         setTableName('');
         setSeatNumber('');
@@ -81,9 +85,19 @@ export default function GuestFormModal({
   function validate(): boolean {
     const errs: Record<string, string> = {};
     if (!fullName.trim()) errs.fullName = 'El nombre es obligatorio';
-    if (!email.trim()) errs.email = 'El email es obligatorio';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
       errs.email = 'Formato de email inválido';
+    const normalizedPhone = normalizeE164Phone(phoneE164);
+    const normalizedWhatsapp = normalizeWhatsappNumber(whatsappNumber);
+    if (!email.trim() && !normalizedPhone && !normalizedWhatsapp) {
+      errs.contact = 'Indica al menos email, teléfono o WhatsApp válido';
+    }
+    if (phoneE164.trim() && !normalizedPhone) {
+      errs.phoneE164 = 'Formato inválido. Usa +34600111222';
+    }
+    if (whatsappNumber.trim() && !normalizedWhatsapp) {
+      errs.whatsappNumber = 'Número de WhatsApp inválido';
+    }
     if (!relationToGrooms.trim()) errs.relationToGrooms = 'La relación es obligatoria';
     if (seatNumber && isNaN(Number(seatNumber)))
       errs.seatNumber = 'El número de asiento debe ser un número';
@@ -100,6 +114,7 @@ export default function GuestFormModal({
       await onSave({
         fullName: fullName.trim(),
         email: email.trim(),
+        phoneE164: phoneE164.trim() || undefined,
         side,
         relationToGrooms: relationToGrooms.trim(),
         relationshipStatus,
@@ -129,6 +144,9 @@ export default function GuestFormModal({
           {errors.form && (
             <p className="text-sm text-red-600 bg-red-50 rounded p-2">{errors.form}</p>
           )}
+          {errors.contact && (
+            <p className="text-sm text-red-600 bg-red-50 rounded p-2">{errors.contact}</p>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="fullName">Nombre completo *</Label>
@@ -142,7 +160,7 @@ export default function GuestFormModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email *</Label>
+            <Label htmlFor="email">Email (opcional)</Label>
             <Input
               id="email"
               type="email"
@@ -151,6 +169,18 @@ export default function GuestFormModal({
               placeholder="email@ejemplo.com"
             />
             {errors.email && <p className="text-xs text-red-600">{errors.email}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="phoneE164">Teléfono (opcional)</Label>
+            <Input
+              id="phoneE164"
+              type="tel"
+              value={phoneE164}
+              onChange={(e) => setPhoneE164(e.target.value)}
+              placeholder="+34 600 000 000"
+            />
+            {errors.phoneE164 && <p className="text-xs text-red-600">{errors.phoneE164}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -206,8 +236,11 @@ export default function GuestFormModal({
               type="tel"
               value={whatsappNumber}
               onChange={(e) => setWhatsappNumber(e.target.value)}
-              placeholder="+34 600 000 000"
+              placeholder="34600000000 o +34600000000"
             />
+            {errors.whatsappNumber && (
+              <p className="text-xs text-red-600">{errors.whatsappNumber}</p>
+            )}
           </div>
 
           <div className="flex items-center justify-between">
