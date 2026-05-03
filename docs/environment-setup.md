@@ -121,8 +121,28 @@ Fill in the values:
 | `CLOUDINARY_API_KEY` | Cloudinary Dashboard → API Keys |
 | `CLOUDINARY_API_SECRET` | Cloudinary Dashboard → API Keys |
 | `GOOGLE_SHEETS_API_KEY` | Google Cloud Console → APIs & Services → Credentials |
+| `GOOGLE_USER_ADMIN_EMAIL` | Workspace user that can open the guest spreadsheet (impersonation subject) |
+| `GOOGLE_WORKSPACE_SERVICE_ACCOUNT_KEY` | Base64-encoded JSON for the Google Cloud *data-management* service account used with domain-wide delegation (not the Firebase Admin key) |
+| `GOOGLE_GUESTS_SPREADSHEET_ID` | ID from the Google Sheets URL |
+| `GOOGLE_GUESTS_SHEET_NAME` | Worksheet tab name (e.g. `Guests`) |
 | `APPLE_SIWA_KEY_ID` | Apple Developer → Keys |
 | `SENTRY_AUTH_TOKEN` | Sentry → Settings → Auth Tokens |
+
+### Google Sheet → Firestore guest sync (admin)
+
+The admin dashboard can pull the guest list from a Google Sheet using **domain-wide delegation**: a dedicated service account in Google Cloud impersonates `GOOGLE_USER_ADMIN_EMAIL` and calls the Sheets API (read-only). No OAuth flow for operators.
+
+1. In [Google Admin Console](https://admin.google.com) → Security → API controls → Domain-wide delegation, authorize the data-management service account client ID with scope `https://www.googleapis.com/auth/spreadsheets.readonly` (and Drive if your setup requires it).
+2. Ensure the spreadsheet is accessible to the impersonated user (owner or shared).
+3. Encode the service account JSON as base64 and set `GOOGLE_WORKSPACE_SERVICE_ACCOUNT_KEY` (never commit the raw JSON). Example on macOS:
+
+   ```bash
+   base64 -i path/to/service-account.json | tr -d '\n'
+   ```
+
+4. Set `GOOGLE_GUESTS_SPREADSHEET_ID` and optionally `GOOGLE_GUESTS_SHEET_NAME` (defaults to `Guests` in application code if unset).
+
+Sync is **upsert-only**: removing a row from the sheet does not delete the Firestore guest.
 
 ### Install and run
 

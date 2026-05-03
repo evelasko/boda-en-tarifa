@@ -5,6 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -29,12 +31,21 @@ import {
   Search,
   Loader2,
   RefreshCw,
+  FileSpreadsheet,
 } from 'lucide-react';
 import GuestTable from '@/components/admin/GuestTable';
 import GuestFormModal from '@/components/admin/GuestFormModal';
 import CSVImportModal from '@/components/admin/CSVImportModal';
 import MagicLinkModal from '@/components/admin/MagicLinkModal';
 import type { GuestWithRSVP, CreateGuestInput, CSVGuestRow } from '@/types/guest';
+
+type SheetSyncOutcome = {
+  created: number;
+  updated: number;
+  unchanged: number;
+  errors: Array<{ sheetRow: number; messages: string[] }>;
+  dryRun: boolean;
+};
 
 async function apiFetch(path: string, user: { getIdToken: () => Promise<string> }, options?: RequestInit) {
   const token = await user.getIdToken();
@@ -81,6 +92,12 @@ export default function GuestsPage() {
   const [deleting, setDeleting] = useState(false);
   const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
   const [bulkDeleting, setBulkDeleting] = useState(false);
+
+  const [sheetSyncOpen, setSheetSyncOpen] = useState(false);
+  const [sheetSyncDryRun, setSheetSyncDryRun] = useState(false);
+  const [sheetSyncLoading, setSheetSyncLoading] = useState(false);
+  const [sheetSyncOutcome, setSheetSyncOutcome] = useState<SheetSyncOutcome | null>(null);
+  const [sheetSyncError, setSheetSyncError] = useState<string | null>(null);
 
   const fetchGuests = useCallback(async () => {
     if (!user) return;
@@ -291,6 +308,32 @@ export default function GuestsPage() {
     }
   }
 
+  async function handleSheetSync() {
+    if (!user) return;
+    setSheetSyncLoading(true);
+    setSheetSyncError(null);
+    setSheetSyncOutcome(null);
+    try {
+      const res = await apiFetch('/api/admin/guests/sync-sheet', user, {
+        method: 'POST',
+        body: JSON.stringify({ dryRun: sheetSyncDryRun }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSheetSyncError(typeof data.error === 'string' ? data.error : 'Error al sincronizar');
+        return;
+      }
+      setSheetSyncOutcome(data as SheetSyncOutcome);
+      if (!sheetSyncDryRun) {
+        await fetchGuests();
+      }
+    } catch {
+      setSheetSyncError('Error al sincronizar la hoja');
+    } finally {
+      setSheetSyncLoading(false);
+    }
+  }
+
   async function handleCSVImport(rows: Array<{ row: number; data: CSVGuestRow }>) {
     if (!user) return;
     const res = await apiFetch('/api/admin/guests/import', user, {
@@ -339,6 +382,18 @@ export default function GuestsPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setSheetSyncOutcome(null);
+              setSheetSyncError(null);
+              setSheetSyncOpen(true);
+            }}
+          >
+            <FileSpreadsheet className="mr-1.5 h-4 w-4" />
+            Sincronizar hoja
+          </Button>
           <Button variant="outline" size="sm" onClick={() => setCsvOpen(true)}>
             <Upload className="mr-1.5 h-4 w-4" />
             Importar CSV
@@ -472,6 +527,85 @@ export default function GuestsPage() {
         onSave={handleSaveGuest}
         existingSeating={editingSeating}
       />
+
+      <Dialog
+        open={sheetSyncOpen}
+        onOpenChange={(open) => {
+          setSheetSyncOpen(open);
+          if (!open) {
+            setSheetSyncOutcome(null);
+            setSheetSyncError(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Sincronizar con Google Sheet</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-charcoal/70">
+            Lee la pestaña configurada en el servidor y actualiza invitados y mesas en Firestore.
+            Las filas eliminadas de la hoja no borran invitados en la base de datos.
+          </p>
+          <div className="flex items-center gap-2 py-2">
+            <Checkbox
+              id="sheet-dry-run"
+              checked={sheetSyncDryRun}
+              onCheckedChange={(v) => setSheetSyncDryRun(v === true)}
+            />
+            <Label htmlFor="sheet-dry-run" className="text-sm font-normal cursor-pointer">
+              Solo simular (dry run, no guardar cambios)
+            </Label>
+          </div>
+          {sheetSyncError && (
+            <div className="text-sm text-red-600 bg-red-50 rounded-md px-3 py-2">{sheetSyncError}</div>
+          )}
+          {sheetSyncOutcome && (
+            <div className="rounded-md border border-charcoal/10 bg-charcoal/5 px-3 py-2 text-sm space-y-1">
+              {sheetSyncOutcome.dryRun && (
+                <p className="font-medium text-charcoal/80">Simulación — no se guardó nada</p>
+              )}
+              <p>Creados: {sheetSyncOutcome.created}</p>
+              <p>Actualizados: {sheetSyncOutcome.updated}</p>
+              <p>Sin cambios: {sheetSyncOutcome.unchanged}</p>
+              {sheetSyncOutcome.errors.length > 0 && (
+                <div className="mt-2 pt-2 border-t border-charcoal/10">
+                  <p className="font-medium text-red-700 mb-1">
+                    Errores ({sheetSyncOutcome.errors.length} filas)
+                  </p>
+                  <ul className="max-h-40 overflow-y-auto space-y-1 text-charcoal/80">
+                    {sheetSyncOutcome.errors.map((e) => (
+                      <li key={e.sheetRow}>
+                        Fila {e.sheetRow}: {e.messages.join('; ')}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setSheetSyncOpen(false)}
+              disabled={sheetSyncLoading}
+            >
+              Cerrar
+            </Button>
+            <Button onClick={handleSheetSync} disabled={sheetSyncLoading}>
+              {sheetSyncLoading ? (
+                <>
+                  <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                  Sincronizando…
+                </>
+              ) : sheetSyncDryRun ? (
+                'Simular'
+              ) : (
+                'Sincronizar'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <CSVImportModal
         open={csvOpen}

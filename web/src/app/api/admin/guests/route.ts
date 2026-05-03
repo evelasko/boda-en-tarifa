@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminFirestore } from '@/lib/firebase-admin';
 import { requireAdmin } from '@/lib/admin-api-auth';
+import { buildGuestRsvpLookup, resolveGuestRsvpStatus } from '@/lib/admin-guest-rsvp';
 import { normalizeE164Phone, normalizeWhatsappNumber } from '@/lib/phone';
 import type { Guest, GuestWithRSVP, CreateGuestInput } from '@/types/guest';
-import type { AttendanceStatus } from '@/types/rsvp';
 
 const GUESTS_COLLECTION = 'guests';
 const RSVP_COLLECTION = 'rsvp_responses';
@@ -22,13 +22,7 @@ export async function GET(request: NextRequest) {
     const guestsSnap = await adminFirestore.collection(GUESTS_COLLECTION).get();
     const rsvpSnap = await adminFirestore.collection(RSVP_COLLECTION).get();
 
-    const rsvpMap = new Map<string, AttendanceStatus>();
-    rsvpSnap.docs.forEach((doc) => {
-      const data = doc.data();
-      if (data.responses?.attendance) {
-        rsvpMap.set(doc.id, data.responses.attendance);
-      }
-    });
+    const rsvpLookup = buildGuestRsvpLookup(rsvpSnap.docs);
 
     let guests: GuestWithRSVP[] = guestsSnap.docs.map((doc) => {
       const raw = doc.data();
@@ -47,14 +41,21 @@ export async function GET(request: NextRequest) {
         phoneE164: raw.phoneE164,
         whatsappNumber: raw.whatsappNumber,
         funFact: raw.funFact,
+        sheetNickname: raw.sheetNickname,
+        age: raw.age,
+        roomNumber: raw.roomNumber,
         relationToGrooms: raw.relationToGrooms ?? '',
         relationshipStatus: raw.relationshipStatus ?? 'soltero',
         side: raw.side ?? 'ambos',
         profileClaimed: raw.profileClaimed ?? false,
         isDirectoryVisible: raw.isDirectoryVisible ?? true,
+        child: raw.child === true,
+        connectedTo: raw.connectedTo,
+        connectionType: raw.connectionType,
+        contactPending: raw.contactPending === true,
         createdAt,
         updatedAt,
-        rsvpStatus: rsvpMap.get(doc.id) ?? 'no_response',
+        rsvpStatus: resolveGuestRsvpStatus(doc.id, raw.email ?? '', rsvpLookup),
       } as GuestWithRSVP;
     });
 
@@ -93,8 +94,17 @@ export async function POST(request: NextRequest) {
 
   try {
     const body: CreateGuestInput = await request.json();
+    const isChild = Boolean(body.child);
 
-    if (!body.fullName?.trim() || !body.side || !body.relationToGrooms?.trim() || !body.relationshipStatus) {
+    const side = body.side ?? (isChild ? 'ambos' : undefined);
+    const relationToGrooms = body.relationToGrooms?.trim()
+      ? body.relationToGrooms.trim()
+      : isChild
+        ? 'Menor'
+        : '';
+    const relationshipStatus = body.relationshipStatus ?? (isChild ? 'soltero' : undefined);
+
+    if (!body.fullName?.trim() || !side || !relationToGrooms || !relationshipStatus) {
       return NextResponse.json(
         { error: 'Faltan campos obligatorios: fullName, side, relationToGrooms, relationshipStatus' },
         { status: 400 }
@@ -105,9 +115,11 @@ export async function POST(request: NextRequest) {
     const normalizedPhoneE164 = normalizeE164Phone(body.phoneE164);
     const normalizedWhatsapp = normalizeWhatsappNumber(body.whatsappNumber);
 
-    if (!normalizedEmail && !normalizedPhoneE164 && !normalizedWhatsapp) {
+    const contactPending = !isChild && Boolean(body.contactPending);
+
+    if (!isChild && !contactPending && !normalizedEmail && !normalizedPhoneE164 && !normalizedWhatsapp) {
       return NextResponse.json(
-        { error: 'Debes proporcionar al menos un email o un teléfono válido' },
+        { error: 'Debes proporcionar al menos un email o un teléfono válido, o marcar RSVP pendiente' },
         { status: 400 }
       );
     }
@@ -138,9 +150,9 @@ export async function POST(request: NextRequest) {
     const guest: Omit<Guest, 'uid'> = {
       fullName: body.fullName.trim(),
       email: normalizedEmail,
-      side: body.side,
-      relationToGrooms: body.relationToGrooms.trim(),
-      relationshipStatus: body.relationshipStatus,
+      side,
+      relationToGrooms,
+      relationshipStatus,
       isDirectoryVisible: body.isDirectoryVisible ?? true,
       phoneE164: normalizedPhoneE164 ?? '',
       whatsappNumber: normalizedWhatsapp ?? '',
@@ -148,6 +160,19 @@ export async function POST(request: NextRequest) {
       createdAt: now,
       updatedAt: now,
     };
+
+    if (isChild) {
+      guest.child = true;
+    }
+    if (body.connectedTo?.trim()) {
+      guest.connectedTo = body.connectedTo.trim();
+    }
+    if (body.connectionType?.trim()) {
+      guest.connectionType = body.connectionType.trim();
+    }
+    if (contactPending && !isChild) {
+      guest.contactPending = true;
+    }
 
     await docRef.set(guest);
 

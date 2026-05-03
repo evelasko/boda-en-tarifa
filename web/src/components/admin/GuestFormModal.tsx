@@ -52,6 +52,8 @@ export default function GuestFormModal({
   const [seatNumber, setSeatNumber] = useState('');
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  /** Adult on the list without email/phone until RSVP (matches sheet `contactPending`). */
+  const [awaitingContactOnly, setAwaitingContactOnly] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -66,6 +68,10 @@ export default function GuestFormModal({
         setWhatsappNumber(guest.whatsappNumber || '');
         setTableName(existingSeating?.tableName || '');
         setSeatNumber(existingSeating?.seatNumber?.toString() || '');
+        const noEmail = !(guest.email ?? '').trim();
+        const noPhone = !(guest.phoneE164 ?? '').trim();
+        const noWa = !(guest.whatsappNumber ?? '').trim();
+        setAwaitingContactOnly(Boolean(guest.contactPending && noEmail && noPhone && noWa));
       } else {
         setFullName('');
         setEmail('');
@@ -77,6 +83,7 @@ export default function GuestFormModal({
         setWhatsappNumber('');
         setTableName('');
         setSeatNumber('');
+        setAwaitingContactOnly(false);
       }
       setErrors({});
     }
@@ -89,8 +96,17 @@ export default function GuestFormModal({
       errs.email = 'Formato de email inválido';
     const normalizedPhone = normalizeE164Phone(phoneE164);
     const normalizedWhatsapp = normalizeWhatsappNumber(whatsappNumber);
-    if (!email.trim() && !normalizedPhone && !normalizedWhatsapp) {
-      errs.contact = 'Indica al menos email, teléfono o WhatsApp válido';
+    const allowNoContact =
+      awaitingContactOnly ||
+      Boolean(guest?.child) ||
+      Boolean(
+        guest?.contactPending &&
+          !email.trim() &&
+          !normalizedPhone &&
+          !normalizedWhatsapp
+      );
+    if (!email.trim() && !normalizedPhone && !normalizedWhatsapp && !allowNoContact) {
+      errs.contact = 'Indica al menos email, teléfono o WhatsApp válido, o activa «Sin contacto aún»';
     }
     if (phoneE164.trim() && !normalizedPhone) {
       errs.phoneE164 = 'Formato inválido. Usa +34600111222';
@@ -111,6 +127,13 @@ export default function GuestFormModal({
 
     setSaving(true);
     try {
+      const noContact =
+        !email.trim() && !normalizeE164Phone(phoneE164) && !normalizeWhatsappNumber(whatsappNumber);
+      const contactPendingFlag =
+        !guest?.child &&
+        noContact &&
+        (awaitingContactOnly || Boolean(guest?.contactPending));
+
       await onSave({
         fullName: fullName.trim(),
         email: email.trim(),
@@ -122,6 +145,7 @@ export default function GuestFormModal({
         whatsappNumber: whatsappNumber.trim() || undefined,
         tableName: tableName.trim() || undefined,
         seatNumber: seatNumber ? Number(seatNumber) : undefined,
+        ...(contactPendingFlag ? { contactPending: true } : {}),
       });
       onOpenChange(false);
     } catch {
@@ -228,6 +252,24 @@ export default function GuestFormModal({
               <p className="text-xs text-red-600">{errors.relationToGrooms}</p>
             )}
           </div>
+
+          {!guest?.child && (
+            <div className="flex items-center justify-between rounded-md border border-charcoal/10 px-3 py-2">
+              <div className="space-y-0.5">
+                <Label htmlFor="awaitingContact" className="text-sm font-medium">
+                  Sin contacto aún (RSVP pendiente)
+                </Label>
+                <p className="text-xs text-charcoal/55">
+                  Actívalo para guardar sin email ni teléfono (como en la hoja antes del RSVP).
+                </p>
+              </div>
+              <Switch
+                id="awaitingContact"
+                checked={awaitingContactOnly}
+                onCheckedChange={setAwaitingContactOnly}
+              />
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="whatsapp">WhatsApp (opcional)</Label>

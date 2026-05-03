@@ -87,6 +87,26 @@ export async function PUT(
       updateData.whatsappNumber = normalized ?? '';
     }
 
+    const prev = docSnap.data()!;
+    const mergedEmail =
+      guestFields.email !== undefined
+        ? String(guestFields.email).trim().toLowerCase()
+        : String(prev.email ?? '').trim().toLowerCase();
+    const mergedPhone =
+      guestFields.phoneE164 !== undefined
+        ? normalizeE164Phone(guestFields.phoneE164) ?? ''
+        : String(prev.phoneE164 ?? '').trim();
+    const mergedWa =
+      guestFields.whatsappNumber !== undefined
+        ? normalizeWhatsappNumber(guestFields.whatsappNumber) ?? ''
+        : String(prev.whatsappNumber ?? '').trim();
+    const hasContact = Boolean(mergedEmail || mergedPhone || mergedWa);
+    if (hasContact) {
+      updateData.contactPending = false;
+    } else if (guestFields.contactPending !== undefined) {
+      updateData.contactPending = guestFields.contactPending;
+    }
+
     // Remove undefined values
     Object.keys(updateData).forEach((key) => {
       if (updateData[key] === undefined) delete updateData[key];

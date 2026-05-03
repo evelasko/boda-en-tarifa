@@ -12,6 +12,20 @@ export interface Guest {
   phoneE164?: string;
   whatsappNumber?: string;
   funFact?: string;
+  /** Synced from spreadsheet column A */
+  sheetNickname?: string;
+  /** Synced from spreadsheet (logistics) */
+  age?: number | string;
+  /** Synced from spreadsheet (logistics) */
+  roomNumber?: string;
+  /** Synced from spreadsheet column S — minors may omit contact fields */
+  child?: boolean;
+  /** Firebase guest UID this row is linked to (spreadsheet column Q) */
+  connectedTo?: string;
+  /** Free-form link label (spreadsheet column R) */
+  connectionType?: string;
+  /** Adult on the list without email/phone yet (sheet or admin); cleared when contact is added */
+  contactPending?: boolean;
   relationToGrooms: string;
   relationshipStatus: RelationshipStatus;
   side: GuestSide;
@@ -43,6 +57,12 @@ export interface CreateGuestInput {
   isDirectoryVisible?: boolean;
   phoneE164?: string;
   whatsappNumber?: string;
+  /** When true, email/phone are optional (minor guest). */
+  child?: boolean;
+  connectedTo?: string;
+  connectionType?: string;
+  /** When true (adult), email/phone/whatsapp may all be empty until RSVP. */
+  contactPending?: boolean;
 }
 
 export interface UpdateGuestInput {
@@ -54,6 +74,10 @@ export interface UpdateGuestInput {
   isDirectoryVisible?: boolean;
   phoneE164?: string;
   whatsappNumber?: string;
+  child?: boolean;
+  connectedTo?: string;
+  connectionType?: string;
+  contactPending?: boolean;
   tableName?: string;
   seatNumber?: number;
 }

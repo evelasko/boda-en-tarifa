@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminFirestore } from '@/lib/firebase-admin';
 import { requireAdmin } from '@/lib/admin-api-auth';
+import { buildGuestRsvpLookup, resolveGuestRsvpStatus } from '@/lib/admin-guest-rsvp';
 import type { Guest } from '@/types/guest';
-import type { AttendanceStatus } from '@/types/rsvp';
 
 const GUESTS_COLLECTION = 'guests';
 const RSVP_COLLECTION = 'rsvp_responses';
@@ -32,13 +32,7 @@ export async function GET(request: NextRequest) {
       adminFirestore.collection(SEATING_COLLECTION).get(),
     ]);
 
-    const rsvpMap = new Map<string, AttendanceStatus>();
-    rsvpSnap.docs.forEach((doc) => {
-      const data = doc.data();
-      if (data.responses?.attendance) {
-        rsvpMap.set(doc.id, data.responses.attendance);
-      }
-    });
+    const rsvpLookup = buildGuestRsvpLookup(rsvpSnap.docs);
 
     const seatingMap = new Map<string, { tableName: string; seatNumber: number }>();
     seatingSnap.docs.forEach((doc) => {
@@ -50,7 +44,7 @@ export async function GET(request: NextRequest) {
       return {
         ...data,
         uid: doc.id,
-        rsvpStatus: rsvpMap.get(doc.id) ?? 'no_response',
+        rsvpStatus: resolveGuestRsvpStatus(doc.id, data.email ?? '', rsvpLookup),
         seating: seatingMap.get(doc.id),
       };
     });
