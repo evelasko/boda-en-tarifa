@@ -26,7 +26,7 @@
       "title": "Bienvenida",
       "description": "Únete a nosotros para bebidas y tapas en la playa",
       "venue": {
-        "name": "Chiringuito Tumbao",
+        "name": "Chiringuito Bora",
         "address": "11380 Valdevaqueros, Cádiz",
         "coordinates": {
           "lat": 36.065928,
@@ -47,7 +47,7 @@
       "id": "pre-wedding",
       "type": "pre-wedding",
       "date": "2026-05-29",
-      "time": "21:00",
+      "time": "22:30",
       "title": "Pre-Boda",
       "description": "Una noche de celebración antes del gran día",
       "venue": {

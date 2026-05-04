@@ -7,6 +7,7 @@ import type { Guest, GuestWithRSVP, CreateGuestInput } from '@/types/guest';
 
 const GUESTS_COLLECTION = 'guests';
 const RSVP_COLLECTION = 'rsvp_responses';
+const SEATING_COLLECTION = 'seating';
 
 export async function GET(request: NextRequest) {
   const auth = await requireAdmin(request);
@@ -19,10 +20,22 @@ export async function GET(request: NextRequest) {
     const profileClaimed = searchParams.get('profileClaimed');
     const search = searchParams.get('search')?.toLowerCase();
 
-    const guestsSnap = await adminFirestore.collection(GUESTS_COLLECTION).get();
-    const rsvpSnap = await adminFirestore.collection(RSVP_COLLECTION).get();
+    const [guestsSnap, rsvpSnap, seatingSnap] = await Promise.all([
+      adminFirestore.collection(GUESTS_COLLECTION).get(),
+      adminFirestore.collection(RSVP_COLLECTION).get(),
+      adminFirestore.collection(SEATING_COLLECTION).get(),
+    ]);
 
     const rsvpLookup = buildGuestRsvpLookup(rsvpSnap.docs);
+
+    const seatingMap = new Map<string, { tableName: string; seatNumber: number }>();
+    seatingSnap.docs.forEach((d) => {
+      const data = d.data() as { tableName?: string; seatNumber?: number };
+      seatingMap.set(d.id, {
+        tableName: data.tableName ?? '',
+        seatNumber: Number(data.seatNumber ?? 0),
+      });
+    });
 
     let guests: GuestWithRSVP[] = guestsSnap.docs.map((doc) => {
       const raw = doc.data();
@@ -56,6 +69,7 @@ export async function GET(request: NextRequest) {
         createdAt,
         updatedAt,
         rsvpStatus: resolveGuestRsvpStatus(doc.id, raw.email ?? '', rsvpLookup),
+        seating: seatingMap.get(doc.id),
       } as GuestWithRSVP;
     });
 

@@ -79,7 +79,6 @@ export default function GuestsPage() {
   // Modals
   const [formOpen, setFormOpen] = useState(false);
   const [editingGuest, setEditingGuest] = useState<GuestWithRSVP | null>(null);
-  const [editingSeating, setEditingSeating] = useState<{ tableName: string; seatNumber: number } | null>(null);
   const [csvOpen, setCsvOpen] = useState(false);
   const [magicLinkOpen, setMagicLinkOpen] = useState(false);
   const [magicLinkGuest, setMagicLinkGuest] = useState<string>('');
@@ -184,13 +183,11 @@ export default function GuestsPage() {
 
   function handleEdit(guest: GuestWithRSVP) {
     setEditingGuest(guest);
-    setEditingSeating(null);
     setFormOpen(true);
   }
 
   function handleAdd() {
     setEditingGuest(null);
-    setEditingSeating(null);
     setFormOpen(true);
   }
 
@@ -525,7 +522,7 @@ export default function GuestsPage() {
         }}
         guest={editingGuest}
         onSave={handleSaveGuest}
-        existingSeating={editingSeating}
+        existingSeating={editingGuest?.seating ?? null}
       />
 
       <Dialog

@@ -13,7 +13,25 @@ import {
 
 interface UseRSVPFormProps {
   user: User;
+  /** `undefined` while parent is still loading RSVP from Firestore. */
   initialData?: RSVPSubmission | null;
+}
+
+function mergeResponsesFromSubmission(submission: RSVPSubmission): Partial<RSVPResponse> {
+  return {
+    ...submission.responses,
+    displayName:
+      submission.responses.displayName?.trim() ||
+      submission.userDisplayName?.trim() ||
+      '',
+  };
+}
+
+function resolveSubmittedDisplayName(
+  responses: Partial<RSVPResponse>,
+  user: User
+): string {
+  return responses.displayName?.trim() || user.displayName || '';
 }
 
 interface UseRSVPFormReturn {
@@ -56,15 +74,38 @@ export function useRSVPForm({ user, initialData }: UseRSVPFormProps): UseRSVPFor
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSavedDataRef = useRef<Partial<RSVPResponse>>({});
   
-  // Load initial data
+  // Load initial data once parent has finished loading (`undefined` = still loading)
   useEffect(() => {
-    if (initialData) {
-      setResponses(initialData.responses);
-      setIsSubmitted(initialData.isSubmitted);
-      setLastSavedAt(initialData.lastUpdatedAt);
-      lastSavedDataRef.current = initialData.responses;
+    if (initialData === undefined) return;
+
+    if (initialData === null) {
+      setResponses((prev) => ({
+        ...prev,
+        displayName: prev.displayName?.trim() || user.displayName?.trim() || '',
+      }));
+      setIsSubmitted(false);
+      setLastSavedAt(undefined);
+      lastSavedDataRef.current = {};
+      return;
     }
+
+    const merged = mergeResponsesFromSubmission(initialData);
+    setResponses(merged);
+    setIsSubmitted(initialData.isSubmitted);
+    setLastSavedAt(initialData.lastUpdatedAt);
+    lastSavedDataRef.current = { ...merged };
   }, [initialData]);
+
+  // After RSVP load: no doc yet — pre-fill display name from auth when it appears
+  useEffect(() => {
+    if (initialData === undefined) return;
+    if (initialData !== null) return;
+    const fromAuth = user.displayName?.trim();
+    if (!fromAuth) return;
+    setResponses((prev) =>
+      prev.displayName?.trim() ? prev : { ...prev, displayName: fromAuth }
+    );
+  }, [initialData, user.displayName]);
   
   // Validate form whenever responses change (but only show errors after validation has been triggered)
   useEffect(() => {
@@ -109,7 +150,7 @@ export function useRSVPForm({ user, initialData }: UseRSVPFormProps): UseRSVPFor
           await RSVPService.saveRSVPResponse(
             user.uid,
             user.email || '',
-            user.displayName || '',
+            resolveSubmittedDisplayName(responses, user),
             responses as RSVPResponse,
             false // Auto-save is always a draft
           );
@@ -253,7 +294,7 @@ export function useRSVPForm({ user, initialData }: UseRSVPFormProps): UseRSVPFor
           await RSVPService.saveRSVPResponse(
             user.uid,
             user.email || '',
-            user.displayName || '',
+            resolveSubmittedDisplayName(responses, user),
             responses as RSVPResponse,
             true // This is a final submission
           );
@@ -328,10 +369,11 @@ export function useRSVPForm({ user, initialData }: UseRSVPFormProps): UseRSVPFor
       );
       
       if (existingData) {
-        setResponses(existingData.responses);
+        const merged = mergeResponsesFromSubmission(existingData);
+        setResponses(merged);
         setIsSubmitted(existingData.isSubmitted);
         setLastSavedAt(existingData.lastUpdatedAt);
-        lastSavedDataRef.current = existingData.responses;
+        lastSavedDataRef.current = { ...merged };
         
         addSentryBreadcrumb(
           'RSVP data loaded successfully',

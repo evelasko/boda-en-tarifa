@@ -15,12 +15,15 @@ export type NightOption = 'friday' | 'saturday' | 'sunday' | 'other';
 export type TransportationNeed = 'find_ride' | 'offer_ride' | 'no_help' | 'not_sure';
 
 // Question 7: ¿Qué prefieres para el plato principal?
-export type MainCoursePreference = 'fish' | 'meat' | 'vegetarian' | 'no_preference';
+export type MainCoursePreference = 'fish' | 'meat' | 'vegetarian';
 
 // Individual RSVP response structure
 export interface RSVPResponse {
   // Question 1: ¿Vas a venir a la boda?
   attendance: AttendanceStatus;
+
+  /** Full name for the guest list (also stored on the RSVP doc as `userDisplayName`). */
+  displayName: string;
   
   // Question 2: ¿Quieres que te gestionemos el alojamiento?
   accommodationManagement: AccommodationManagement;
@@ -40,6 +43,9 @@ export interface RSVPResponse {
   
   // Question 7: ¿Qué prefieres para el plato principal?
   mainCoursePreference: MainCoursePreference;
+
+  // Question 8: ¿Contamos contigo para el brunch del domingo? (optional)
+  sundayBrunch?: boolean;
 }
 
 // Complete RSVP submission with metadata
@@ -102,6 +108,14 @@ export interface RSVPQuestionConfig {
 
 // Spanish form configuration
 export const RSVP_FORM_CONFIG: RSVPQuestionConfig[] = [
+  {
+    id: 'displayName',
+    label: 'Tu nombre (como quieres que aparezca en la lista)',
+    required: true,
+    type: 'text',
+    placeholder: 'Nombre y apellidos',
+    maxLength: 120,
+  },
   {
     id: 'attendance',
     label: '¿Vas a venir a la boda?',
@@ -184,8 +198,13 @@ export const RSVP_FORM_CONFIG: RSVPQuestionConfig[] = [
       { value: 'fish', label: 'Pescado' },
       { value: 'meat', label: 'Carne' },
       { value: 'vegetarian', label: 'Opción vegetariana' },
-      { value: 'no_preference', label: 'No tengo preferencia' }
     ]
+  },
+  {
+    id: 'sundayBrunch',
+    label: '¿Contamos contigo para el brunch del domingo?',
+    required: false,
+    type: 'checkbox'
   }
 ];
 

@@ -9,23 +9,22 @@ interface FormProgressProps {
 }
 
 export function FormProgress({ responses, className }: FormProgressProps) {
-  const totalQuestions = 4; // Only required questions: attendance, nightsStaying, transportationNeeds, mainCoursePreference
+  const totalQuestions = 5;
+
   let completedQuestions = 0;
 
-  // Question 1: Attendance (required)
+  if (responses.displayName?.trim()) completedQuestions++;
+
   if (responses.attendance) completedQuestions++;
 
-  // Question 2: Nights staying (required)
   if (responses.nightsStaying && responses.nightsStaying.length > 0) {
     completedQuestions++;
   }
 
-  // Question 4: Transportation needs (required)
   if (responses.transportationNeeds && responses.transportationNeeds.length > 0) {
     completedQuestions++;
   }
 
-  // Question 6: Main course preference (required)
   if (responses.mainCoursePreference) completedQuestions++;
 
   const progressPercentage = (completedQuestions / totalQuestions) * 100;

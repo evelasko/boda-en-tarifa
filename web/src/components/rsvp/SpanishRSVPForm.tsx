@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { AttendanceStatus, MainCoursePreference, NightOption, RSVPResponse, RSVPSubmission, TransportationNeed } from '@/types/rsvp';
 import { useRSVPForm } from '@/lib/hooks/useRSVPForm';
-import { RSVPService } from '@/lib/firestore';
+import { RSVPService, RSVPValidation } from '@/lib/firestore';
 import { 
   captureRSVPError, 
   addSentryBreadcrumb,
@@ -21,6 +21,14 @@ import { ConditionalField } from './ConditionalField';
 import { FormProgress } from './FormProgress';
 import { AutoSaveIndicator } from './AutoSaveIndicator';
 import { auth } from '@/lib/firebase';
+import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface SpanishRSVPFormProps {
   user: User;
@@ -44,7 +52,13 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
     isSubmitted,
     updateField,
     submitForm,
-  } = useRSVPForm({ user, initialData });
+  } = useRSVPForm({ user, initialData: isLoading ? undefined : initialData });
+
+  const blockingMessages = useMemo(
+    () => RSVPValidation.listBlockingMessages(responses),
+    [responses]
+  );
+  const showSubmitHint = !isValid && !isSaving && blockingMessages.length > 0;
 
   // Load existing data on mount
   useEffect(() => {
@@ -234,7 +248,8 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
               Confirmar Asistencia
             </h1>
             <p className="text-gray-600 mb-4">
-              ¡Hola {user.displayName || user.email}! Por favor, confirma tu asistencia a nuestra boda.
+              ¡Hola {responses.displayName?.trim() || user.displayName || user.email}! Por favor,
+              confirma tu asistencia a nuestra boda.
             </p>
             
             {/* Progress and Auto-save indicators */}
@@ -250,6 +265,17 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-8">
+            <TextInput
+              name="displayName"
+              label="Tu nombre (como quieres que aparezca en la lista)"
+              required
+              error={errors.displayName}
+              value={responses.displayName || ''}
+              onChange={(value) => handleFieldUpdate('displayName', value)}
+              placeholder="Nombre y apellidos"
+              maxLength={120}
+            />
+
             {/* Question 1: ¿Vas a venir a la boda? */}
             <RadioGroup
               name="attendance"
@@ -344,35 +370,108 @@ export function SpanishRSVPForm({ user, onSuccess, onError }: SpanishRSVPFormPro
                 { value: 'fish', label: 'Pescado' },
                 { value: 'meat', label: 'Carne' },
                 { value: 'vegetarian', label: 'Opción vegetariana' },
-                { value: 'no_preference', label: 'No tengo preferencia' }
               ]}
               value={responses.mainCoursePreference}
-              onChange={(value) => value && handleFieldUpdate('mainCoursePreference', value as MainCoursePreference)}
+              onChange={(value) =>
+                value && handleFieldUpdate('mainCoursePreference', value as MainCoursePreference)
+              }
             />
+
+            {/* Question 7: Brunch del domingo (optional) */}
+            <div
+              className={cn(
+                'flex items-start gap-3 p-3 my-12 rounded-lg border border-gray-200',
+                'hover:border-gray-300 hover:bg-gray-50 transition-colors'
+              )}
+            >
+              <Checkbox
+                id="sundayBrunch"
+                checked={responses.sundayBrunch === true}
+                onCheckedChange={(checked) =>
+                  handleFieldUpdate('sundayBrunch', checked === true)
+                }
+                className="mt-1"
+              />
+              <label
+                htmlFor="sundayBrunch"
+                className="text-sm text-gray-700 leading-relaxed cursor-pointer select-none"
+              >
+                ¿Contamos contigo para el brunch del domingo?
+              </label>
+            </div>
 
             {/* Submit and Cancel buttons */}
             <div className="pt-6 border-t border-gray-200">
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-500">
-                  {isSubmitted ? 'Respuesta enviada' : 'Borrador guardado automáticamente'}
+              <TooltipProvider delayDuration={250}>
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="text-sm text-gray-500 sm:order-1">
+                      {isSubmitted ? 'Respuesta enviada' : 'Borrador guardado automáticamente'}
+                    </div>
+                    <div className="flex justify-end gap-3 sm:order-2">
+                      <button
+                        type="button"
+                        onClick={handleCancel}
+                        className="px-6 py-3 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                      {showSubmitHint ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span
+                              tabIndex={0}
+                              className="inline-flex rounded-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
+                            >
+                              <button
+                                type="submit"
+                                disabled
+                                aria-describedby="rsvp-submit-blocking-hint"
+                                className="bg-blue-600 text-white px-8 py-3 rounded-md opacity-50 cursor-not-allowed"
+                              >
+                                {isSubmitted ? 'Actualizar respuesta' : 'Enviar respuesta'}
+                              </button>
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" align="end" className="max-w-[min(20rem,calc(100vw-2rem))]">
+                            <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-charcoal/80">
+                              Falta por completar
+                            </p>
+                            <ul className="list-disc space-y-1 pl-4 text-left text-sm text-charcoal">
+                              {blockingMessages.map((msg, i) => (
+                                <li key={`${i}-${msg.slice(0, 24)}`}>{msg}</li>
+                              ))}
+                            </ul>
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <button
+                          type="submit"
+                          disabled={!isValid || isSaving}
+                          className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isSaving ? 'Enviando...' : isSubmitted ? 'Actualizar respuesta' : 'Enviar respuesta'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  {showSubmitHint && (
+                    <div
+                      id="rsvp-submit-blocking-hint"
+                      role="status"
+                      aria-live="polite"
+                      className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900 sm:ml-auto sm:max-w-xl sm:text-right"
+                    >
+                      <p className="font-medium sm:text-right">Aún no puedes enviar el formulario</p>
+                      <ul className="mt-1 list-inside list-disc space-y-0.5 text-red-800 sm:ml-auto sm:inline-block sm:text-left">
+                        {blockingMessages.map((msg, i) => (
+                          <li key={`${i}-${msg.slice(0, 24)}`}>{msg}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="px-6 py-3 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                    className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isSaving ? 'Enviando...' : isSubmitted ? 'Actualizar respuesta' : 'Enviar respuesta'}
-                  </button>
-                </div>
-              </div>
+              </TooltipProvider>
             </div>
           </form>
         </div>

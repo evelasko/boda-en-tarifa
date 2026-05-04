@@ -497,11 +497,15 @@ function buildGuestUpdatePayload(
     child: parsed.isChild,
     contactPending: parsed.contactPending,
     profileClaimed: existing.profileClaimed ?? false,
-    photoUrl: existing.photoUrl,
     whatsappNumber: existing.whatsappNumber ?? '',
     createdAt: existing.createdAt ?? nowIso,
     updatedAt: nowIso,
   };
+
+  // Firestore rejects undefined; optional fields may be absent on existing docs.
+  if (typeof existing.photoUrl === 'string') {
+    doc.photoUrl = existing.photoUrl;
+  }
 
   if (parsed.connectedTo) {
     doc.connectedTo = parsed.connectedTo;

@@ -13,7 +13,7 @@ import {
   orderBy
 } from 'firebase/firestore';
 import { app } from './firebase';
-import { RSVPSubmission, RSVPResponse } from '@/types/rsvp';
+import { RSVPSubmission, RSVPResponse, type MainCoursePreference } from '@/types/rsvp';
 import { 
   captureFirestoreError, 
   addSentryBreadcrumb,
@@ -383,6 +383,8 @@ export class RSVPService {
   }
 }
 
+const MAIN_COURSE_VALUES: MainCoursePreference[] = ['fish', 'meat', 'vegetarian'];
+
 // Form validation utilities
 export class RSVPValidation {
   /**
@@ -390,6 +392,11 @@ export class RSVPValidation {
    */
   static validateResponse(responses: Partial<RSVPResponse>): Record<string, string> {
     const errors: Record<string, string> = {};
+
+    // Display name (required)
+    if (!responses.displayName?.trim()) {
+      errors.displayName = 'Por favor, indica tu nombre completo';
+    }
 
     // Question 1: Attendance (required)
     if (!responses.attendance) {
@@ -417,8 +424,12 @@ export class RSVPValidation {
     // Question 5: Dietary restrictions (optional - no validation needed)
 
     // Question 6: Main course preference (required)
-    if (!responses.mainCoursePreference) {
-      errors.mainCoursePreference = 'Por favor, selecciona tu preferencia para el plato principal';
+    if (
+      !responses.mainCoursePreference ||
+      !MAIN_COURSE_VALUES.includes(responses.mainCoursePreference)
+    ) {
+      errors.mainCoursePreference =
+        'Por favor, selecciona tu preferencia para el plato principal';
     }
 
     return errors;
@@ -430,6 +441,24 @@ export class RSVPValidation {
   static isFormValid(responses: Partial<RSVPResponse>): boolean {
     const errors = this.validateResponse(responses);
     return Object.keys(errors).length === 0;
+  }
+
+  /** Stable order for surfacing blocking issues next to a disabled submit control. */
+  private static readonly blockingFieldOrder: (keyof RSVPResponse)[] = [
+    'displayName',
+    'attendance',
+    'nightsStaying',
+    'otherNightsCombination',
+    'transportationNeeds',
+    'mainCoursePreference',
+  ];
+
+  /** Human-readable validation messages for fields that block submission. */
+  static listBlockingMessages(responses: Partial<RSVPResponse>): string[] {
+    const errors = this.validateResponse(responses);
+    return this.blockingFieldOrder
+      .filter((key) => Boolean(errors[key]))
+      .map((key) => errors[key] as string);
   }
 
   /**

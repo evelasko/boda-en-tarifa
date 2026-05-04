@@ -35,13 +35,15 @@ export interface Guest {
   updatedAt: string;
 }
 
-export interface GuestWithRSVP extends Guest {
-  rsvpStatus: AttendanceStatus | 'no_response';
-}
-
 export interface SeatingAssignment {
   tableName: string;
   seatNumber: number;
+}
+
+export interface GuestWithRSVP extends Guest {
+  rsvpStatus: AttendanceStatus | 'no_response';
+  /** Set when loaded from admin list API (seating collection). */
+  seating?: SeatingAssignment;
 }
 
 export interface GuestWithSeating extends GuestWithRSVP {
@@ -107,6 +109,13 @@ export interface ImportResult {
 export const SIDE_LABELS: Record<GuestSide, string> = {
   novioA: 'Novio A (Enrique)',
   novioB: 'Novio B (Manuel)',
+  ambos: 'Ambos',
+};
+
+/** Short groom names for table badges and compact UI. */
+export const SIDE_GROOM_NAMES: Record<GuestSide, string> = {
+  novioA: 'Enrique',
+  novioB: 'Manuel',
   ambos: 'Ambos',
 };
 
