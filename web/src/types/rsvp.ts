@@ -48,6 +48,9 @@ export interface RSVPResponse {
   sundayBrunch?: boolean;
 }
 
+/** Admin-managed link from an RSVP doc (`rsvp_responses/{authUid}`) to `guests/{guestUid}`. */
+export type RsvpGuestLinkSource = 'manual' | 'auto_email';
+
 // Complete RSVP submission with metadata
 export interface RSVPSubmission {
   // User identification
@@ -63,6 +66,15 @@ export interface RSVPSubmission {
   lastUpdatedAt: Date;
   isSubmitted: boolean; // true when user clicks submit, false for drafts
   version: number; // for tracking edits
+
+  /** Firestore guest doc id when an admin has linked this RSVP to a guest row. */
+  linkedGuestUid?: string | null;
+  linkedAt?: Date;
+  linkedByAdminUid?: string;
+  linkSource?: RsvpGuestLinkSource;
+  linkNotes?: string;
+  unlinkedAt?: Date;
+  unlinkedByAdminUid?: string;
 }
 
 // Form state for real-time management

@@ -1,0 +1,62 @@
+Branched conversation. You are now in the branch.
+     To return to the original: /resume d74bab60-5567-4909-95e1-9a90147f4caa                                         
+     (or from a new terminal: claude -r d74bab60-5567-4909-95e1-9a90147f4caa)  
+
+curl -s "https://graph.facebook.com/v22.0/${WABA_ID}/subscribed_apps" -H "Authorization: Bearer ${TOKEN}" | jq 
+
+curl -X POST "https://graph.facebook.com/v22.0/${WABA_ID}/subscribed_apps" -H "Authorization: Bearer ${TOKEN}"
+
+
+Phone number questions
+
+  Quick orientation: each WABA (WhatsApp Business Account) can hold up to 2 phone numbers. The Test WABA Meta
+  provisioned has 1 (the test number). When you "register a phone number" in WhatsApp Manager, you're adding a number
+   to a WABA.
+
+  Can I use my existing business number?
+
+  Depends on what it's currently registered to:
+
+  - On the consumer WhatsApp Business app (the green-icon mobile app you download from the App Store): yes you can,
+  but you'll lose that account first. The same phone number can only be on one WhatsApp system at a time. Steps:
+    a. Back up any data you care about from WhatsApp Business app (chats, media).
+    b. In the app: Settings → Account → Delete my account.
+    c. Wait ~24 hours (Meta requires it; otherwise the next step fails with "number still active in WhatsApp").
+    d. Register it to your Cloud API WABA per Step 6 of the setup guide.
+  - On another Cloud API WABA (a different Meta app/business): migrate it via WhatsApp Manager → Phone Numbers → … →
+  Request to migrate. Meta moves it under your new WABA. Same caveat: only one WABA can hold it at a time.
+  - You want to keep using it as a personal/business WhatsApp simultaneously: not possible. The Cloud API takes
+  ownership of the number; consumer WhatsApp stops working on that SIM.
+
+  This is why the setup guide recommends a fresh prepaid SIM (Step 3, Path A). For ~€5–10 you avoid touching anything
+   you depend on personally.
+
+  Can I keep testing on the test number/WABA?
+
+  Yes — and you should, for the full Phase 1→6 cycle. The test number stays available regardless of whether you ever
+  register a production phone. The implementation plan (bot/docs/implementation-plan.md) keeps you on the test number
+   through Day 12; the production-number switch only happens in Phase 7 (Day 13). Wedding is 2026-05-29 → you have
+  plenty of buffer.
+
+  Why is "Test your registered phone number" dropdown empty?
+
+  Because that section is for registered production phones, not the test number. You haven't registered one yet, so
+  the dropdown has no entries — that's expected, not a bug. The test number is in a separate place (the API Setup
+  tab, where you've been working).
+
+  What's the right order before submitting templates and Flows?
+
+  1. Now (after the redeploy): confirm round-trip on the test number — message it from a verified phone, receive the
+  placeholder reply.
+  2. Phase 2 (next ~3 days): swap the placeholder for the Claude pipeline; still test on the test number. Verify
+  schedule/venue Q&A works in both languages.
+  3. Phase 3: photos, Flows, all the tool calls — still test number.
+  4. In parallel during Phase 3/4: decide on the production phone (fresh SIM vs. delete your business WhatsApp first)
+   and register it under a new production WABA — not the Test WABA. Submit templates and Flows against that
+  production WABA, because Test WABA approvals don't carry over.
+  5. Phase 7 (Day 13): flip WHATSAPP_PHONE_NUMBER_ID and WHATSAPP_BUSINESS_ACCOUNT_ID secrets to the production
+  values, redeploy, smoke test, done.
+
+  You don't need the production phone to be ready until ~Day 10–13. Get the test-number round-trip working first;
+  everything else can be done in parallel.
+

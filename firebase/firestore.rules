@@ -15,6 +15,17 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.token.admin == true;
     }
 
+    // Operator = admin custom claim OR a doc in /admins/{uid}.
+    // The bot spec (bot/specs/04-data-model.md §4) standardizes on the
+    // doc-based form; we accept both so existing custom-claim admins
+    // keep working until/unless they're migrated.
+    function isOperator() {
+      return isAuthenticated() && (
+        request.auth.token.admin == true ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
     // guests/{uid}
     match /guests/{uid} {
       allow read: if isAuthenticated();
@@ -55,6 +66,77 @@ service cloud.firestore {
       allow read: if isAuthenticated()
         && resource.data.unlockAt <= request.time;
       allow write: if false;
+    }
+
+    // ── Bot collections ───────────────────────────────────────────────
+    // All bot writes happen server-side via Admin SDK (which bypasses
+    // rules). Operator dashboard reads selected collections. Spec:
+    // bot/specs/04-data-model.md §4.
+
+    match /bot_conversations/{phone} {
+      allow read: if isOperator();
+      allow write: if false;
+
+      match /messages/{messageId} {
+        allow read: if isOperator();
+        allow write: if false;
+      }
+    }
+
+    match /bot_dedupe/{id} {
+      allow read, write: if false;
+    }
+
+    match /bot_send_log/{id} {
+      allow read: if isOperator();
+      allow write: if false;
+    }
+
+    match /bot_broadcasts/{id} {
+      allow read: if isOperator();
+      allow create, update: if isOperator();
+      allow delete: if false;
+    }
+
+    match /bot_escalations/{id} {
+      allow read: if isOperator();
+      allow update: if isOperator();
+      allow create, delete: if false;
+    }
+
+    match /bot_unknown_inbound/{id} {
+      allow read: if isOperator();
+      allow update: if isOperator();
+      allow create, delete: if false;
+    }
+
+    match /bot_rate/{id} {
+      allow read, write: if false;
+    }
+
+    match /bot_kb_version/{id} {
+      allow read: if isOperator();
+      allow write: if false;
+    }
+
+    match /bot_feedback/{id} {
+      allow read: if isOperator();
+      allow write: if false;
+    }
+
+    match /song_requests/{id} {
+      allow read: if isOperator();
+      allow write: if false;
+    }
+
+    match /bot_outbound_pending/{id} {
+      allow read, write: if false;
+    }
+
+    // config/bot — operator-tunable bot config doc inside the existing
+    // config/ collection. Other config/* docs are unaffected.
+    match /config/bot {
+      allow read, write: if isOperator();
     }
   }
 }

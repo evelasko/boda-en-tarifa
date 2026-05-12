@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -379,6 +380,12 @@ export default function GuestsPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/admin/guests/rsvp">
+              <LinkIcon className="mr-1.5 h-4 w-4" />
+              Respuestas RSVP
+            </Link>
+          </Button>
           <Button
             variant="outline"
             size="sm"

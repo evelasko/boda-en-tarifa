@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   Users,
+  Link2,
   Calendar,
   FileText,
   Shield,
@@ -17,6 +18,7 @@ import {
 const navItems = [
   { href: '/admin', label: 'Resumen', icon: LayoutDashboard, exact: true },
   { href: '/admin/guests', label: 'Invitados', icon: Users },
+  { href: '/admin/guests/rsvp', label: 'Enlazar RSVP', icon: Link2, nested: true },
   { href: '/admin/timeline', label: 'Timeline', icon: Calendar },
   { href: '/admin/content', label: 'Contenido', icon: FileText },
   { href: '/admin/content/time-gated', label: 'Contenido Programado', icon: Clock, nested: true },

@@ -2,14 +2,21 @@ import type { DocumentData } from 'firebase-admin/firestore';
 import type { AttendanceStatus } from '@/types/rsvp';
 
 export type GuestRsvpLookup = {
+  /** Guest doc id → attendance from RSVP docs with `linkedGuestUid` (most recent RSVP wins). */
+  byLinkedGuestUid: Map<string, AttendanceStatus>;
   /** RSVP doc id (Firebase Auth UID) → attendance */
   byRsvpDocId: Map<string, AttendanceStatus>;
   /** Normalized RSVP userEmail → attendance (when doc id ≠ guest id) */
   byResponderEmail: Map<string, AttendanceStatus>;
 };
 
-function normalizeEmail(email: string): string {
+/** Same normalization as guest emails in Firestore / sheet sync. */
+export function normalizeGuestEmailForMatch(email: string): string {
   return email.trim().toLowerCase();
+}
+
+function normalizeEmail(email: string): string {
+  return normalizeGuestEmailForMatch(email);
 }
 
 function timestampMs(value: unknown): number {
@@ -35,6 +42,10 @@ function rsvpRecencyMs(data: DocumentData): number {
  */
 export function buildGuestRsvpLookup(rsvpDocs: Array<{ id: string; data: () => DocumentData }>): GuestRsvpLookup {
   const byRsvpDocId = new Map<string, AttendanceStatus>();
+  const byLinkedGuestUid = new Map<
+    string,
+    { attendance: AttendanceStatus; recency: number }
+  >();
   const byResponderEmail = new Map<
     string,
     { attendance: AttendanceStatus; recency: number }
@@ -47,6 +58,16 @@ export function buildGuestRsvpLookup(rsvpDocs: Array<{ id: string; data: () => D
 
     byRsvpDocId.set(doc.id, attendance);
 
+    const linkedRaw = data.linkedGuestUid;
+    if (typeof linkedRaw === 'string' && linkedRaw.trim()) {
+      const linkedUid = linkedRaw.trim();
+      const recency = rsvpRecencyMs(data);
+      const prevL = byLinkedGuestUid.get(linkedUid);
+      if (!prevL || recency >= prevL.recency) {
+        byLinkedGuestUid.set(linkedUid, { attendance, recency });
+      }
+    }
+
     const emailRaw = data.userEmail;
     if (typeof emailRaw !== 'string' || !emailRaw.trim()) continue;
 
@@ -58,12 +79,17 @@ export function buildGuestRsvpLookup(rsvpDocs: Array<{ id: string; data: () => D
     }
   }
 
+  const linkedFlat = new Map<string, AttendanceStatus>();
+  for (const [guestUid, { attendance }] of byLinkedGuestUid) {
+    linkedFlat.set(guestUid, attendance);
+  }
+
   const emailFlat = new Map<string, AttendanceStatus>();
   for (const [email, { attendance }] of byResponderEmail) {
     emailFlat.set(email, attendance);
   }
 
-  return { byRsvpDocId, byResponderEmail: emailFlat };
+  return { byLinkedGuestUid: linkedFlat, byRsvpDocId, byResponderEmail: emailFlat };
 }
 
 export function resolveGuestRsvpStatus(
@@ -71,6 +97,9 @@ export function resolveGuestRsvpStatus(
   guestEmail: string,
   lookup: GuestRsvpLookup
 ): AttendanceStatus | 'no_response' {
+  const byLinked = lookup.byLinkedGuestUid.get(guestUid);
+  if (byLinked) return byLinked;
+
   const byId = lookup.byRsvpDocId.get(guestUid);
   if (byId) return byId;
 

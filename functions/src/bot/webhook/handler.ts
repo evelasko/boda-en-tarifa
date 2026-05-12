@@ -1,0 +1,241 @@
+import {onRequest, type Request} from "firebase-functions/v2/https";
+import * as logger from "firebase-functions/logger";
+import type {Response} from "express";
+import {randomUUID} from "node:crypto";
+import {
+  BOT_REGION,
+  PHASE1_PLACEHOLDER_REPLY,
+  WEBHOOK_SECRETS,
+  WHATSAPP_ACCESS_TOKEN,
+  WHATSAPP_APP_SECRET,
+  WHATSAPP_PHONE_NUMBER_ID,
+  WHATSAPP_VERIFY_TOKEN,
+} from "../lib/config.js";
+import {fromMetaWaId, maskPhone} from "../lib/phone.js";
+import {handleHandshake, verifySignature} from "./verify.js";
+import {claimMessageId, markProcessed} from "./dedupe.js";
+import {classifyEvents, type ClassifiedEvent} from "./classify.js";
+import {sendText} from "../whatsapp/send.js";
+
+/**
+ * WhatsApp Cloud API webhook entry point.
+ *
+ * Phase 1 scope:
+ *   - GET handshake for Meta subscription verification.
+ *   - POST: HMAC verify, dedupe, classify, reply to text with a placeholder.
+ *
+ * Always returns 200 to Meta on POST (except for HMAC failure → 401),
+ * regardless of internal processing outcome — Meta retries on 5xx and
+ * we never want duplicate processing.
+ *
+ * Spec: `bot/specs/08-integration-contract.md` §1,
+ *       `bot/specs/03-architecture.md` §5.1.
+ */
+export const whatsappWebhook = onRequest(
+  {
+    region: BOT_REGION,
+    secrets: WEBHOOK_SECRETS,
+    memory: "1GiB",
+    timeoutSeconds: 60,
+    minInstances: 0,
+    maxInstances: 50,
+    invoker: "public",
+  },
+  async (req, res) => {
+    const requestId = randomUUID();
+
+    if (req.method === "GET") {
+      return handleGet(req, res, requestId);
+    }
+    if (req.method === "POST") {
+      return handlePost(req, res, requestId);
+    }
+
+    logger.warn("bot.webhook.method_not_allowed", {
+      requestId,
+      method: req.method,
+    });
+    res.status(405).send("Method Not Allowed");
+    return;
+  }
+);
+
+/**
+ * GET handshake — Meta calls this once when the webhook is first
+ * subscribed in the App Dashboard (and any time the URL is re-saved).
+ *
+ * @param {Request} req
+ * @param {Response} res
+ * @param {string} requestId
+ * @return {void}
+ */
+function handleGet(
+  req: Request,
+  res: Response,
+  requestId: string
+): void {
+  const expectedToken = WHATSAPP_VERIFY_TOKEN.value();
+  const result = handleHandshake(
+    {
+      mode: typeof req.query["hub.mode"] === "string" ?
+        req.query["hub.mode"] : undefined,
+      token: typeof req.query["hub.verify_token"] === "string" ?
+        req.query["hub.verify_token"] : undefined,
+      challenge: typeof req.query["hub.challenge"] === "string" ?
+        req.query["hub.challenge"] : undefined,
+    },
+    expectedToken
+  );
+
+  logger.info("bot.webhook.handshake", {
+    requestId,
+    status: result.status,
+  });
+  res.status(result.status).send(result.body);
+}
+
+/**
+ * POST handler — verify signature, then process synchronously inside the
+ * 10s Meta timeout. If processing exceeds budget, ack 200 first and let
+ * the work continue best-effort (acceptable for Phase 1 placeholder
+ * traffic; later phases use a dedicated dispatch path).
+ *
+ * @param {Request} req
+ * @param {Response} res
+ * @param {string} requestId
+ * @return {Promise<void>}
+ */
+async function handlePost(
+  req: Request,
+  res: Response,
+  requestId: string
+): Promise<void> {
+  const rawBody = req.rawBody?.toString("utf8") ?? "";
+  const signature = req.get("x-hub-signature-256") ?? undefined;
+
+  const appSecret = WHATSAPP_APP_SECRET.value();
+  if (!verifySignature(rawBody, signature, appSecret)) {
+    logger.warn("bot.webhook.signature_failed", {
+      requestId,
+      hasSignature: Boolean(signature),
+    });
+    res.status(401).send("Unauthorized");
+    return;
+  }
+
+  let body: unknown;
+  try {
+    body = rawBody ? JSON.parse(rawBody) : {};
+  } catch (err) {
+    logger.warn("bot.webhook.bad_json", {requestId, err: String(err)});
+    res.status(200).send("OK"); // never let Meta retry on our parse failure
+    return;
+  }
+
+  // Ack early — Meta's timeout is 10s. Phase 1 work is fast (<2s) so we
+  // still complete inside the request lifecycle; ack-first is defense
+  // against unexpectedly slow downstream calls (Meta send, Firestore).
+  res.status(200).send("OK");
+
+  try {
+    const events = classifyEvents(body);
+    logger.info("bot.webhook.received", {
+      requestId,
+      eventCount: events.length,
+      kinds: events.map((e) => e.kind),
+    });
+
+    for (const event of events) {
+      await dispatchEvent(event, requestId);
+    }
+  } catch (err) {
+    logger.error("bot.webhook.processing_error", {
+      requestId,
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+/**
+ * Phase 1 dispatcher: only text inbound triggers an outbound. Other
+ * kinds are logged so we can confirm classification works end-to-end
+ * but do not produce a reply yet.
+ *
+ * @param {ClassifiedEvent} event
+ * @param {string} requestId
+ * @return {Promise<void>}
+ */
+async function dispatchEvent(
+  event: ClassifiedEvent,
+  requestId: string
+): Promise<void> {
+  if (event.kind === "status") {
+    logger.info("bot.webhook.status", {
+      requestId,
+      metaMessageId: event.messageId,
+      status: event.status,
+      recipient: maskPhone(`+${event.recipientId}`),
+    });
+    return;
+  }
+
+  if (event.kind === "unsupported") {
+    logger.info("bot.webhook.unsupported", {
+      requestId,
+      reason: event.reason,
+    });
+    return;
+  }
+
+  // Inbound message kinds: text | interactive | media. All carry
+  // messageId + from. Dedupe applies to all of them.
+  const claimed = await claimMessageId(event.messageId);
+  if (!claimed) {
+    logger.info("bot.webhook.duplicate", {
+      requestId,
+      metaMessageId: event.messageId,
+    });
+    return;
+  }
+
+  const fromE164 = fromMetaWaId(event.from);
+  const baseLog = {
+    requestId,
+    kind: event.kind,
+    metaMessageId: event.messageId,
+    from: maskPhone(fromE164),
+  };
+
+  if (event.kind !== "text") {
+    logger.info("bot.webhook.skip_non_text_phase1", baseLog);
+    await markProcessed(event.messageId);
+    return;
+  }
+
+  logger.info("bot.webhook.text_inbound", {
+    ...baseLog,
+    bodyLength: event.text.length,
+  });
+
+  try {
+    const result = await sendText({
+      to: fromE164,
+      body: PHASE1_PLACEHOLDER_REPLY,
+      requestId,
+      phoneNumberId: WHATSAPP_PHONE_NUMBER_ID.value(),
+      accessToken: WHATSAPP_ACCESS_TOKEN.value(),
+    });
+    logger.info("bot.webhook.replied", {
+      ...baseLog,
+      outboundMetaMessageId: result.metaMessageId,
+    });
+    await markProcessed(event.messageId);
+  } catch (err) {
+    logger.error("bot.webhook.send_failed", {
+      ...baseLog,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    // Intentionally do not markProcessed on send failure — the dedupe
+    // entry remains as a "claimed but unprocessed" marker for ops review.
+  }
+}

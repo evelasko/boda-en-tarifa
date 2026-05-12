@@ -19,3 +19,6 @@ export {triggerFilmDevelopment} from "./camera/trigger-film-development.js";
 export {sendEventReminder} from "./notifications/send-event-reminder.js";
 export {sendContentUnlockNotification}
   from "./notifications/send-content-unlock.js";
+
+// Bot (WhatsApp Cloud API)
+export {whatsappWebhook} from "./bot/index.js";
