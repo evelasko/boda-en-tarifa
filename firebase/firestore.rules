@@ -61,6 +61,17 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // rsvp_responses/{authUid} — one doc per signed-in user (doc id = Firebase Auth UID).
+    // Admin linking fields are written only via Admin SDK (bypasses rules).
+    match /rsvp_responses/{authUid} {
+      allow read: if isOwner(authUid);
+      allow create: if isOwner(authUid)
+        && request.resource.data.userId == request.auth.uid;
+      allow update: if isOwner(authUid)
+        && request.resource.data.userId == request.auth.uid;
+      allow delete: if isOwner(authUid);
+    }
+
     // time_gated_content/{contentId}
     match /time_gated_content/{contentId} {
       allow read: if isAuthenticated()

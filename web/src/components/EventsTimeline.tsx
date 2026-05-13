@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { MapPin, Clock, ExternalLink, Facebook, Instagram } from 'lucide-react'
 import { FaCocktail, FaMusic, FaRing, FaGlassCheers, FaCoffee } from 'react-icons/fa'
+import { parseCalendarDate } from '@/lib/calendar-date'
 import { cn } from '@/lib/utils'
 import { getWeddingContent } from '@/lib/content'
 
@@ -76,7 +77,7 @@ export function EventsTimeline() {
                   <div className="flex items-center gap-2 text-charcoal/70">
                     <Clock className="w-4 h-4" />
                     <span className="type-ui-label">
-                      {new Date(event.date).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })} • {event.time}
+                      {parseCalendarDate(event.date).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })} • {event.time}
                     </span>
                   </div>
                   <div className="flex items-start gap-2 text-charcoal/70">

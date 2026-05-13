@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { MapPin, Clock, ExternalLink, Facebook, Instagram, Map } from 'lucide-react'
+import { parseCalendarDate } from '@/lib/calendar-date'
 import { cn } from '@/lib/utils'
 import { getWeddingContent } from '@/lib/content'
 import Typography, { combineTypographyClasses } from '@/lib/typography'
@@ -41,7 +42,7 @@ export function EventsTimelineList() {
       options.year = 'numeric'
     }
     
-    return new Date(dateString).toLocaleDateString('es-ES', options)
+    return parseCalendarDate(dateString).toLocaleDateString('es-ES', options)
   }
 
   return (
