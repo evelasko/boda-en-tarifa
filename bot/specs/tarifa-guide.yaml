@@ -1,0 +1,264 @@
+# Tarifa Concierge Guide
+#
+# Curated knowledge Thora uses to recommend things to do for guests
+# arriving early or exploring the area. Source-of-truth for the
+# `lookup_tarifa_guide` tool (see 07-knowledge-base.md).
+#
+# FORMAT — each item is a dict with:
+#   name             : short display name (string)
+#   category         : one of [beaches, restaurants, kite_wind, water,
+#                              sightseeing, day_trips, whale_watching,
+#                              walking, nightlife, family]
+#   area             : rough location ("Tarifa town", "Bolonia", etc.)
+#   description      : 1-2 lines, factual, no marketing fluff
+#   contact          : optional — phone / web / reservation hint
+#   personal_note    : optional — Thora may quote ("mi humano Manuel dice...")
+#   tarifa_specific  : bool — true if Tarifa-area, false for day trips
+#   tags             : optional array of free-form tags for filtering
+#
+# OPERATOR FILL-IN — items marked "TODO" need Enrique/Manuel to complete.
+
+version: 1
+last_updated: "TODO"
+
+# =============================================================================
+# Beaches
+# =============================================================================
+beaches:
+  - name: "Valdevaqueros"
+    category: beaches
+    area: "5-10 min en coche al norte de Tarifa"
+    description: "Playa muy ancha, dunas espectaculares al final. Famosa para kite y windsurf. En días de Levante fuerte se llena de viento y arena."
+    contact: ""
+    personal_note: "TODO — Enrique/Manuel"
+    tarifa_specific: true
+    tags: ["kite", "windsurf", "ancha", "ventosa"]
+
+  - name: "Bolonia"
+    category: beaches
+    area: "20 min en coche al norte"
+    description: "Cala con dunas enormes y las ruinas romanas de Baelo Claudia justo al lado. Una de las playas más bonitas de España. Llegar pronto en verano."
+    contact: ""
+    personal_note: "TODO — Enrique/Manuel"
+    tarifa_specific: false
+    tags: ["ruinas", "dunas", "imprescindible"]
+
+  - name: "Los Lances"
+    category: beaches
+    area: "junto a la urbanización de Tarifa"
+    description: "La playa de la propia Tarifa. Buena para pasear, chiringuitos a tiro de piedra, accesible andando desde el centro y desde Tres Mares."
+    contact: ""
+    personal_note: "TODO — Enrique/Manuel"
+    tarifa_specific: true
+    tags: ["accesible", "chiringuitos", "urbana"]
+
+  - name: "Punta Paloma"
+    category: beaches
+    area: "10 min en coche al norte de Tarifa"
+    description: "Cala más recogida que Valdevaqueros, fondos de arena fina. Famosa por la 'arcilla' natural — la gente se la pone en la piel a modo de spa improvisado."
+    contact: ""
+    personal_note: "TODO — Enrique/Manuel"
+    tarifa_specific: true
+    tags: ["recogida", "arcilla", "fotogénica"]
+
+# =============================================================================
+# Restaurants — operator to fill substantively
+# =============================================================================
+restaurants:
+  # Suggested categories to cover when filling:
+  #   - best paella
+  #   - best fish / pescaíto frito
+  #   - best tapas
+  #   - best breakfast
+  #   - best cocktail spot
+  #   - best chiringuito
+  #   - splurge spot
+  #   - family-friendly
+  #   - vegetarian-friendly
+  - name: "TODO — operator pick"
+    category: restaurants
+    area: "TODO"
+    description: "TODO"
+    contact: ""
+    personal_note: ""
+    tarifa_specific: true
+
+# =============================================================================
+# Kite & wind activities
+# =============================================================================
+kite_wind:
+  - name: "TODO — Enrique's recommended kite school"
+    category: kite_wind
+    area: "Valdevaqueros / Los Lances"
+    description: "TODO — Enrique to fill: school name, what level they teach, typical price."
+    contact: "TODO"
+    personal_note: "Mi humano Enrique se compinche con {instructor}, le pidió que le enseñara hace años. Si te animas, le aviso."
+    tarifa_specific: true
+    tags: ["kite", "lessons", "personal-intro-available"]
+
+  - name: "TODO — wind/kite rental"
+    category: kite_wind
+    area: "TODO"
+    description: "TODO"
+    tarifa_specific: true
+
+# =============================================================================
+# Other water activities
+# =============================================================================
+water:
+  - name: "TODO — scuba diving operator"
+    category: water
+    area: "Tarifa port"
+    description: "TODO"
+    contact: "TODO"
+    personal_note: ""
+    tarifa_specific: true
+
+  - name: "TODO — paddle / SUP rental"
+    category: water
+    area: "TODO"
+    description: "TODO"
+    tarifa_specific: true
+
+  - name: "TODO — surf"
+    category: water
+    area: "Los Lances"
+    description: "TODO"
+    tarifa_specific: true
+
+# =============================================================================
+# Sightseeing
+# =============================================================================
+sightseeing:
+  - name: "Castillo de Guzmán el Bueno"
+    category: sightseeing
+    area: "Tarifa old town"
+    description: "Castillo medieval del siglo X, vistas al estrecho. Entrada de pago. Visita rápida (~1h)."
+    contact: ""
+    personal_note: "TODO — Enrique/Manuel"
+    tarifa_specific: true
+    tags: ["historia", "rápido"]
+
+  - name: "Mirador del Estrecho"
+    category: sightseeing
+    area: "10 min en coche al este, hacia Algeciras"
+    description: "Mirador sobre el estrecho de Gibraltar. En días claros se ve perfectamente la costa de Marruecos."
+    contact: ""
+    personal_note: ""
+    tarifa_specific: true
+    tags: ["vistas", "fotogénico"]
+
+  - name: "Baelo Claudia"
+    category: sightseeing
+    area: "Bolonia, 20 min en coche al norte"
+    description: "Ruinas romanas espectaculares, junto a la playa de Bolonia. Entrada gratuita para ciudadanos UE. Visita 1.5–2h."
+    contact: ""
+    personal_note: "TODO — Enrique/Manuel"
+    tarifa_specific: false
+    tags: ["ruinas", "histórico"]
+
+  - name: "Casco antiguo de Tarifa"
+    category: sightseeing
+    area: "Tarifa centro"
+    description: "Callejear sin plan por el casco antiguo: Puerta de Jerez, plaza del Mesón, callejuelas blancas. Mejor al atardecer."
+    contact: ""
+    personal_note: "TODO — Enrique/Manuel"
+    tarifa_specific: true
+
+# =============================================================================
+# Day trips
+# =============================================================================
+day_trips:
+  - name: "Tánger (ferry desde Tarifa)"
+    category: day_trips
+    area: "Marruecos, ferry desde el puerto de Tarifa"
+    description: "Ferry rápido (35-45 min) FRS o Inter Shipping, salidas frecuentes. Pasaporte obligatorio. Visitar la kasbah, comer en el zoco. Día completo."
+    contact: "frs.es / intershipping.com"
+    personal_note: ""
+    tarifa_specific: false
+    tags: ["frontera", "pasaporte"]
+
+  - name: "Vejer de la Frontera"
+    category: day_trips
+    area: "40 min en coche al norte"
+    description: "Pueblo blanco encaramado en un cerro. Casco histórico precioso, buena gastronomía. Tarde tranquila o cena con vistas."
+    contact: ""
+    personal_note: "TODO — Enrique/Manuel"
+    tarifa_specific: false
+    tags: ["pueblo blanco"]
+
+  - name: "Cádiz capital"
+    category: day_trips
+    area: "1h 15min en coche al noroeste"
+    description: "Casco histórico, playa de la Caleta, mercado central. Día gastronómico fácil."
+    contact: ""
+    personal_note: ""
+    tarifa_specific: false
+
+  - name: "Gibraltar"
+    category: day_trips
+    area: "45 min en coche al este"
+    description: "Cruzar la frontera con pasaporte o DNI. Subir al peñón en teleférico, los monos, la cueva de San Miguel. Medio día suficiente."
+    contact: ""
+    personal_note: ""
+    tarifa_specific: false
+    tags: ["frontera", "monos"]
+
+# =============================================================================
+# Whale watching
+# =============================================================================
+whale_watching:
+  - name: "TODO — operator (FIRMM o similar)"
+    category: whale_watching
+    area: "puerto de Tarifa"
+    description: "Avistamiento de cetáceos en el estrecho. Especies: delfines, orcas (verano), cachalotes, calderones. Salidas 2-3h."
+    contact: "TODO"
+    personal_note: "TODO — Enrique/Manuel"
+    tarifa_specific: true
+    tags: ["familia-friendly", "verano"]
+
+# =============================================================================
+# Walking / hiking
+# =============================================================================
+walking:
+  - name: "Faro de Camarinal"
+    category: walking
+    area: "salida desde Punta Paloma"
+    description: "Caminata 1h aprox. desde la playa de Punta Paloma hasta el faro. Vistas al estrecho. Mejor al atardecer."
+    contact: ""
+    personal_note: "TODO — Enrique/Manuel"
+    tarifa_specific: true
+
+  - name: "TODO — más rutas"
+    category: walking
+    area: "TODO"
+    description: "TODO"
+    tarifa_specific: true
+
+# =============================================================================
+# Nightlife
+# =============================================================================
+nightlife:
+  - name: "TODO — chiringuito recomendado para copas"
+    category: nightlife
+    area: "Tarifa playa"
+    description: "TODO"
+    contact: ""
+    personal_note: "TODO"
+    tarifa_specific: true
+
+  - name: "TODO — bar de copas en el casco antiguo"
+    category: nightlife
+    area: "Tarifa centro"
+    description: "TODO"
+    tarifa_specific: true
+
+# =============================================================================
+# Family-friendly
+# =============================================================================
+family:
+  - name: "TODO — sitio kid-friendly"
+    category: family
+    area: "TODO"
+    description: "TODO"
+    tarifa_specific: true

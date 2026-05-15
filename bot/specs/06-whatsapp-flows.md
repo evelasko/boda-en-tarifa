@@ -6,14 +6,16 @@
 
 | ID | Logical name | Purpose | Screens | Triggered by | Submission handler |
 |---|---|---|---|---|---|
-| F1 | `rsvp_full` | Full RSVP capture | 4 | T2 button, "rsvp" intent, onboarding quick reply | `services/rsvp.ts.submitRsvpFlow()` |
-| F2 | `brunch_attendance` | Brunch attendance + dietary | 1 | "brunch" intent, manual trigger | `services/rsvp.ts.submitBrunchFlow()` |
-| F3 | `song_request` | Song requests | 1 | "song" intent, manual trigger | `services/songs.ts.submitSongFlow()` |
-| F4 | `logistics_intake` | Arrival, transport, accessibility | 2 | Manual trigger from operator | `services/guests.ts.submitLogisticsFlow()` |
-| F5 | `photo_consent` | One-time consent for photo publishing | 1 | First photo received with no consent on file | `services/photos.ts.submitConsentFlow()` |
+| F1 | `rsvp_full` | Full RSVP capture | 4 | T2 button, "rsvp" intent (when `rsvpStatus: pending`) | `services/rsvp.ts.submitRsvpFlow()` |
+| ~~F2~~ | ~~`brunch_attendance`~~ | **DROPPED** — brunch is loose-attendance; web RSVP captures it. Thora handles conversationally. | — | — | — |
+| F3 | `song_request` | Song requests with moderation | 1 | "song" intent | `services/songs.ts.submitSongFlow()` |
+| F4 | `logistics_intake` | Arrival, transport, accessibility — operator-trigger only for complex cases | 2 | Manual trigger from operator | `services/guests.ts.submitLogisticsFlow()` |
+| ~~F5~~ | ~~`photo_consent`~~ | **DROPPED** — photo consent collected pre-event on the web. | — | — | — |
 | F6 | `feedback` | Post-event feedback | 2 | T11 button | `services/feedback.ts.submitFeedbackFlow()` |
 
 Each Flow's Meta-side ID is stored in `config/bot.flows.activeIds` as `{ rsvp_full: "12345...", ... }` so the implementation references logical names.
+
+**Default arrival-date capture**: per the 2026-05-14 design refinement, the **lightweight conversational ask** ("¿qué día llegas a Tarifa?") is the default mechanism for capturing arrival dates (used to schedule the `arrival_day_nudge` template T17). The formal F4 Flow stays available but is only triggered manually by the operator for complex logistical cases (transport coordination, accessibility, etc.).
 
 ## 2. Authoring conventions
 
@@ -165,7 +167,7 @@ Below: full Flow JSON for each, in **Spanish**. The English variant is identical
                 "name": "events",
                 "required": true,
                 "data-source": [
-                  { "id": "welcome_dinner", "title": "Cena de bienvenida — Vie 29, 20:30" },
+                  { "id": "pre_wedding", "title": "Pre-boda — Vie 29, 22:30 (Casa Explora)" },
                   { "id": "ceremony",       "title": "Ceremonia — Sáb 30, 18:00" },
                   { "id": "reception",      "title": "Banquete y fiesta — Sáb 30, 20:00" },
                   { "id": "brunch",         "title": "Brunch despedida — Dom 31, 11:30" }
@@ -338,7 +340,7 @@ Below: full Flow JSON for each, in **Spanish**. The English variant is identical
 | Sí, allí estaré | Yes, I'll be there |
 | No podré asistir | I can't make it |
 | ¿A qué eventos? | Which events? |
-| Cena de bienvenida — Vie 29, 20:30 | Welcome dinner — Fri 29, 20:30 |
+| Pre-boda — Vie 29, 22:30 (Casa Explora) | Pre-wedding drinks — Fri 29, 22:30 (Casa Explora) |
 | Ceremonia — Sáb 30, 18:00 | Ceremony — Sat 30, 18:00 |
 | Banquete y fiesta — Sáb 30, 20:00 | Reception & party — Sat 30, 20:00 |
 | Brunch despedida — Dom 31, 11:30 | Farewell brunch — Sun 31, 11:30 |
@@ -361,7 +363,7 @@ async function submitRsvpFlow(input: {
   //      guestId: phone (or resolved guest id),
   //      source: 'whatsapp',
   //      attending: boolean,
-  //      events: { welcome_dinner: bool, ceremony: bool, reception: bool, brunch: bool },
+  //      events: { pre_wedding: bool, ceremony: bool, reception: bool, brunch: bool },
   //      plusOne: { name?: string },
   //      dietary: string[],
   //      dietaryNotes?: string,
@@ -371,71 +373,26 @@ async function submitRsvpFlow(input: {
   // 4. Idempotency: if rsvp_responses/{guestId} exists, update with new submission;
   //    write old one to rsvp_responses/{guestId}/history/{auto} for audit.
   // 5. Update guests/{phone}.rsvpStatus accordingly.
-  // 6. Send confirmation session message via WhatsApp:
-  //    ES: "¡Recibido! Si necesitas cambiar algo, escríbeme y lo arreglamos. 💛"
-  //    EN: "Got it! If you need to change anything, just message me. 💛"
+  // 6. Send confirmation session message via WhatsApp in Thora's voice:
+  //    ES: "¡Recibido! 🐾 Si necesitas cambiar algo, escríbeme y lo arreglamos."
+  //    EN: "Got it! 🐾 If you need to change anything, just message me."
   // 7. Log everything via services/audit.ts.
 }
 ```
 
+**RSVP-already-done handling**: when a guest types "quiero confirmar" / "RSVP" and their `rsvp_responses/{guestId}` doc already exists, Thora does **not** open the Flow. Instead she pulls the existing record via `get_guest_context` and replies with a summary + edit offer (golden example G9b in `02-conversation-design.md`):
+
+> Ya estás confirmada 🐾 Vienes a la ceremonia, banquete y brunch. Sin alergias declaradas. ¿Cambiar algo?
+
+If the guest says yes to changing, Thora then triggers F1 (which on submission writes a new record and archives the previous one to `history/`).
+
+**Event slug naming note**: this spec previously listed `welcome_dinner` as an event. Per the 2026-05-14 design refinement reflecting `bot/docs/our-take.md`: the "welcome" is **not** an actual event (just informal hangout at Chiringuito Bora). The real Friday-evening event is **pre-wedding drinks at Casa Explora (22:30 Fri)**. Event slugs in `events/` Firestore should be updated accordingly: `pre_wedding` replaces `welcome_dinner`.
+
 ---
 
-### F2: `brunch_attendance` — single-screen brunch yes/no + dietary delta
+### F2: `brunch_attendance` — **DROPPED**
 
-```json
-{
-  "version": "6.0",
-  "screens": [{
-    "id": "BRUNCH",
-    "title": "Brunch del domingo",
-    "terminal": true,
-    "layout": {
-      "type": "SingleColumnLayout",
-      "children": [
-        { "type": "TextHeading", "text": "Brunch despedida — Dom 31" },
-        { "type": "TextBody", "text": "11:30, en {venue}. ¿Te apuntas?" },
-        {
-          "type": "Form",
-          "name": "form_brunch",
-          "children": [
-            {
-              "type": "RadioButtonsGroup",
-              "label": "¿Vienes al brunch?",
-              "name": "attending",
-              "required": true,
-              "data-source": [
-                { "id": "yes",   "title": "Sí" },
-                { "id": "no",    "title": "No" },
-                { "id": "maybe", "title": "Aún no lo sé" }
-              ]
-            },
-            {
-              "type": "TextArea",
-              "label": "Cualquier nota (opcional)",
-              "name": "notes",
-              "required": false,
-              "max-length": 200
-            },
-            {
-              "type": "Footer",
-              "label": "Enviar",
-              "on-click-action": {
-                "name": "complete",
-                "payload": {
-                  "attending": "${form.attending}",
-                  "notes": "${form.notes}"
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  }]
-}
-```
-
-**Handler:** updates `rsvp_responses/{guestId}.events.brunch` and `.brunchNotes`. Sends an ack.
+Removed in the 2026-05-14 design refinement. Rationale: the brunch is loose ("paella for all who want to come"); the web RSVP already captures the field. If operator needs an update closer to the date, Thora can ask conversationally rather than via a dedicated Flow.
 
 ---
 
@@ -512,7 +469,34 @@ async function submitRsvpFlow(input: {
 }
 ```
 
-**Handler:** writes a `song_requests` doc; ack with "🎵 ¡Apuntada! Le pasamos la lista al DJ. 🤞".
+**Handler:** writes a `song_requests` doc with `status: pending`. Applies `config/bot.moderation_hints` no-go list (artist exclusions, song exclusions, theme exclusions provided by operator). Decision tree:
+
+- **Pass (default for borderline)** → status flips to `approved`, song-title-resolution via Spotify API attempts to add to the playlist (`config/bot.spotify.playlistId`), Thora acks: `"🎵 Apuntada, cruzo las patas 🐾 — el DJ tiene la última palabra"`.
+- **Fail (matches moderation hint)** → status flips to `rejected_self_moderated`. Thora delegates to in-person: `"Esa mis humanos la tienen marcada — díselo en persona si insistes, tienen vía directa con Randy 🐾"`. No escalation, no operator action needed.
+- **Spotify not found** → Thora asks for help inline: `"No encuentro 'X' en Spotify, ¿la deletreas o me das artista?"` — song stays `pending` until the guest follows up.
+
+**Per-guest quota**: 3 requests max within the active window. On 4th attempt: `"Ya me has pedido 3 canciones 🐾 No me digas que no es suficiente."`.
+
+**Window**: requests accepted between **21:00 Sat May 30 and 01:00 Sun May 31** (last hour closed so the DJ can flex). Outside this window: `"Cerré por hoy — pídeselas a Randy cara a cara 🐾"`.
+
+**`moderation_hints` operator schema** (Firestore `config/bot.moderation_hints`):
+
+```ts
+interface ModerationHints {
+  blocked_artists: string[];        // e.g., ["Despacito", "Macarena"]
+  blocked_songs: { title: string; artist?: string }[];
+  blocked_themes: string[];         // free-form descriptions for Haiku to interpret
+  notes_for_thora?: string;         // operator note Thora can quote when refusing
+}
+```
+
+**Spotify integration**:
+
+- Single playlist (`config/bot.spotify.playlistId`) created by operator pre-event.
+- App credentials and refresh token in Firebase secrets: `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REFRESH_TOKEN`.
+- Resolution: `GET /v1/search?q={title artist}&type=track&limit=3` → pick top hit; if confidence low, ask the guest for confirmation.
+- Append: `POST /v1/playlists/{playlistId}/tracks` with the resolved track URI.
+- Randy (DJ) is given the playlist URL pre-event and pulls from it live.
 
 ---
 
@@ -635,54 +619,15 @@ async function submitRsvpFlow(input: {
 
 ---
 
-### F5: `photo_consent`
+### F5: `photo_consent` — **DROPPED**
 
-```json
-{
-  "version": "6.0",
-  "screens": [{
-    "id": "CONSENT",
-    "title": "Permiso de fotos",
-    "terminal": true,
-    "layout": {
-      "type": "SingleColumnLayout",
-      "children": [
-        { "type": "TextHeading", "text": "Una pregunta rápida" },
-        {
-          "type": "TextBody",
-          "text": "¿Podemos publicar las fotos que mandas en el álbum compartido de la boda? Será visible para los demás invitados a partir del domingo 31."
-        },
-        {
-          "type": "Form",
-          "name": "form_consent",
-          "children": [
-            {
-              "type": "RadioButtonsGroup",
-              "label": "¿Las publicamos?",
-              "name": "consent",
-              "required": true,
-              "data-source": [
-                { "id": "yes", "title": "Sí, claro" },
-                { "id": "no",  "title": "No, mejor solo para vosotros dos" }
-              ]
-            },
-            {
-              "type": "Footer",
-              "label": "Listo",
-              "on-click-action": {
-                "name": "complete",
-                "payload": { "consent": "${form.consent}" }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  }]
-}
-```
+Removed in the 2026-05-14 design refinement. **Photo consent is collected pre-event on the web** (per the RSVP/profile flow already in place). Thora does **not** trigger a consent flow on first photo. All photos arrive at the bot already tagged with the guest's stored `photoConsent` field.
 
-**Handler:** updates `guests/{phone}.photoConsent` to `true`/`false`. If `false`, the bot replies: "Hecho — quedan privadas, las verán solo Enrique y Manuel. 💛". Existing `feed_posts` from this guest with `consent: 'pending'` are bulk-updated to match.
+If `photoConsent == false`, the photo is stored privately (visible only to operator); not added to the album.
+
+If `photoConsent == true`, the photo enters the moderation queue per the standard flow.
+
+If `photoConsent == undefined` (legacy edge case for a guest who's not on the web): Thora replies neutrally — `"Recibida 🐾 Avisa a mis humanos si quieres que aparezca en el álbum compartido o solo para nosotros."` — and the operator handles consent capture out-of-band.
 
 ---
 
@@ -773,7 +718,7 @@ async function submitRsvpFlow(input: {
 }
 ```
 
-**Handler:** writes `bot_feedback`. Ack: "Gracias 💛 De verdad."
+**Handler:** writes `bot_feedback`. Ack in Thora's voice: `"Gracias 🐾 De verdad. Cuidaos."`
 
 ---
 
@@ -893,10 +838,10 @@ export const RsvpFullSubmission = z.object({
 ```ts
 export type FlowName =
   | 'rsvp_full'
-  | 'brunch_attendance'
+  // | 'brunch_attendance'  ← DROPPED (2026-05-14)
   | 'song_request'
-  | 'logistics_intake'
-  | 'photo_consent'
+  | 'logistics_intake'      // operator-trigger only
+  // | 'photo_consent'      ← DROPPED (2026-05-14, consent on web pre-event)
   | 'feedback';
 
 export interface FlowDef {
