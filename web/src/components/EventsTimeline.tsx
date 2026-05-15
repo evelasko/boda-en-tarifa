@@ -94,12 +94,12 @@ export function EventsTimeline() {
                   <button
                     onClick={() => setExpandedEvent(expandedEvent === event.id ? null : event.id)}
                     className={cn(
-                      "w-full px-4 py-2 rounded-full !text-charcoal border",
+                      "w-full px-4 py-2 rounded-full text-charcoal! border",
                       // borderColorClasses[event.color as keyof typeof borderColorClasses],
                       // `hover:${colorClasses[event.color as keyof typeof colorClasses]}`
                     )}
                   >
-                   <span className="!text-charcoal">Ver Mapa</span>
+                   <span className="text-charcoal!">Ver Mapa</span>
                   </button>
                   
                   {/* Social Links */}
