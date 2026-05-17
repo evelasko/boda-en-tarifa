@@ -61,6 +61,13 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // app_config/{docId} — admin-only writes via Admin SDK; reads allowed to
+    // operators (no PII, no need to expose to all signed-in users).
+    match /app_config/{docId} {
+      allow read: if isOperator();
+      allow write: if false;
+    }
+
     // rsvp_responses/{authUid} — one doc per signed-in user (doc id = Firebase Auth UID).
     // Admin linking fields are written only via Admin SDK (bypasses rules).
     match /rsvp_responses/{authUid} {

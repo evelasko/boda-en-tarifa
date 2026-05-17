@@ -13,6 +13,8 @@ import {
   Bell,
   Settings,
   Clock,
+  Utensils,
+  LayoutGrid,
   X,
 } from 'lucide-react';
 
@@ -24,6 +26,8 @@ const navItems = [
   { href: '/admin/timeline', label: 'Timeline', icon: Calendar },
   { href: '/admin/content', label: 'Contenido', icon: FileText },
   { href: '/admin/content/time-gated', label: 'Contenido Programado', icon: Clock, nested: true },
+  { href: '/admin/seating', label: 'Plano de mesas', icon: Utensils },
+  { href: '/admin/seating/layout', label: 'Configurar mesas', icon: LayoutGrid, nested: true },
   { href: '/admin/moderation', label: 'Moderación', icon: Shield },
   { href: '/admin/notifications', label: 'Notificaciones', icon: Bell },
   { href: '/admin/config', label: 'Configuración', icon: Settings },

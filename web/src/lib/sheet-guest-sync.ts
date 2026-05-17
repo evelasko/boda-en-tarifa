@@ -5,7 +5,10 @@ import { FieldValue } from 'firebase-admin/firestore';
 import { adminFirestore } from '@/lib/firebase-admin';
 import { getSheetsClient } from '@/lib/google-sheets-delegated';
 import { normalizeSheetPhoneToE164 } from '@/lib/phone';
+import { readSeatingLayout } from '@/lib/seating-layout-server';
+import { tableNumberByName } from '@/lib/seating-layout';
 import type { Guest } from '@/types/guest';
+import type { SeatingLayout } from '@/types/seating-layout';
 
 const GUESTS_COLLECTION = 'guests';
 const SEATING_COLLECTION = 'seating';
@@ -27,6 +30,12 @@ export interface SheetSyncResult {
   unchanged: number;
   errors: SheetSyncErrorRow[];
   dryRun: boolean;
+  /**
+   * Count of seating writes where `tableNumber` could not be resolved against
+   * `app_config/seating_layout` (so the field was written as `null`). Such
+   * rows surface in the `/admin/seating` "Sin coincidencia" panel.
+   */
+  seatingUnresolved: number;
 }
 
 interface ParsedSheetRow {
@@ -618,7 +627,20 @@ export async function syncGuestsFromSheet(options: { dryRun: boolean }): Promise
     unchanged: 0,
     errors: [],
     dryRun: options.dryRun,
+    seatingUnresolved: 0,
   };
+
+  let layout: SeatingLayout | null = null;
+  try {
+    layout = await readSeatingLayout();
+  } catch (err) {
+    console.warn('sheet-guest-sync: failed to load seating layout, tableNumber will be null', err);
+  }
+  if (!layout) {
+    console.warn(
+      'sheet-guest-sync: app_config/seating_layout not seeded; seating docs will be written with tableNumber: null until the layout is initialized.',
+    );
+  }
 
   const maps = await loadExistingMaps(adminFirestore);
   const { byEmail, byPhone, byChildLink, byPendingSyncKey, guestByUid, seatingByUid } = maps;
@@ -812,9 +834,20 @@ export async function syncGuestsFromSheet(options: { dryRun: boolean }): Promise
       if (m.seatingPlan === 'delete') {
         batch.delete(seatRef);
       } else {
+        const tableNumber = layout
+          ? tableNumberByName(layout, m.seatingPlan.tableName)
+          : null;
+        if (tableNumber === null) {
+          result.seatingUnresolved += 1;
+          console.warn(
+            `sheet-guest-sync: unresolved table name "${m.seatingPlan.tableName}" (sheet row ${m.sheetRow}); writing tableNumber: null.`,
+          );
+        }
         batch.set(seatRef, {
           tableName: m.seatingPlan.tableName,
           seatNumber: m.seatingPlan.seatNumber,
+          tableNumber,
+          updatedAt: FieldValue.serverTimestamp(),
         });
       }
       opCount += 1;
