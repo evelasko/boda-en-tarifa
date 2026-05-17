@@ -1,0 +1,21 @@
+# Raw reference photos — uploaded to Cloudinary, not version-controlled.
+# Cloudinary holds the canonical signed-access copy; the dossier.yaml's
+# `reference_photos` array carries the durable URL reference.
+#
+# See README.md in this folder for the upload workflow.
+
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.JPG
+*.JPEG
+*.PNG
+*.WEBP
+*.heic
+*.HEIC
+
+# But DO commit the YAML, README, and this file itself.
+!*.yaml
+!*.md
+!.gitignore

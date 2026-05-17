@@ -12,7 +12,7 @@ help:
   @echo "Boda en Tarifa monorepo commands"
   @echo ""
   @echo "Discovery and setup:"
-  @echo "  help | menu | doctor | env-check | setup-all | setup-web | setup-functions | setup-scripts | setup-app"
+  @echo "  help | menu | doctor | env-check | setup-all | setup-web | setup-functions | setup-scripts | setup-bot-scripts | setup-app"
   @echo "Emulator lifecycle:"
   @echo "  emu-start | emu-start-core | emu-stop | emu-status | emu-exec <command...> | emu-reset"
   @echo "Data lifecycle:"
@@ -26,6 +26,8 @@ help:
   @echo "Firebase and ops:"
   @echo "  fb-status fb-use <alias> fb-deploy-all fb-deploy-functions fb-deploy-hosting fb-deploy-remoteconfig fb-deploy-rules"
   @echo "  ops-magic-links ops-magic-links-dry ops-magic-links-emulator ops-magic-links-emulator-dry ops-guest-audit ops-guest-backup ops-linear-list ops-linear-get <id> ops-linear-id <id>"
+  @echo "Bot scripts (one-off operator tools):"
+  @echo "  bot-spotify-auth | bot-upload-photos <slug | --all> [--dry-run] | bot-upload-photos-dry <slug | --all>"
   @echo "Golden path flows:"
   @echo "  flow-dev-app flow-dev-web flow-test-functions flow-qa-smoke flow-release-web flow-release-functions"
   @echo "Menus:"
@@ -51,7 +53,7 @@ env-check:
   @if [ -z "${LINEAR_API_KEY:-}" ]; then echo "  ⚠️  LINEAR_API_KEY missing (needed for ops-linear-*)"; else echo "  ✅ LINEAR_API_KEY is set"; fi
   @if [ -z "${GOOGLE_APPLICATION_CREDENTIALS:-}" ]; then echo "  ⚠️  GOOGLE_APPLICATION_CREDENTIALS missing (needed for ops-magic-links, ops-guest-audit, ops-guest-backup; not required for ops-magic-links-emulator)"; else echo "  ✅ GOOGLE_APPLICATION_CREDENTIALS is set"; fi
 
-setup-all: setup-web setup-functions setup-scripts setup-app
+setup-all: setup-web setup-functions setup-scripts setup-bot-scripts setup-app
 
 setup-web:
   npm --prefix web install
@@ -61,6 +63,9 @@ setup-functions:
 
 setup-scripts:
   npm --prefix scripts install
+
+setup-bot-scripts:
+  npm --prefix bot/scripts install
 
 setup-app:
   flutter pub get --directory app
@@ -279,6 +284,35 @@ ops-linear-get issue:
 
 ops-linear-id issue:
   python3 scripts/linear.py get-issue-id {{issue}}
+
+# ──────────────────────────────────────────────────────────────────────
+# Bot scripts (one-off operator tools — see bot/scripts/ and bot/docs/)
+# ──────────────────────────────────────────────────────────────────────
+# All bot scripts are invoked from the repo root so they can resolve
+# bot/.env via cwd-relative paths. Node's module resolution still finds
+# bot/scripts/node_modules/ because it walks up from the script's own
+# location, not cwd.
+
+# One-time Spotify OAuth helper. Zero deps — runs on bare node.
+bot-spotify-auth:
+  node bot/scripts/spotify-auth.mjs
+
+# Sync reference photos for guest dossiers to Cloudinary, write signed
+# URLs back to the per-guest dossier.yaml. Requires `just setup-bot-scripts`
+# beforehand (installs cloudinary + yaml).
+#
+# Examples:
+#   just bot-upload-photos javier-otero
+#   just bot-upload-photos --all
+#   just bot-upload-photos javier-otero --dry-run
+bot-upload-photos *args:
+  node bot/scripts/upload-reference-photos.mjs {{args}}
+
+# Convenience: dry-run preview (no Cloudinary upload, no YAML write).
+#   just bot-upload-photos-dry javier-otero
+#   just bot-upload-photos-dry --all
+bot-upload-photos-dry *args:
+  node bot/scripts/upload-reference-photos.mjs {{args}} --dry-run
 
 flow-dev-app:
   just env-check
