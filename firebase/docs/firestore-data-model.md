@@ -47,6 +47,8 @@ Pre-populated by admins before the event. Each document represents one invited g
 | `side` | string | Yes | Which groom the guest is associated with | One of: `"novioA"`, `"novioB"`, `"ambos"`; admin-set; **immutable by guest** |
 | `profileClaimed` | bool | Yes | Whether the guest has authenticated and claimed this profile | Defaults to `false`; set to `true` by `onUserCreate` Cloud Function |
 | `isDirectoryVisible` | bool | Yes | Privacy toggle — whether guest appears in the Guest Directory | Defaults to `true`; guest can toggle off in settings |
+| `child` | bool | No | Minor guest (spreadsheet column S) | Synced from sheet; may omit contact fields |
+| `tableCaptain` | bool | No | Table captain for service staff (spreadsheet column U) | Synced from sheet; admin-editable |
 | `contactPreference` | string | No | How the guest prefers to be contacted | One of: `"whatsapp"`, `"email"`; set during onboarding |
 | `createdAt` | timestamp | Yes | Document creation time | Server timestamp; set once on creation |
 | `updatedAt` | timestamp | Yes | Last modification time | Server timestamp; updated on every write |

@@ -146,7 +146,7 @@ export default function RsvpResponsesTable({ rows }: RsvpResponsesTableProps) {
         <button
           type="button"
           onClick={() => handleSort(field)}
-          className="flex items-center hover:text-charcoal transition-colors font-medium whitespace-nowrap"
+          className="flex items-center text-charcoal/80 hover:text-charcoal transition-colors font-medium whitespace-nowrap"
         >
           {children}
           <SortIcon field={field} />
@@ -158,9 +158,9 @@ export default function RsvpResponsesTable({ rows }: RsvpResponsesTableProps) {
   return (
     <TooltipProvider delayDuration={200}>
       <div className="overflow-x-auto rounded-lg border border-charcoal/10 bg-white">
-        <Table>
+        <Table className="text-charcoal">
           <TableHeader>
-            <TableRow className="bg-cream/50">
+            <TableRow className="bg-cream/50 border-charcoal/10">
               <SortableHeader field="displayName">Nombre</SortableHeader>
               <SortableHeader field="attendance">Asistencia</SortableHeader>
               <SortableHeader field="mainCoursePreference">Plato</SortableHeader>
@@ -194,14 +194,14 @@ export default function RsvpResponsesTable({ rows }: RsvpResponsesTableProps) {
                 );
 
                 return (
-                  <TableRow key={row.rsvpUid}>
+                  <TableRow key={row.rsvpUid} className="text-charcoal hover:bg-cream/40">
                     <TableCell className="min-w-[160px]">
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span className="block cursor-default">
                             <span className="font-medium text-charcoal">{row.displayName}</span>
                             {row.userEmail && (
-                              <span className="block text-xs text-charcoal/50 truncate max-w-[200px]">
+                              <span className="block text-xs text-charcoal/65 truncate max-w-[200px]">
                                 {row.userEmail}
                               </span>
                             )}
@@ -217,32 +217,32 @@ export default function RsvpResponsesTable({ rows }: RsvpResponsesTableProps) {
                             <span
                               className={`h-2.5 w-2.5 rounded-full shrink-0 ${rsvpDotClass(row.attendance)}`}
                             />
-                            <span className="text-sm">{attendanceLabel}</span>
+                            <span className="text-sm text-charcoal">{attendanceLabel}</span>
                           </span>
                         </TooltipTrigger>
                         <TooltipContent>{attendanceLabel}</TooltipContent>
                       </Tooltip>
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-sm">
+                    <TableCell className="whitespace-nowrap text-sm text-charcoal">
                       {formatMainCourse(row.mainCoursePreference)}
                     </TableCell>
-                    <TableCell className="max-w-[140px] text-sm" title={dietFull}>
+                    <TableCell className="max-w-[140px] text-sm text-charcoal" title={dietFull}>
                       {truncate(row.dietaryRestrictions, 40)}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-sm">
+                    <TableCell className="whitespace-nowrap text-sm text-charcoal">
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="cursor-default font-medium tracking-wide">
+                          <span className="cursor-default font-medium tracking-wide text-charcoal">
                             {nightsCompact}
                           </span>
                         </TooltipTrigger>
                         <TooltipContent>{nightsFull}</TooltipContent>
                       </Tooltip>
                     </TableCell>
-                    <TableCell className="max-w-[120px] text-sm" title={roomFull}>
+                    <TableCell className="max-w-[120px] text-sm text-charcoal" title={roomFull}>
                       {truncate(row.roomSharing, 30)}
                     </TableCell>
-                    <TableCell className="text-sm whitespace-nowrap">
+                    <TableCell className="text-sm whitespace-nowrap text-charcoal">
                       {row.linkedGuest?.fullName ?? '—'}
                     </TableCell>
                     <TableCell>
@@ -253,7 +253,7 @@ export default function RsvpResponsesTable({ rows }: RsvpResponsesTableProps) {
                         {row.isSubmitted ? 'Enviado' : 'Borrador'}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-charcoal/70 whitespace-nowrap">
+                    <TableCell className="text-sm text-charcoal/80 whitespace-nowrap tabular-nums">
                       {formatWhen(row.lastUpdatedAt)}
                     </TableCell>
                   </TableRow>

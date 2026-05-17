@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
     const headers = [
       'UID', 'Nombre Completo', 'Email', 'PhoneE164', 'Lado', 'Relación con Novios',
       'Estado Sentimental', 'Perfil Reclamado', 'Visible en Directorio',
-      'WhatsApp', 'Estado RSVP', 'Mesa', 'Asiento',
+      'WhatsApp', 'Estado RSVP', 'Mesa', 'Asiento', 'Capitán',
     ];
 
     const rows = guests.map((g) => [
@@ -82,6 +82,7 @@ export async function GET(request: NextRequest) {
       g.rsvpStatus,
       g.seating?.tableName || '',
       g.seating?.seatNumber?.toString() || '',
+      g.tableCaptain ? 'Sí' : 'No',
     ]);
 
     const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');

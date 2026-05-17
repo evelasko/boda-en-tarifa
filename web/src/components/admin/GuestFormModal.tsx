@@ -54,6 +54,7 @@ export default function GuestFormModal({
   const [errors, setErrors] = useState<Record<string, string>>({});
   /** Adult on the list without email/phone until RSVP (matches sheet `contactPending`). */
   const [awaitingContactOnly, setAwaitingContactOnly] = useState(false);
+  const [tableCaptain, setTableCaptain] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -72,6 +73,7 @@ export default function GuestFormModal({
         const noPhone = !(guest.phoneE164 ?? '').trim();
         const noWa = !(guest.whatsappNumber ?? '').trim();
         setAwaitingContactOnly(Boolean(guest.contactPending && noEmail && noPhone && noWa));
+        setTableCaptain(Boolean(guest.tableCaptain));
       } else {
         setFullName('');
         setEmail('');
@@ -84,6 +86,7 @@ export default function GuestFormModal({
         setTableName('');
         setSeatNumber('');
         setAwaitingContactOnly(false);
+        setTableCaptain(false);
       }
       setErrors({});
     }
@@ -145,6 +148,7 @@ export default function GuestFormModal({
         whatsappNumber: whatsappNumber.trim() || undefined,
         tableName: tableName.trim() || undefined,
         seatNumber: seatNumber ? Number(seatNumber) : undefined,
+        tableCaptain,
         ...(contactPendingFlag ? { contactPending: true } : {}),
       });
       onOpenChange(false);
@@ -317,6 +321,22 @@ export default function GuestFormModal({
               </div>
             </>
           )}
+
+          <div className="flex items-center justify-between rounded-md border border-charcoal/10 px-3 py-2">
+            <div className="space-y-0.5">
+              <Label htmlFor="tableCaptain" className="text-sm font-medium">
+                Capitán de mesa
+              </Label>
+              <p className="text-xs text-charcoal/55">
+                Punto de contacto del personal de servicio en la mesa (columna U de la hoja).
+              </p>
+            </div>
+            <Switch
+              id="tableCaptain"
+              checked={tableCaptain}
+              onCheckedChange={setTableCaptain}
+            />
+          </div>
 
           <Separator />
 

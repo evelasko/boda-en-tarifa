@@ -63,6 +63,7 @@ export async function GET(request: NextRequest) {
         profileClaimed: raw.profileClaimed ?? false,
         isDirectoryVisible: raw.isDirectoryVisible ?? true,
         child: raw.child === true,
+        tableCaptain: raw.tableCaptain === true,
         connectedTo: raw.connectedTo,
         connectionType: raw.connectionType,
         contactPending: raw.contactPending === true,
@@ -178,6 +179,7 @@ export async function POST(request: NextRequest) {
     if (isChild) {
       guest.child = true;
     }
+    guest.tableCaptain = Boolean(body.tableCaptain);
     if (body.connectedTo?.trim()) {
       guest.connectedTo = body.connectedTo.trim();
     }

@@ -46,6 +46,7 @@ interface ParsedSheetRow {
   firestoreUid: string;
   funFact: string;
   isChild: boolean;
+  isTableCaptain: boolean;
   connectedTo: string;
   connectionType: string;
   contactPending: boolean;
@@ -86,7 +87,7 @@ function parseDirectoryVisible(raw: string): boolean {
 }
 
 /** Google Sheets checkbox / boolean cell */
-function parseSheetChildColumn(raw: string): boolean {
+function parseSheetBooleanColumn(raw: string): boolean {
   const s = raw.trim().toLowerCase();
   if (!s) return false;
   return ['true', 'yes', '1', 'sí', 'si', 'y', 'x', 'checked'].includes(s);
@@ -191,7 +192,8 @@ function parseGuestRow(values: unknown[], sheetRow: number): { ok: ParsedSheetRo
   const funFact = cell(values, 15);
   const connectedToRaw = cell(values, 16);
   const connectionTypeRaw = cell(values, 17);
-  const isChild = parseSheetChildColumn(cell(values, 18));
+  const isChild = parseSheetBooleanColumn(cell(values, 18));
+  const isTableCaptain = parseSheetBooleanColumn(cell(values, 20));
 
   const phoneE164 = normalizeSheetPhoneToE164(phoneRaw || null);
   const email = emailRaw.trim();
@@ -281,6 +283,7 @@ function parseGuestRow(values: unknown[], sheetRow: number): { ok: ParsedSheetRo
       firestoreUid,
       funFact,
       isChild,
+      isTableCaptain,
       connectedTo: connectedToRaw,
       connectionType: connectionTypeRaw,
       contactPending,
@@ -466,6 +469,7 @@ function buildGuestCreatePayload(parsed: ParsedSheetRow, nowIso: string): Record
     funFact: parsed.funFact,
     sheetNickname: parsed.sheetNickname,
     child: parsed.isChild,
+    tableCaptain: parsed.isTableCaptain,
     profileClaimed: false,
     whatsappNumber: '',
     createdAt: nowIso,
@@ -495,6 +499,7 @@ function buildGuestUpdatePayload(
     funFact: parsed.funFact,
     sheetNickname: parsed.sheetNickname,
     child: parsed.isChild,
+    tableCaptain: parsed.isTableCaptain,
     contactPending: parsed.contactPending,
     profileClaimed: existing.profileClaimed ?? false,
     whatsappNumber: existing.whatsappNumber ?? '',
@@ -564,6 +569,7 @@ function syncedGuestFieldsEqual(existing: Record<string, unknown>, parsed: Parse
   }
 
   if (Boolean(existing.child) !== parsed.isChild) return false;
+  if (Boolean(existing.tableCaptain) !== parsed.isTableCaptain) return false;
   if (String(existing.connectedTo ?? '') !== parsed.connectedTo) return false;
   if (String(existing.connectionType ?? '') !== parsed.connectionType) return false;
   if (Boolean(existing.contactPending) !== parsed.contactPending) return false;
@@ -598,7 +604,7 @@ export async function syncGuestsFromSheet(options: { dryRun: boolean }): Promise
   const sheetName = getSheetName();
 
   const sheets = await getSheetsClient();
-  const range = a1Range(sheetName, 'A2:S');
+  const range = a1Range(sheetName, 'A2:U');
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId,
     range,

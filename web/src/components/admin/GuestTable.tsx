@@ -240,6 +240,7 @@ export default function GuestTable({
                 <SortableHeader field="profileClaimed">Perfil</SortableHeader>
                 <SortableHeader field="relationshipStatus">Estado</SortableHeader>
                 <SortableHeader field="seating">Mesa</SortableHeader>
+                <TableHead>Capitán</TableHead>
                 <TableHead className="w-12">
                   <span className="sr-only">Acciones</span>
                 </TableHead>
@@ -248,7 +249,7 @@ export default function GuestTable({
             <TableBody>
               {paginated.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-12 text-charcoal/50">
+                  <TableCell colSpan={10} className="text-center py-12 text-charcoal/50">
                     No se encontraron invitados
                   </TableCell>
                 </TableRow>
@@ -361,6 +362,18 @@ export default function GuestTable({
                       </TableCell>
                       <TableCell className="type-body-small tabular-nums text-charcoal">
                         {formatTableSeat(guest)}
+                      </TableCell>
+                      <TableCell>
+                        {guest.tableCaptain ? (
+                          <Badge
+                            variant="outline"
+                            className="text-xs font-medium border-amber-300 bg-amber-50 text-amber-950"
+                          >
+                            Capitán
+                          </Badge>
+                        ) : (
+                          <span className="text-charcoal/30">—</span>
+                        )}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>

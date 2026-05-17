@@ -20,6 +20,8 @@ export interface Guest {
   roomNumber?: string;
   /** Synced from spreadsheet column S — minors may omit contact fields */
   child?: boolean;
+  /** Synced from spreadsheet column U — table captain for service staff */
+  tableCaptain?: boolean;
   /** Firebase guest UID this row is linked to (spreadsheet column Q) */
   connectedTo?: string;
   /** Free-form link label (spreadsheet column R) */
@@ -61,6 +63,7 @@ export interface CreateGuestInput {
   whatsappNumber?: string;
   /** When true, email/phone are optional (minor guest). */
   child?: boolean;
+  tableCaptain?: boolean;
   connectedTo?: string;
   connectionType?: string;
   /** When true (adult), email/phone/whatsapp may all be empty until RSVP. */
@@ -77,6 +80,7 @@ export interface UpdateGuestInput {
   phoneE164?: string;
   whatsappNumber?: string;
   child?: boolean;
+  tableCaptain?: boolean;
   connectedTo?: string;
   connectionType?: string;
   contactPending?: boolean;

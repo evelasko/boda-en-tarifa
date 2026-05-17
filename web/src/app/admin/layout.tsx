@@ -11,7 +11,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <AdminGuard>
-      <div className="min-h-screen bg-cream flex">
+      <div className="min-h-screen bg-cream flex text-charcoal">
         <AdminSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <div className="flex-1 flex flex-col min-w-0">
           <AdminHeader onToggleSidebar={() => setSidebarOpen((v) => !v)} />
