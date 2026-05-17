@@ -36,6 +36,7 @@ import {
   ChevronRight,
   Phone,
   Mail,
+  FilePlus2,
 } from 'lucide-react';
 import type { GuestWithRSVP, RelationshipStatus } from '@/types/guest';
 import {
@@ -62,6 +63,7 @@ interface GuestTableProps {
   onEdit: (guest: GuestWithRSVP) => void;
   onDelete: (guest: GuestWithRSVP) => void;
   onMagicLink: (guest: GuestWithRSVP) => void;
+  onManualRsvp?: (guest: GuestWithRSVP) => void;
 }
 
 const PAGE_SIZE = 20;
@@ -136,6 +138,7 @@ export default function GuestTable({
   onEdit,
   onDelete,
   onMagicLink,
+  onManualRsvp,
 }: GuestTableProps) {
   const [sortField, setSortField] = useState<SortField>('fullName');
   const [sortDir, setSortDir] = useState<SortDirection>('asc');
@@ -253,6 +256,8 @@ export default function GuestTable({
                 paginated.map((guest) => {
                   const phoneOk = hasPhoneContact(guest);
                   const emailOk = hasEmailContact(guest);
+                  const canAddManualRsvp =
+                    guest.rsvpStatus === 'no_response' && Boolean(onManualRsvp);
                   return (
                     <TableRow
                       key={guest.uid}
@@ -310,19 +315,38 @@ export default function GuestTable({
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span
-                              className="inline-flex cursor-default rounded-full p-1"
-                              aria-label={RSVP_STATUS_LABELS[guest.rsvpStatus]}
-                            >
+                        <div className="flex items-center gap-1.5">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
                               <span
-                                className={`inline-block h-2.5 w-2.5 shrink-0 rounded-full ${rsvpDotClass(guest.rsvpStatus)}`}
-                              />
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent side="top">{RSVP_STATUS_LABELS[guest.rsvpStatus]}</TooltipContent>
-                        </Tooltip>
+                                className="inline-flex cursor-default rounded-full p-1"
+                                aria-label={RSVP_STATUS_LABELS[guest.rsvpStatus]}
+                              >
+                                <span
+                                  className={`inline-block h-2.5 w-2.5 shrink-0 rounded-full ${rsvpDotClass(guest.rsvpStatus)}`}
+                                />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">{RSVP_STATUS_LABELS[guest.rsvpStatus]}</TooltipContent>
+                          </Tooltip>
+                          {canAddManualRsvp && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6"
+                                  aria-label="Añadir RSVP manual"
+                                  onClick={() => onManualRsvp?.(guest)}
+                                >
+                                  <FilePlus2 className="h-3.5 w-3.5" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent side="top">Añadir RSVP manual</TooltipContent>
+                            </Tooltip>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="text-base leading-none" title={guest.profileClaimed ? 'Perfil reclamado' : 'Perfil sin reclamar'}>
                         {guest.profileClaimed ? '✅' : '📭'}
@@ -354,6 +378,12 @@ export default function GuestTable({
                               <LinkIcon className="mr-2 h-4 w-4" />
                               Magic Link
                             </DropdownMenuItem>
+                            {canAddManualRsvp && (
+                              <DropdownMenuItem onClick={() => onManualRsvp?.(guest)}>
+                                <FilePlus2 className="mr-2 h-4 w-4" />
+                                Añadir RSVP manual
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem
                               onClick={() => onDelete(guest)}
                               className="text-red-600 focus:text-red-600"

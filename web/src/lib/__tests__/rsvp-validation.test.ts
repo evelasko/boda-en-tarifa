@@ -1,4 +1,4 @@
-import { RSVPValidation } from '../firestore';
+import { RSVPValidation } from '../rsvp-validation';
 import { RSVPResponse } from '@/types/rsvp';
 
 describe('RSVP Validation', () => {

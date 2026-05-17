@@ -38,6 +38,7 @@ import GuestTable from '@/components/admin/GuestTable';
 import GuestFormModal from '@/components/admin/GuestFormModal';
 import CSVImportModal from '@/components/admin/CSVImportModal';
 import MagicLinkModal from '@/components/admin/MagicLinkModal';
+import ManualRsvpModal, { type ManualRsvpPayload } from '@/components/admin/ManualRsvpModal';
 import type { GuestWithRSVP, CreateGuestInput, CSVGuestRow } from '@/types/guest';
 
 type SheetSyncOutcome = {
@@ -88,6 +89,8 @@ export default function GuestsPage() {
   const [magicLinkSmsShareUrl, setMagicLinkSmsShareUrl] = useState<string | null>(null);
   const [magicLinkLoading, setMagicLinkLoading] = useState(false);
   const [magicLinkError, setMagicLinkError] = useState<string | null>(null);
+  const [manualRsvpGuest, setManualRsvpGuest] = useState<GuestWithRSVP | null>(null);
+  const [manualRsvpSuccess, setManualRsvpSuccess] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<GuestWithRSVP | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
@@ -132,7 +135,11 @@ export default function GuestsPage() {
       result = result.filter((g) => g.side === filterSide);
     }
     if (filterRsvp !== 'all') {
-      result = result.filter((g) => g.rsvpStatus === filterRsvp);
+      result = result.filter(
+        (g) =>
+          g.rsvpStatus === filterRsvp &&
+          (filterRsvp !== 'no_response' || !g.child)
+      );
     }
     if (filterClaimed !== 'all') {
       result = result.filter((g) => g.profileClaimed === (filterClaimed === 'true'));
@@ -144,7 +151,7 @@ export default function GuestsPage() {
   const stats = useMemo(() => ({
     total: guests.length,
     attending: guests.filter((g) => g.rsvpStatus === 'yes').length,
-    noResponse: guests.filter((g) => g.rsvpStatus === 'no_response').length,
+    noResponse: guests.filter((g) => g.rsvpStatus === 'no_response' && !g.child).length,
     claimed: guests.filter((g) => g.profileClaimed).length,
   }), [guests]);
 
@@ -364,6 +371,33 @@ export default function GuestsPage() {
     URL.revokeObjectURL(url);
   }
 
+  function handleOpenManualRsvp(guest: GuestWithRSVP) {
+    setManualRsvpSuccess(null);
+    setManualRsvpGuest(guest);
+  }
+
+  async function handleSaveManualRsvp(payload: ManualRsvpPayload) {
+    if (!user || !manualRsvpGuest) return;
+    setError(null);
+    const res = await apiFetch(`/api/admin/guests/${manualRsvpGuest.uid}/rsvp`, user, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      const fieldErrors = body.fieldErrors as Record<string, string> | undefined;
+      if (fieldErrors && Object.keys(fieldErrors).length > 0) {
+        throw new Error(Object.values(fieldErrors)[0]);
+      }
+      throw new Error(body.error || 'No se pudo guardar el RSVP manual');
+    }
+
+    await fetchGuests();
+    setManualRsvpSuccess(`RSVP manual guardado para ${manualRsvpGuest.fullName}.`);
+    setManualRsvpGuest(null);
+  }
+
   const existingEmails = useMemo(
     () => new Set(guests.map((g) => g.email.toLowerCase())),
     [guests]
@@ -381,7 +415,7 @@ export default function GuestsPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" asChild>
-            <Link href="/admin/guests/rsvp">
+            <Link href="/admin/guests/respuestas">
               <LinkIcon className="mr-1.5 h-4 w-4" />
               Respuestas RSVP
             </Link>
@@ -504,6 +538,12 @@ export default function GuestsPage() {
         </div>
       )}
 
+      {manualRsvpSuccess && (
+        <div className="flex items-center gap-2 text-sage bg-sage/10 border border-sage/20 rounded-lg px-4 py-3 text-sm">
+          <span>{manualRsvpSuccess}</span>
+        </div>
+      )}
+
       {/* Loading */}
       {loading ? (
         <div className="flex items-center justify-center py-16">
@@ -517,6 +557,7 @@ export default function GuestsPage() {
           onEdit={handleEdit}
           onDelete={(g) => setDeleteConfirm(g)}
           onMagicLink={handleMagicLink}
+          onManualRsvp={handleOpenManualRsvp}
         />
       )}
 
@@ -627,6 +668,16 @@ export default function GuestsPage() {
         smsShareUrl={magicLinkSmsShareUrl}
         loading={magicLinkLoading}
         error={magicLinkError}
+      />
+
+      <ManualRsvpModal
+        open={Boolean(manualRsvpGuest)}
+        onOpenChange={(open) => {
+          if (!open) setManualRsvpGuest(null);
+        }}
+        guest={manualRsvpGuest}
+        guests={guests}
+        onSave={handleSaveManualRsvp}
       />
 
       {/* Delete confirmation */}

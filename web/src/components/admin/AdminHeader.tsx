@@ -8,6 +8,8 @@ import Link from 'next/link';
 const breadcrumbLabels: Record<string, string> = {
   admin: 'Admin',
   guests: 'Invitados',
+  respuestas: 'Respuestas RSVP',
+  rsvp: 'Enlazar RSVP',
   timeline: 'Timeline',
   content: 'Contenido',
   'time-gated': 'Programado',

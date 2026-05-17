@@ -50,6 +50,7 @@ export interface RSVPResponse {
 
 /** Admin-managed link from an RSVP doc (`rsvp_responses/{authUid}`) to `guests/{guestUid}`. */
 export type RsvpGuestLinkSource = 'manual' | 'auto_email';
+export type RsvpSubmissionSource = 'web' | 'whatsapp' | 'manual';
 
 // Complete RSVP submission with metadata
 export interface RSVPSubmission {
@@ -75,6 +76,13 @@ export interface RSVPSubmission {
   linkNotes?: string;
   unlinkedAt?: Date;
   unlinkedByAdminUid?: string;
+
+  /** Channel used to submit this RSVP. */
+  source?: RsvpSubmissionSource;
+  /** Present when source is `manual`. */
+  enteredByAdminUid?: string;
+  /** Optional audit when transcribing another RSVP. */
+  proxySourceRsvpUid?: string;
 }
 
 // Form state for real-time management

@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Users,
   Link2,
+  ClipboardList,
   Calendar,
   FileText,
   Shield,
@@ -18,6 +19,7 @@ import {
 const navItems = [
   { href: '/admin', label: 'Resumen', icon: LayoutDashboard, exact: true },
   { href: '/admin/guests', label: 'Invitados', icon: Users },
+  { href: '/admin/guests/respuestas', label: 'Respuestas RSVP', icon: ClipboardList, nested: true },
   { href: '/admin/guests/rsvp', label: 'Enlazar RSVP', icon: Link2, nested: true },
   { href: '/admin/timeline', label: 'Timeline', icon: Calendar },
   { href: '/admin/content', label: 'Contenido', icon: FileText },

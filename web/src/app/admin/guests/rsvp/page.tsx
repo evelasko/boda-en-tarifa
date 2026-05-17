@@ -373,7 +373,7 @@ export default function AdminGuestRsvpLinkPage() {
             <ArrowLeft className="h-4 w-4 mr-1" />
             Volver a invitados
           </Link>
-          <h1 className="type-heading-4 text-charcoal">Respuestas RSVP</h1>
+          <h1 className="type-heading-4 text-charcoal">Enlazar RSVP</h1>
           <p className="text-charcoal/60 type-body-small mt-1 max-w-2xl">
             Enlaza cada respuesta (UID de autenticación) con un invitado de la lista. Las
             coincidencias únicas por email se pueden aplicar con un clic; el resto requiere

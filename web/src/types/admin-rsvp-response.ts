@@ -1,4 +1,10 @@
-import type { AttendanceStatus, RsvpGuestLinkSource } from '@/types/rsvp';
+import type {
+  AttendanceStatus,
+  MainCoursePreference,
+  NightOption,
+  RsvpGuestLinkSource,
+  RsvpSubmissionSource,
+} from '@/types/rsvp';
 
 export type AdminRsvpLinkBucket = 'linked' | 'auto_match' | 'needs_review';
 
@@ -31,5 +37,24 @@ export type AdminRsvpListResponse = {
     linked: number;
     auto_match: number;
     needs_review: number;
+  };
+};
+
+export type AdminRsvpDetailRow = AdminRsvpResponseRow & {
+  mainCoursePreference: MainCoursePreference | null;
+  dietaryRestrictions: string;
+  nightsStaying: NightOption[];
+  otherNightsCombination: string | null;
+  roomSharing: string;
+  source: RsvpSubmissionSource | null;
+};
+
+export type AdminRsvpDetailListResponse = {
+  rows: AdminRsvpDetailRow[];
+  counts: {
+    all: number;
+    submitted: number;
+    draft: number;
+    linked: number;
   };
 };
