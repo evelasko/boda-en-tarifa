@@ -65,20 +65,30 @@ export const FOOD_LETTERS: Record<FoodCategory, string> = {
   unknown: '?',
 };
 
+/**
+ * Per-category fill colour for the seat disc. Values are CSS `var(...)`
+ * references resolved from `web/src/styles/seating-diagram.css`; tweak the
+ * underlying tokens there to recolour the diagram without touching code.
+ * These strings are passed straight into inline `style={{ fill: ... }}` on
+ * the SVG element, where `var(--seat-fill-meat)` is valid CSS.
+ */
 export const FOOD_FILLS: Record<FoodCategory, string> = {
-  meat: '#E89B5A',
-  fish: '#5A8FB8',
-  vegetarian: '#7BAA6E',
-  child: '#E58FB5',
-  unknown: '#C9C2BA',
+  meat:       'var(--seat-fill-meat)',
+  fish:       'var(--seat-fill-fish)',
+  vegetarian: 'var(--seat-fill-vegetarian)',
+  child:      'var(--seat-fill-child)',
+  unknown:    'var(--seat-fill-unknown)',
 };
 
+/**
+ * Per-category stroke colour for the seat disc. Same pattern as FOOD_FILLS.
+ */
 export const FOOD_STROKES: Record<FoodCategory, string> = {
-  meat: '#A86A2E',
-  fish: '#345E80',
-  vegetarian: '#4F7A45',
-  child: '#A35176',
-  unknown: '#8C857D',
+  meat:       'var(--seat-stroke-meat)',
+  fish:       'var(--seat-stroke-fish)',
+  vegetarian: 'var(--seat-stroke-vegetarian)',
+  child:      'var(--seat-stroke-child)',
+  unknown:    'var(--seat-stroke-unknown)',
 };
 
 export const CAPTAIN_BADGE = '👑';

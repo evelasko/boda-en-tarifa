@@ -1,0 +1,265 @@
+/* ============================================================================
+ * Seating diagram theme & layout
+ * ----------------------------------------------------------------------------
+ * Single source of truth for the visual styling of the round-table SVG
+ * diagram rendered at /admin/seating and /staff/tables. Both routes mount
+ * the same <SeatingDiagram> React tree, so any change here is reflected in
+ * both views automatically.
+ *
+ * What lives here:
+ *   - Colours    (food fills/strokes, table fill/stroke, label text)
+ *   - Typography (font sizes & weights for every text element in the SVG)
+ *   - Layout     (row / table gaps, both screen and print)
+ *   - Print rules (A3-landscape page setup, chrome-hiding selectors)
+ *
+ * What does NOT live here (and why):
+ *   - SVG geometry numbers — `viewBox`, table radius (70), seat-ring radius
+ *     (110), seat-disc radius (16), label offset (26), seat-position math.
+ *     These are inputs to `seatAngleDegrees` / `compassToSvg` in
+ *     `web/src/lib/seating-geometry.ts` and must stay as JS numbers.
+ *
+ * Variable conventions:
+ *   --seat-*    apply to an individual seat disc and its labels
+ *   --table-*   apply to the central table circle and its labels
+ *   --seating-* apply to the diagram-wide layout (grid gaps, print)
+ *
+ * Variables are declared on `:root` so the constants in
+ * `web/src/types/seating-layout.ts` (FOOD_FILLS / FOOD_STROKES) can
+ * reference them as `var(...)` strings — those strings end up in inline
+ * `style={{ fill: ... }}` props on the SVG elements.
+ * ============================================================================ */
+
+:root {
+  /* ── Food-category seat fills ────────────────────────────────────────────
+   * Consumed by FOOD_FILLS in web/src/types/seating-layout.ts and passed
+   * through to <SeatingDiagramSeat> as the seat disc's `fill`. Tweak these
+   * to recolour the chart; the legend and the diagram stay in lockstep
+   * because both read the same constant.                                   */
+  --seat-fill-meat:        #E89B5A;   /* C — orange */
+  --seat-fill-fish:        #5A8FB8;   /* P — blue */
+  --seat-fill-vegetarian:  #7BAA6E;   /* V — green */
+  --seat-fill-child:       #E58FB5;   /* N — pink (always wins over RSVP) */
+  --seat-fill-unknown:     #C9C2BA;   /* ? — grey, should rarely appear */
+
+  /* ── Food-category seat strokes (ring around the disc) ─────────────────
+   * Consumed by FOOD_STROKES; usually a darker variant of the fill.        */
+  --seat-stroke-meat:        #A86A2E;
+  --seat-stroke-fish:        #345E80;
+  --seat-stroke-vegetarian:  #4F7A45;
+  --seat-stroke-child:       #A35176;
+  --seat-stroke-unknown:     #8C857D;
+
+  /* Stroke width applied to every food-category seat disc. */
+  --seat-stroke-width: 1.5;
+  /* Colour of the letter inside the disc (C / P / V / N / ?). */
+  --seat-letter-color: #FFFFFF;
+
+  /* ── Orphan seat (data anomaly) ────────────────────────────────────────
+   * Per plan §9.3 a seat with no guest "should never happen"; if it does,
+   * we still render a visible warning rather than swallowing it.           */
+  --seat-orphan-fill:         #FFFFFF;
+  --seat-orphan-stroke:       #C0392B;   /* red */
+  --seat-orphan-text:         #C0392B;
+  --seat-orphan-stroke-width: 2;
+
+  /* ── Seat label text (rendered radially outside the seat ring) ─────────
+   * `--seat-name-*` is the bold guest name; `--seat-diet-*` is the
+   * verbatim dietary text below it; `--seat-number-*` is the tiny numeric
+   * seat index inside the disc.                                            */
+  --seat-name-color:   #1F1F1F;
+  --seat-name-weight:  600;
+  --seat-diet-color:   #555555;
+  --seat-number-color: #777777;
+
+  /* ── Seat typography (font sizes) ──────────────────────────────────────
+   * All in pixels because the SVG `viewBox` is fixed at 320×320; the
+   * effective rendered size scales with the SVG container width.           */
+  --seat-font-letter:        14px;   /* the C/P/V/N inside the disc */
+  --seat-font-letter-weight: 700;
+  --seat-font-name:          11px;   /* primary label (full name) */
+  --seat-font-diet:           9px;   /* secondary label (dietary text) */
+  --seat-font-number:         8px;   /* numeric seat index in the disc */
+  --seat-font-captain:       13px;   /* 👑 badge above the disc */
+  --seat-font-gift:          12px;   /* 🎁 badge at top-right of the disc */
+
+  /* ── Table circle (centre of each table SVG) ───────────────────────────
+   * The big sand-filled disc that the seats sit around.                    */
+  --table-fill:              #FAF6F2;   /* cream */
+  --table-stroke:            #3A3A3A;   /* charcoal */
+  --table-stroke-width:      1.5;
+  --table-number-color:      #3A3A3A;
+  --table-name-color:        #5A5A5A;
+  --table-font-number:       20px;
+  --table-font-number-weight:700;
+  --table-font-name:         11px;
+  --table-empty-text:        "sin invitados asignados";   /* placeholder text — not currently driven by CSS, kept here for documentation */
+
+  /* ── Diagram layout (screen) ───────────────────────────────────────────
+   * Row gap = vertical spacing between rows of tables.
+   * Table gap = horizontal spacing between tables within a row.            */
+  --seating-row-gap:   1.5rem;
+  --seating-table-gap: 1rem;
+
+  /* ── Print rules (A3 landscape paper copy for service staff) ───────────
+   * Tweak page margins / row spacing here; the @media print block below
+   * pulls these in.                                                        */
+  --seating-print-margin:    8mm;
+  --seating-print-row-gap:   12mm;
+  --seating-print-legend-mb: 6mm;
+  --seating-print-font:      'Helvetica Neue', Arial, sans-serif;
+  --seating-print-color:     #111111;
+}
+
+/* ============================================================================
+ * SVG element styles
+ * ----------------------------------------------------------------------------
+ * Semantic class names on SVG/HTML elements so the React tree stays focused
+ * on structure. Per-category fills (which vary per render) stay inline via
+ * FOOD_FILLS/FOOD_STROKES; everything else is one centralised rule.
+ * ============================================================================ */
+
+/* ── Table circle ────────────────────────────────────────────────────────── */
+.seating-diagram svg .table-disc {
+  fill:         var(--table-fill);
+  stroke:       var(--table-stroke);
+  stroke-width: var(--table-stroke-width);
+}
+.seating-diagram svg .table-number-label {
+  fill:        var(--table-number-color);
+  font-size:   var(--table-font-number);
+  font-weight: var(--table-font-number-weight);
+}
+.seating-diagram svg .table-name-label {
+  fill:      var(--table-name-color);
+  font-size: var(--table-font-name);
+}
+.seating-diagram svg .table-empty-label {
+  fill:      #A0A0A0;
+  font-size: 10px;
+}
+
+/* ── Seat disc ───────────────────────────────────────────────────────────── */
+/* Fill + stroke colours come from inline style (FOOD_FILLS / FOOD_STROKES,
+ * which in turn reference the var(--seat-fill-*) tokens above). Stroke
+ * width is centralised here so all categories stay in sync. */
+.seating-diagram svg .seat-disc {
+  stroke-width: var(--seat-stroke-width);
+}
+.seating-diagram svg .seat-disc.seat-disc--orphan {
+  fill:         var(--seat-orphan-fill);
+  stroke:       var(--seat-orphan-stroke);
+  stroke-width: var(--seat-orphan-stroke-width);
+}
+
+/* ── Letter inside the seat disc (C/P/V/N/?) ─────────────────────────────── */
+.seating-diagram svg .seat-letter {
+  fill:        var(--seat-letter-color);
+  font-size:   var(--seat-font-letter);
+  font-weight: var(--seat-font-letter-weight);
+}
+.seating-diagram svg .seat-letter.seat-letter--orphan {
+  fill: var(--seat-orphan-text);
+}
+
+/* ── Badges (captain crown / child gift) ─────────────────────────────────── */
+.seating-diagram svg .seat-captain { font-size: var(--seat-font-captain); }
+.seating-diagram svg .seat-gift    { font-size: var(--seat-font-gift); }
+
+/* ── Seat labels (guest name + dietary + numeric seat index) ─────────────── */
+.seating-diagram svg .seat-name {
+  fill:        var(--seat-name-color);
+  font-size:   var(--seat-font-name);
+  font-weight: var(--seat-name-weight);
+}
+.seating-diagram svg .seat-diet {
+  fill:      var(--seat-diet-color);
+  font-size: var(--seat-font-diet);
+}
+.seating-diagram svg .seat-number {
+  fill:      var(--seat-number-color);
+  font-size: var(--seat-font-number);
+}
+
+/* ── Diagram grid (rows of tables) ───────────────────────────────────────── */
+.seating-diagram .seating-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--seating-row-gap);
+}
+.seating-diagram .seating-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: var(--seating-table-gap);
+}
+
+/* ============================================================================
+ * Print rules — shared between /admin/seating and /staff/tables.
+ * ----------------------------------------------------------------------------
+ * Both pages render the same .seating-diagram tree; the chrome around it
+ * differs (admin has a <aside>+<header>; staff has neither). The selectors
+ * below are intentionally broad enough to hide either form of chrome without
+ * coupling to admin-specific class names.
+ * ============================================================================ */
+
+@media print {
+  @page {
+    size: A3 landscape;
+    margin: var(--seating-print-margin);
+  }
+
+  body {
+    background: white !important;
+  }
+
+  /* Hide the admin shell (and the staff page's screen-only controls).
+   * Selectors are harmless on the staff page where <aside>/<header> don't
+   * exist. */
+  aside,
+  header,
+  .seating-actions,
+  .seating-unassigned {
+    display: none !important;
+  }
+
+  /* Collapse the page <main>'s padding for both layouts. */
+  main {
+    padding: 0 !important;
+    background: white !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .seating-diagram {
+    font-family: var(--seating-print-font);
+    color: var(--seating-print-color);
+  }
+
+  .seating-legend {
+    margin-bottom: var(--seating-print-legend-mb);
+  }
+
+  .seating-grid {
+    gap: var(--seating-print-row-gap);
+  }
+
+  .seating-row {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .seating-table-card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    background: white !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Force max contrast for label text in print. */
+  .seating-diagram svg .seat-name,
+  .seating-diagram svg .seat-diet {
+    fill: var(--seating-print-color) !important;
+  }
+}

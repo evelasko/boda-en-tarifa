@@ -1,7 +1,9 @@
 import { buildSeatingRenderPayload } from '@/lib/seating-render';
 import SeatingDiagram from '@/components/admin/SeatingDiagram';
 import SeatingLayoutSeedPrompt from '@/components/admin/SeatingLayoutSeedPrompt';
-import './print.css';
+// Print rules + theme tokens live in web/src/styles/seating-diagram.css,
+// which is imported once from globals.css and applies to both this page
+// and /staff/tables.
 
 export const dynamic = 'force-dynamic';
 

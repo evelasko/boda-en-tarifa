@@ -17,9 +17,20 @@ export default function SeatingDiagramLegend() {
     <div className="seating-legend bg-white border border-charcoal/10 rounded-lg p-3 flex flex-wrap items-center gap-4 text-sm">
       {CATEGORIES.map((cat) => (
         <div key={cat} className="flex items-center gap-2">
+          {/* Legend chip. Mirrors the seat disc so the legend always tracks
+           *  any token tweak: backgroundColor + borderColor + colour all
+           *  read from the same CSS vars as the SVG (FOOD_FILLS /
+           *  FOOD_STROKES → var(--seat-fill-*) / var(--seat-stroke-*),
+           *  and `color` → var(--seat-letter-color)). */}
           <span
-            className="inline-flex items-center justify-center w-6 h-6 rounded-full text-white text-[11px] font-bold"
-            style={{ backgroundColor: FOOD_FILLS[cat], borderColor: FOOD_STROKES[cat], borderWidth: 1.5, borderStyle: 'solid' }}
+            className="inline-flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-bold"
+            style={{
+              backgroundColor: FOOD_FILLS[cat],
+              borderColor: FOOD_STROKES[cat],
+              borderWidth: 1.5,
+              borderStyle: 'solid',
+              color: 'var(--seat-letter-color)',
+            }}
           >
             {FOOD_LETTERS[cat]}
           </span>

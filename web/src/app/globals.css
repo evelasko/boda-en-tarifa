@@ -1,5 +1,8 @@
 @import url('https://use.typekit.net/tqk3qdr.css');
 @import "tailwindcss";
+/* Feature-scoped theme: tokens + element styles + print rules for the
+ * seating diagram rendered at /admin/seating and /staff/tables. */
+@import "../styles/seating-diagram.css";
 
 /* ==========================================================================
    TYPOGRAPHY DESIGN SYSTEM

@@ -11,9 +11,15 @@ import type { SeatingRenderPayload, SeatRender } from '@/types/seating-layout';
 
 interface Props {
   payload: SeatingRenderPayload;
+  /**
+   * 'admin' (default) shows the "Sin coincidencia" diagnostic panel.
+   * 'public' hides it — the staff-facing /staff/tables view is not the place
+   * to surface data anomalies.
+   */
+  variant?: 'admin' | 'public';
 }
 
-export default function SeatingDiagram({ payload }: Props) {
+export default function SeatingDiagram({ payload, variant = 'admin' }: Props) {
   const router = useRouter();
 
   const seatsByTable = useMemo(() => {
@@ -52,14 +58,18 @@ export default function SeatingDiagram({ payload }: Props) {
 
       <SeatingDiagramLegend />
 
-      <SeatingUnassignedPanel guests={payload.unassigned} />
+      {variant === 'admin' && (
+        <SeatingUnassignedPanel guests={payload.unassigned} />
+      )}
 
-      <div className="seating-grid space-y-6">
+      {/* Layout-only wrappers. `.seating-grid` and `.seating-row` are styled
+       *  by web/src/styles/seating-diagram.css (flex column + flex row with
+       *  --seating-row-gap / --seating-table-gap). The inner `div` controls
+       *  the per-table responsive sizing (still Tailwind because these
+       *  knobs are not part of the diagram-token surface area). */}
+      <div className="seating-grid">
         {payload.layout.rows.map((row, rowIdx) => (
-          <div
-            key={rowIdx}
-            className="seating-row flex flex-wrap justify-around items-start gap-4"
-          >
+          <div key={rowIdx} className="seating-row">
             {row.map((tableNumber) => (
               <div
                 key={tableNumber}
