@@ -10,16 +10,38 @@ interface Props {
   seats: SeatRender[];
 }
 
-// ── SVG geometry constants (NOT in CSS — they feed the seat-position math).
-// Tweaking these will rescale every table proportionally. The SVG viewBox is
-// square so the table circle and the seat ring stay concentric.
-const VIEW_BOX = 320;
-const CENTER = VIEW_BOX / 2;
-// Radius of the central (sand-filled) table circle.
+// ── SVG geometry (NOT in CSS — these feed the seat-position math). ──────────
+// The "core" coordinate space is a 320×320 square. All seat / table math is
+// written against that square: table circle at (CENTER, CENTER) with radius
+// TABLE_RADIUS, seats on a ring of radius SEAT_RING_RADIUS, label anchors
+// at SEAT_RING_RADIUS + LABEL_OFFSET (LABEL_OFFSET lives in
+// SeatingDiagramSeat.tsx). Tweaking these will rescale every table
+// proportionally; the viewBox padding below adapts automatically.
+const CORE_SIZE = 320;
+const CENTER = CORE_SIZE / 2;
 const TABLE_RADIUS = 70;
-// Radius of the ring on which seats are placed. Must be > TABLE_RADIUS plus
-// the seat-disc radius to keep the seats clear of the table edge.
 const SEAT_RING_RADIUS = 110;
+
+// ── viewBox padding (cracks the original 320×320 wide open so side-seat
+// labels don't clip). ──────────────────────────────────────────────────────
+//
+// Side-seat labels anchor at (CENTER ± (SEAT_RING_RADIUS + LABEL_OFFSET))
+// and grow AWAY from the table centre by up to roughly the longest expected
+// name width at the current font size. For Spanish full names rendered in
+// uppercase 11px bold, ~130px of horizontal reach beyond the core square
+// covers everything we've seen in the dataset (e.g. "MARÍA DEL CARMEN
+// GARCÍA"). Bump HORIZONTAL_PAD if longer names start clipping again.
+//
+// VERTICAL_PAD is small — the top/bottom-seat labels are already mostly
+// contained by the core square thanks to the side-aware stacking in
+// SeatingDiagramSeat.tsx; a few pixels of breathing room for the captain
+// crown above top seats and the dietary line below bottom seats is enough.
+const HORIZONTAL_PAD = 130;
+const VERTICAL_PAD = 16;
+const VIEW_BOX_MIN_X = -HORIZONTAL_PAD;
+const VIEW_BOX_MIN_Y = -VERTICAL_PAD;
+const VIEW_BOX_WIDTH = CORE_SIZE + HORIZONTAL_PAD * 2;
+const VIEW_BOX_HEIGHT = CORE_SIZE + VERTICAL_PAD * 2;
 
 export default function SeatingDiagramTable({
   tableNumber,
@@ -34,7 +56,12 @@ export default function SeatingDiagramTable({
   return (
     <div className="seating-table-card bg-white border border-charcoal/10 rounded-lg p-2 shrink-0">
       <svg
-        viewBox={`0 0 ${VIEW_BOX} ${VIEW_BOX}`}
+        viewBox={`${VIEW_BOX_MIN_X} ${VIEW_BOX_MIN_Y} ${VIEW_BOX_WIDTH} ${VIEW_BOX_HEIGHT}`}
+        // Belt-and-braces: even if a parent stylesheet sets clipping, the
+        // viewBox already contains everything we draw. `overflow="visible"`
+        // is harmless when the viewBox is sized correctly and protects us
+        // from regressions if a label inches outside.
+        overflow="visible"
         className="w-full h-auto"
         role="img"
         aria-label={`Mesa ${tableNumber} ${tableName}`}

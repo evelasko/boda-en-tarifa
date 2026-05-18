@@ -62,19 +62,17 @@ export default function SeatingDiagram({ payload, variant = 'admin' }: Props) {
         <SeatingUnassignedPanel guests={payload.unassigned} />
       )}
 
-      {/* Layout-only wrappers. `.seating-grid` and `.seating-row` are styled
-       *  by web/src/styles/seating-diagram.css (flex column + flex row with
-       *  --seating-row-gap / --seating-table-gap). The inner `div` controls
-       *  the per-table responsive sizing (still Tailwind because these
-       *  knobs are not part of the diagram-token surface area). */}
+      {/* Layout-only wrappers. `.seating-grid`, `.seating-row`, and
+       *  `.seating-table-slot` are all styled by
+       *  web/src/styles/seating-diagram.css. The slot's flex basis / max
+       *  width is driven by --seating-table-min-width /
+       *  --seating-table-max-width so card sizing is tweakable from the
+       *  same token surface as colours and typography. */}
       <div className="seating-grid">
         {payload.layout.rows.map((row, rowIdx) => (
           <div key={rowIdx} className="seating-row">
             {row.map((tableNumber) => (
-              <div
-                key={tableNumber}
-                className="basis-[280px] grow max-w-[360px]"
-              >
+              <div key={tableNumber} className="seating-table-slot">
                 <SeatingDiagramTable
                   tableNumber={tableNumber}
                   tableName={payload.layout.names[String(tableNumber)] ?? `Mesa ${tableNumber}`}

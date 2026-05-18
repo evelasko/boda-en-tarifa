@@ -103,6 +103,15 @@
    * Table gap = horizontal spacing between tables within a row.            */
   --seating-row-gap:   1.5rem;
   --seating-table-gap: 1rem;
+  /* Per-table card sizing. The card holds the SVG which now uses a
+   * horizontally-padded viewBox (~580×352, aspect ~1.65) so side-seat
+   * labels don't clip. `min-width` is the flex basis (each card aims for
+   * at least this width); `max-width` caps growth when there's room.
+   * Tweak these to trade table-circle visual size against tables-per-row:
+   *   - Bigger values  → bigger tables, fewer per row, more wrapping
+   *   - Smaller values → smaller tables, more per row */
+  --seating-table-min-width: 320px;
+  --seating-table-max-width: 440px;
 
   /* ── Print rules (A3 landscape paper copy for service staff) ───────────
    * Tweak page margins / row spacing here; the @media print block below
@@ -203,6 +212,14 @@
   justify-content: space-around;
   align-items: flex-start;
   gap: var(--seating-table-gap);
+}
+/* Each table sits inside one of these slots so the per-table sizing is
+ * tweakable from the CSS-variable layer. Without it, side-seat labels
+ * clip — see HORIZONTAL_PAD in SeatingDiagramTable.tsx. */
+.seating-diagram .seating-table-slot {
+  flex-basis: var(--seating-table-min-width);
+  flex-grow: 1;
+  max-width: var(--seating-table-max-width);
 }
 
 /* ============================================================================
