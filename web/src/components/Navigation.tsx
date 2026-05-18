@@ -8,7 +8,12 @@ import Typography from '@/lib/typography'
 import Logo from './Logo'
 import SignInModal from './auth/SignInModal'
 
-export function Navigation() {
+interface NavigationProps {
+  /** Prefix for in-page anchor links (e.g. "/" on standalone pages → "/#events") */
+  anchorPrefix?: string
+}
+
+export function Navigation({ anchorPrefix = '' }: NavigationProps) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false)
@@ -23,18 +28,25 @@ export function Navigation() {
   }, [])
   
   const navLinks = [
-    { href: '#home', label: 'Inicio' },
-    { href: '#events', label: 'Eventos' },
-    { href: '#travel', label: 'Viaje' },
-    { href: '#accommodations', label: 'Alojamiento' },
-    { href: '#faq', label: 'FAQ' },
-    { href: '#gifts', label: 'Regalos' },
-    { href: '#contact', label: 'Contacto' },
+    { href: `${anchorPrefix}#home`, label: 'Inicio' },
+    { href: anchorPrefix ? '/eventos' : '#events', label: 'Eventos' },
+    { href: `${anchorPrefix}#travel`, label: 'Viaje' },
+    { href: `${anchorPrefix}#accommodations`, label: 'Alojamiento' },
+    { href: `${anchorPrefix}#faq`, label: 'FAQ' },
+    { href: `${anchorPrefix}#gifts`, label: 'Regalos' },
+    { href: `${anchorPrefix}#contact`, label: 'Contacto' },
   ]
   
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('/')) {
+      setIsMobileMenuOpen(false)
+      return
+    }
+
+    if (!href.startsWith('#')) return
+
     e.preventDefault()
-    const id = href.substring(1)
+    const id = href.slice(1)
     const element = document.getElementById(id)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })

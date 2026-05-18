@@ -23,6 +23,7 @@ import {
   ChevronsUpDown,
   ChevronLeft,
   ChevronRight,
+  Pencil,
 } from 'lucide-react';
 import type { AdminRsvpDetailRow } from '@/types/admin-rsvp-response';
 import { RSVP_STATUS_LABELS } from '@/types/guest';
@@ -43,6 +44,7 @@ type SortDirection = 'asc' | 'desc';
 
 interface RsvpResponsesTableProps {
   rows: AdminRsvpDetailRow[];
+  onEditRow?: (row: AdminRsvpDetailRow) => void;
 }
 
 const PAGE_SIZE = 20;
@@ -88,7 +90,7 @@ function truncate(text: string, max: number): string {
   return `${t.slice(0, max)}…`;
 }
 
-export default function RsvpResponsesTable({ rows }: RsvpResponsesTableProps) {
+export default function RsvpResponsesTable({ rows, onEditRow }: RsvpResponsesTableProps) {
   const [sortField, setSortField] = useState<SortField>('lastUpdatedAt');
   const [sortDir, setSortDir] = useState<SortDirection>('desc');
   const [page, setPage] = useState(0);
@@ -170,12 +172,18 @@ export default function RsvpResponsesTable({ rows }: RsvpResponsesTableProps) {
               <TableHead>Invitado enlazado</TableHead>
               <SortableHeader field="isSubmitted">Estado</SortableHeader>
               <SortableHeader field="lastUpdatedAt">Actualizado</SortableHeader>
+              {onEditRow && (
+                <TableHead className="text-right font-medium">Acciones</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginated.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-12 text-charcoal/50">
+                <TableCell
+                  colSpan={onEditRow ? 10 : 9}
+                  className="text-center py-12 text-charcoal/50"
+                >
                   No se encontraron respuestas RSVP
                 </TableCell>
               </TableRow>
@@ -256,6 +264,18 @@ export default function RsvpResponsesTable({ rows }: RsvpResponsesTableProps) {
                     <TableCell className="text-sm text-charcoal/80 whitespace-nowrap tabular-nums">
                       {formatWhen(row.lastUpdatedAt)}
                     </TableCell>
+                    {onEditRow && (
+                      <TableCell className="text-right">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onEditRow(row)}
+                        >
+                          <Pencil className="h-3.5 w-3.5 mr-1" />
+                        </Button>
+                      </TableCell>
+                    )}
                   </TableRow>
                 );
               })

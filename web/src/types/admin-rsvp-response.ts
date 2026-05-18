@@ -46,6 +46,7 @@ export type AdminRsvpDetailRow = AdminRsvpResponseRow & {
   nightsStaying: NightOption[];
   otherNightsCombination: string | null;
   roomSharing: string;
+  sundayBrunch: boolean | null;
   source: RsvpSubmissionSource | null;
 };
 

@@ -33,6 +33,7 @@ describe('admin RSVP detail helpers', () => {
           dietaryRestrictions: 'Sin gluten',
           nightsStaying: ['friday', 'saturday'],
           roomSharing: 'Con María',
+          sundayBrunch: true,
         },
       }),
     },
@@ -59,6 +60,7 @@ describe('admin RSVP detail helpers', () => {
     expect(linked?.dietaryRestrictions).toBe('Sin gluten');
     expect(linked?.nightsStaying).toEqual(['friday', 'saturday']);
     expect(linked?.roomSharing).toBe('Con María');
+    expect(linked?.sundayBrunch).toBe(true);
     expect(linked?.source).toBe('web');
     expect(linked?.linkedGuest?.fullName).toBe('Ana García');
 
@@ -66,6 +68,7 @@ describe('admin RSVP detail helpers', () => {
     expect(draft?.isSubmitted).toBe(false);
     expect(draft?.mainCoursePreference).toBeNull();
     expect(draft?.nightsStaying).toEqual(['sunday']);
+    expect(draft?.sundayBrunch).toBeNull();
   });
 
   it('filterAdminRsvpDetailRows respects attendance and submitted filters', () => {

@@ -76,7 +76,7 @@
       "title": "Ceremonia",
       "description": "El momento en que decimos 'Sí, quiero' con el océano como testigo",
       "venue": {
-        "name": "Chiringuito Carbones 13",
+        "name": "Surfin' Tarifa Surf",
         "address": "Playa de Los Lances, 11380 Tarifa, Cádiz",
         "coordinates": {
           "lat": 36.023976,
@@ -97,7 +97,7 @@
       "id": "celebration",
       "type": "celebration",
       "date": "2026-05-30",
-      "time": "19:00",
+      "time": "19:30",
       "title": "Celebración",
       "description": "Cocktail, cena, y recuerdos bajo las estrellas",
       "venue": {
@@ -121,8 +121,8 @@
     {
       "id": "party",
       "type": "party",
-      "date": "2026-05-30",
-      "time": "23:00",
+      "date": "2026-05-31",
+      "time": "00:00",
       "title": "Fiesta",
       "description": "Baile y jarana hasta que llegue la mañana",
       "venue": {
@@ -148,7 +148,7 @@
       "type": "post-wedding",
       "date": "2026-05-31",
       "time": "14:00",
-      "title": "Brunch",
+      "title": "Paella Party",
       "description": "Una reunión relajada para compartir historias y despedirnos",
       "venue": {
         "name": "Chill Out Hotel Tres Mares — Tarifa",

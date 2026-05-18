@@ -39,7 +39,8 @@ export interface RSVPResponse {
   transportationNeeds: TransportationNeed[];
   
   // Question 6: ¿Tienes alguna alergia, intolerancia o necesidad alimentaria?
-  dietaryRestrictions: string;
+  /** Absent when the guest has not recorded a dietary restriction. */
+  dietaryRestrictions?: string;
   
   // Question 7: ¿Qué prefieres para el plato principal?
   mainCoursePreference: MainCoursePreference;

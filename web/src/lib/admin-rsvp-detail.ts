@@ -49,6 +49,7 @@ function parseDetailFields(data: DocumentData): Pick<
   | 'nightsStaying'
   | 'otherNightsCombination'
   | 'roomSharing'
+  | 'sundayBrunch'
   | 'source'
 > {
   const responses = data.responses as Record<string, unknown> | undefined;
@@ -64,12 +65,16 @@ function parseDetailFields(data: DocumentData): Pick<
       ? responses.otherNightsCombination.trim()
       : null;
 
+  const sundayBrunch =
+    typeof responses?.sundayBrunch === 'boolean' ? responses.sundayBrunch : null;
+
   return {
     mainCoursePreference: parseMainCourse(responses?.mainCoursePreference),
     dietaryRestrictions: dietary,
     nightsStaying: parseNightsStaying(responses?.nightsStaying),
     otherNightsCombination: otherNights,
     roomSharing,
+    sundayBrunch,
     source: parseSource(data.source),
   };
 }

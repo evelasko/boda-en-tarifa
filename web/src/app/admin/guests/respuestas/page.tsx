@@ -21,6 +21,9 @@ import {
   Search,
 } from 'lucide-react';
 import RsvpResponsesTable from '@/components/admin/RsvpResponsesTable';
+import EditRsvpResponseModal, {
+  type EditRsvpResponsePayload,
+} from '@/components/admin/EditRsvpResponseModal';
 import type {
   AdminRsvpDetailListResponse,
   AdminRsvpDetailRow,
@@ -81,6 +84,8 @@ export default function AdminRsvpResponsesPage() {
   const [filterSubmitted, setFilterSubmitted] = useState<'all' | 'true' | 'false'>('all');
   const [filterLinkStatus, setFilterLinkStatus] = useState<AdminRsvpLinkBucket | 'all'>('all');
   const [filterSource, setFilterSource] = useState<RsvpSubmissionSource | 'all'>('all');
+  const [editOpen, setEditOpen] = useState(false);
+  const [editingRow, setEditingRow] = useState<AdminRsvpDetailRow | null>(null);
 
   const fetchRows = useCallback(async () => {
     if (!user) return;
@@ -135,6 +140,27 @@ export default function AdminRsvpResponsesPage() {
     }
     return result;
   }, [rows, search, filterAttendance, filterSubmitted, filterLinkStatus, filterSource]);
+
+  const handleEditRow = useCallback((row: AdminRsvpDetailRow) => {
+    setEditingRow(row);
+    setEditOpen(true);
+  }, []);
+
+  const handleSaveEdit = useCallback(
+    async ({ rsvpUid, responses }: EditRsvpResponsePayload) => {
+      if (!user) throw new Error('No autenticado');
+      const res = await apiFetch(`/api/admin/rsvp-responses/${rsvpUid}`, user, {
+        method: 'PATCH',
+        body: JSON.stringify({ responses }),
+      });
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(data.error ?? 'No se pudo actualizar la respuesta RSVP');
+      }
+      await fetchRows();
+    },
+    [user, fetchRows]
+  );
 
   const stats = useMemo(
     () => ({
@@ -275,9 +301,16 @@ export default function AdminRsvpResponsesPage() {
             {filteredRows.length} respuesta{filteredRows.length !== 1 ? 's' : ''}
             {filteredRows.length !== rows.length && ` (de ${rows.length})`}
           </p>
-          <RsvpResponsesTable rows={filteredRows} />
+          <RsvpResponsesTable rows={filteredRows} onEditRow={handleEditRow} />
         </>
       )}
+
+      <EditRsvpResponseModal
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        row={editingRow}
+        onSave={handleSaveEdit}
+      />
     </div>
   );
 }
