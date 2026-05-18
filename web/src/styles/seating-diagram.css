@@ -53,6 +53,10 @@
   --seat-stroke-width: 1.5;
   /* Colour of the letter inside the disc (C / P / V / N / ?). */
   --seat-letter-color: #FFFFFF;
+  /* Colour of the letter when the seat's guest has a non-empty
+   * `dietaryRestrictions` value. Used by the .seat-letter--flagged
+   * modifier; tweak this to change the "watch out" red. */
+  --seat-letter-color-flagged: #D32F2F;
 
   /* ── Orphan seat (data anomaly) ────────────────────────────────────────
    * Per plan §9.3 a seat with no guest "should never happen"; if it does,
@@ -159,6 +163,13 @@
 }
 .seating-diagram svg .seat-letter.seat-letter--orphan {
   fill: var(--seat-orphan-text);
+}
+/* Adult guests with non-empty `dietaryRestrictions`: the in-disc letter
+ * turns red so service staff spot the affected seats at a glance. The
+ * modifier is mutually exclusive with --orphan (an orphan has no guest,
+ * so no dietary text). */
+.seating-diagram svg .seat-letter.seat-letter--flagged {
+  fill: var(--seat-letter-color-flagged);
 }
 
 /* ── Badges (captain crown / child gift) ─────────────────────────────────── */

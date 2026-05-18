@@ -14,6 +14,7 @@ import {
   seatAngleDegrees,
   seatSide,
 } from '@/lib/seating-geometry';
+import { splitGuestName } from '@/lib/seating-name';
 
 interface Props {
   seat: SeatRender;
@@ -28,10 +29,12 @@ interface Props {
 // ── SVG geometry constants (NOT in CSS — these feed seat-position math) ─────
 // Radius of the per-seat coloured disc.
 const SEAT_DISC_RADIUS = 16;
-// Distance from the seat centre to the name text anchor along the radial
-// vector. Larger value → labels sit farther from the table.
+// Distance from the seat centre to the label anchor along the radial vector.
+// Larger value → labels sit farther from the table.
 const LABEL_OFFSET = 26;
-// Vertical separation between the name line and the dietary line.
+// Vertical separation between successive label lines (name line 1, name
+// line 2, dietary). Used both to lay the lines out and to align the
+// label block relative to the disc on top-side seats.
 const LABEL_LINE_HEIGHT = 11;
 
 export default function SeatingDiagramSeat({
@@ -71,6 +74,44 @@ export default function SeatingDiagramSeat({
   // and the literal "(asiento huérfano)" label so it's impossible to miss.
   const isOrphanSeat = guest === null;
 
+  // Adult guests with a non-empty dietaryRestrictions string get a red
+  // letter inside the disc — staff cue to look at the second line of text
+  // below the disc. Children always have `dietaryRestrictions === ''` per
+  // seating-render-core (their menu is uniform), so this never fires for N.
+  const hasDietaryFlag =
+    !isOrphanSeat &&
+    !!guest?.dietaryRestrictions &&
+    guest.dietaryRestrictions.trim().length > 0;
+
+  // ── Build the stacked label block ────────────────────────────────────────
+  // Guest name is rendered across two uppercase lines (split via
+  // splitGuestName); the dietary text follows as an optional third line.
+  // Orphan seats get a single placeholder line so the rest of the layout
+  // logic still applies uniformly.
+  const [nameLine1, nameLine2] = isOrphanSeat
+    ? (['(asiento huérfano)', ''] as const)
+    : splitGuestName(guest?.fullName ?? '');
+
+  type LabelLine = { key: string; className: string; text: string };
+  const labelLines: LabelLine[] = [];
+  if (nameLine1) labelLines.push({ key: 'name1', className: 'seat-name', text: nameLine1 });
+  if (nameLine2) labelLines.push({ key: 'name2', className: 'seat-name', text: nameLine2 });
+  if (hasDietaryFlag && guest) {
+    labelLines.push({ key: 'diet', className: 'seat-diet', text: guest.dietaryRestrictions });
+  }
+
+  // Side-aware vertical stacking:
+  //   - For 'top' seats (labels sit ABOVE the disc): the LAST line should
+  //     be at the radial anchor (closest to the disc); earlier lines stack
+  //     upward. Otherwise a long stack would overflow back into the disc.
+  //   - For all other sides (bottom, left, right): keep the existing
+  //     behaviour — first line at the anchor, later lines stack downward.
+  const totalLines = labelLines.length;
+  const yForLine = (i: number): number =>
+    side === 'top'
+      ? (i - (totalLines - 1)) * LABEL_LINE_HEIGHT
+      : i * LABEL_LINE_HEIGHT;
+
   return (
     <g transform={`translate(${x}, ${y})`}>
       {/* Seat disc. Stroke width is set via CSS class (--seat-stroke-width);
@@ -82,11 +123,31 @@ export default function SeatingDiagramSeat({
         r={SEAT_DISC_RADIUS}
         style={isOrphanSeat ? undefined : { fill, stroke }}
       />
-      {/* Letter inside the disc (C/P/V/N/?). Colour + size from CSS vars. */}
+      {/* Letter inside the disc (C/P/V/N/?). The optional --flagged modifier
+       *  turns the letter red when the guest has dietary restrictions.
+       *
+       *  Why both class AND inline style: the class is here so the rule
+       *  remains discoverable in seating-diagram.css and the colour is
+       *  driven by --seat-letter-color-flagged. The inline style guarantees
+       *  the override applies even if a parent or cached stylesheet would
+       *  otherwise win on cascade — it still reads from the same CSS
+       *  variable, so tweaking the token in seating-diagram.css updates
+       *  this seat just like every other rule. */}
       <text
-        className={`seat-letter${isOrphanSeat ? ' seat-letter--orphan' : ''}`}
+        className={[
+          'seat-letter',
+          isOrphanSeat ? 'seat-letter--orphan' : '',
+          hasDietaryFlag ? 'seat-letter--flagged' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
         textAnchor="middle"
         y={5}
+        style={
+          hasDietaryFlag
+            ? { fill: 'var(--seat-letter-color-flagged)' }
+            : undefined
+        }
       >
         {isOrphanSeat ? '!' : letter}
       </text>
@@ -113,22 +174,22 @@ export default function SeatingDiagramSeat({
         </text>
       )}
 
-      {/* Outer labels: guest name (bold) + verbatim dietary text below.
-       *  The whole group is translated outward along the radial vector so
-       *  the labels sit clear of the table circle. */}
+      {/* Outer label stack: up to two uppercase name lines + optional
+       *  dietary line. The whole group is translated outward along the
+       *  radial vector; each <text> child uses its own `y` for vertical
+       *  position so the side-aware stacking (top vs everything else)
+       *  keeps the stack clear of the disc. */}
       <g transform={`translate(${labelDx}, ${labelDy})`}>
-        <text className="seat-name" textAnchor={textAnchor}>
-          {guest?.fullName ?? (isOrphanSeat ? '(asiento huérfano)' : '')}
-        </text>
-        {guest?.dietaryRestrictions && (
+        {labelLines.map((line, i) => (
           <text
-            className="seat-diet"
+            key={line.key}
+            className={line.className}
             textAnchor={textAnchor}
-            dy={LABEL_LINE_HEIGHT}
+            y={yForLine(i)}
           >
-            {guest.dietaryRestrictions}
+            {line.text}
           </text>
-        )}
+        ))}
       </g>
 
       {/* Tiny numeric seat index inside the disc, near the bottom edge. Lets
