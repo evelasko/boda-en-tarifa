@@ -34,7 +34,10 @@ export function classifyCommand(text: string): CommandKind | null {
   return null;
 }
 
-export async function handleStop(guestId: string, lang: Language): Promise<CommandReply> {
+export async function handleStop(
+  guestId: string,
+  lang: Language
+): Promise<CommandReply> {
   await setEnrolled(guestId, false);
   return {kind: "stop", text: lang === "en" ? STOP_ACK.en : STOP_ACK.es};
 }

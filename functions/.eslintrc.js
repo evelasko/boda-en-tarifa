@@ -20,6 +20,7 @@ module.exports = {
   ignorePatterns: [
     "/lib/**/*", // Ignore built files.
     "/generated/**/*", // Ignore generated files.
+    "/scripts/**/*", // Dev tools, not deployed.
   ],
   plugins: [
     "@typescript-eslint",
@@ -29,5 +30,10 @@ module.exports = {
     "quotes": ["error", "double"],
     "import/no-unresolved": 0,
     "indent": ["error", 2],
+    // TS already enforces parameter and return types — JSDoc duplication
+    // adds boilerplate and rots quickly. Keep JSDoc as a tool authors
+    // reach for when they want to explain *why*, not what.
+    "require-jsdoc": "off",
+    "valid-jsdoc": "off",
   },
 };

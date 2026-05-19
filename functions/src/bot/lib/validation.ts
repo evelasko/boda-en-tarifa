@@ -48,7 +48,10 @@ export function validate<T extends ZodTypeAny>(
 export class ValidationError extends Error {
   constructor(
     public readonly context: string,
-    public readonly issues: ReadonlyArray<{path: (string | number)[]; message: string}>
+    public readonly issues: ReadonlyArray<{
+      path: (string | number)[];
+      message: string;
+    }>
   ) {
     super(`validation_failed: ${context}`);
     this.name = "ValidationError";

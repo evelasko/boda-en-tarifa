@@ -18,7 +18,9 @@ import * as logger from "firebase-functions/logger";
 import {CLAUDE_HAIKU_MODEL} from "../lib/config.js";
 import type {Language} from "../lib/i18n.js";
 
-const SYSTEM = "Classify language: respond with exactly \"es\" or \"en\". Default to \"es\" if unclear.";
+const SYSTEM =
+  "Classify language: respond with exactly \"es\" or \"en\". " +
+  "Default to \"es\" if unclear.";
 
 let cachedClient: Anthropic | null = null;
 function client(apiKey: string): Anthropic {

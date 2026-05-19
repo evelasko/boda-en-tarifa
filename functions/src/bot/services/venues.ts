@@ -30,7 +30,10 @@ export async function listVenues(): Promise<BotVenue[]> {
   try {
     const snap = await getFirestore().collection(COLLECTION).get();
     if (snap.empty) return [];
-    return snap.docs.map((d) => ({id: d.id, ...(d.data() as Omit<BotVenue, "id">)}));
+    return snap.docs.map((d) => ({
+      id: d.id,
+      ...(d.data() as Omit<BotVenue, "id">),
+    }));
   } catch (err) {
     logger.warn("bot.services.venues.read_failed", {
       err: err instanceof Error ? err.message : String(err),

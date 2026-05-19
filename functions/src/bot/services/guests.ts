@@ -96,7 +96,9 @@ export async function getGuestById(uid: string): Promise<Guest | null> {
  *   3. fallback "amig@" / "friend" — extremely unlikely (would mean
  *      both fields are blank, which the operator should fix)
  */
-export function displayName(guest: Pick<Guest, "preferredName" | "fullName">): string {
+export function displayName(
+  guest: Pick<Guest, "preferredName" | "fullName">
+): string {
   if (guest.preferredName && guest.preferredName.trim().length > 0) {
     return guest.preferredName.trim();
   }
@@ -133,9 +135,18 @@ export async function touchGuestOnInbound(guest: Guest): Promise<Date> {
   return cswExpiresAt;
 }
 
-/** Persist a detected / switched language. Debounce upstream in the handler. */
-export async function setLanguage(guestId: string, lang: Language): Promise<void> {
-  await getFirestore().collection(COLLECTION).doc(guestId).update({language: lang});
+/**
+ * Persist a detected / switched language. Debounce upstream in the
+ * handler.
+ */
+export async function setLanguage(
+  guestId: string,
+  lang: Language
+): Promise<void> {
+  await getFirestore()
+    .collection(COLLECTION)
+    .doc(guestId)
+    .update({language: lang});
 }
 
 /**
@@ -143,8 +154,14 @@ export async function setLanguage(guestId: string, lang: Language): Promise<void
  * routes (allowlist passes) and `touchGuestOnInbound` re-flips this to
  * true, matching the spec's "any message reactivates me" rule.
  */
-export async function setEnrolled(guestId: string, enrolled: boolean): Promise<void> {
-  await getFirestore().collection(COLLECTION).doc(guestId).update({botEnrolled: enrolled});
+export async function setEnrolled(
+  guestId: string,
+  enrolled: boolean
+): Promise<void> {
+  await getFirestore()
+    .collection(COLLECTION)
+    .doc(guestId)
+    .update({botEnrolled: enrolled});
 }
 
 // ── Internal ──────────────────────────────────────────────────────────────

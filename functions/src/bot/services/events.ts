@@ -45,7 +45,10 @@ export async function listEvents(): Promise<BotEvent[]> {
       logger.info("bot.services.events.empty");
       return [];
     }
-    return snap.docs.map((d) => ({id: d.id, ...(d.data() as Omit<BotEvent, "id">)}));
+    return snap.docs.map((d) => ({
+      id: d.id,
+      ...(d.data() as Omit<BotEvent, "id">),
+    }));
   } catch (err) {
     // Don't crash the KB build if the collection isn't provisioned yet;
     // the spec treats a missing collection as "nothing to render".

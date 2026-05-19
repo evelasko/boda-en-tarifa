@@ -23,7 +23,12 @@ import {
   DEFAULT_MAX_TOOL_ITERATIONS,
 } from "../lib/config.js";
 import {buildSystem} from "./system-prompt.js";
-import {executeTool, TOOLS, type ToolContext, type ToolResult} from "./tools.js";
+import {
+  executeTool,
+  TOOLS,
+  type ToolContext,
+  type ToolResult,
+} from "./tools.js";
 import type {HistoryTurn} from "../conversation/state.js";
 
 export interface PipelineInput {
@@ -133,7 +138,10 @@ export async function runTurn(input: PipelineInput): Promise<PipelineOutput> {
             name: block.name,
             err: err instanceof Error ? err.message : String(err),
           });
-          return {output: {error: "tool_exception"}, errored: true} as ToolResult;
+          return {
+            output: {error: "tool_exception"},
+            errored: true,
+          } as ToolResult;
         });
 
       recordedCalls.push({

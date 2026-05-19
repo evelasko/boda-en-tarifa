@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /**
  * Three-block system prompt assembly: Persona & Rules (A), Knowledge
  * Base (B), and Tool Usage Guidance (C). Each gets its own
@@ -6,6 +7,10 @@
  *
  * Spec: `bot/specs/07-knowledge-base.md` §4 ("Prompt structure"),
  *       `bot/specs/02-conversation-design.md` §1-§11 (Thora persona).
+ *
+ * `max-len` is disabled file-wide because Blocks A and C are natural-
+ * language prose copied verbatim from the spec; wrapping them at 80
+ * cols would obscure paragraph structure and make spec-diffing hard.
  */
 
 import type Anthropic from "@anthropic-ai/sdk";

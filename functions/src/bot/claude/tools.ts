@@ -34,14 +34,15 @@ export const TOOLS: Anthropic.Messages.Tool[] = [
     name: "lookup_events",
     description:
       "List wedding events. Filter by event_id, day, or " +
-      '"next"/"current"/"today"/"tomorrow"/"all".',
+      "\"next\"/\"current\"/\"today\"/\"tomorrow\"/\"all\".",
     input_schema: {
       type: "object",
       properties: {
         filter: {
           type: "string",
           description:
-            "Optional. event_id, or one of today, tomorrow, next, current, all.",
+            "Optional. event_id, or one of " +
+            "today, tomorrow, next, current, all.",
         },
       },
       required: [],
@@ -249,36 +250,36 @@ export async function executeTool(
   ctx: ToolContext
 ): Promise<ToolResult> {
   switch (name) {
-    case "get_guest_context":
-      return execGetGuestContext(ctx);
-    case "lookup_events":
-      return execLookupEvents(input);
-    case "lookup_venue":
-      return execLookupVenue(input);
-    case "lookup_seating":
-      return stub(name, "seating service lands in Phase 3");
-    case "lookup_couple_facts":
-      return stub(name, "couple dossier reader lands in Phase 3");
-    case "lookup_guest_dossier":
-      return stub(name, "guest dossier reader lands in Phase 3");
-    case "lookup_tarifa_guide":
-      return stub(name, "tarifa guide reader lands in Phase 3");
-    case "get_current_weather":
-      return stub(name, "Open-Meteo client lands in Phase 3");
-    case "get_now":
-      return execGetNow();
-    case "send_location_pin":
-      return execSendLocationPin(input);
-    case "trigger_flow":
-      return execTriggerFlow(input);
-    case "escalate_to_operator":
-      return stub(name, "escalation writer lands in Phase 3");
-    case "moderate_song_request":
-      return stub(name, "song moderation lands in Phase 3");
-    case "resolve_spotify_track":
-      return stub(name, "spotify resolver lands in Phase 3");
-    default:
-      return {output: {error: `unknown_tool: ${name}`}, errored: true};
+  case "get_guest_context":
+    return execGetGuestContext(ctx);
+  case "lookup_events":
+    return execLookupEvents(input);
+  case "lookup_venue":
+    return execLookupVenue(input);
+  case "lookup_seating":
+    return stub(name, "seating service lands in Phase 3");
+  case "lookup_couple_facts":
+    return stub(name, "couple dossier reader lands in Phase 3");
+  case "lookup_guest_dossier":
+    return stub(name, "guest dossier reader lands in Phase 3");
+  case "lookup_tarifa_guide":
+    return stub(name, "tarifa guide reader lands in Phase 3");
+  case "get_current_weather":
+    return stub(name, "Open-Meteo client lands in Phase 3");
+  case "get_now":
+    return execGetNow();
+  case "send_location_pin":
+    return execSendLocationPin(input);
+  case "trigger_flow":
+    return execTriggerFlow(input);
+  case "escalate_to_operator":
+    return stub(name, "escalation writer lands in Phase 3");
+  case "moderate_song_request":
+    return stub(name, "song moderation lands in Phase 3");
+  case "resolve_spotify_track":
+    return stub(name, "spotify resolver lands in Phase 3");
+  default:
+    return {output: {error: `unknown_tool: ${name}`}, errored: true};
   }
 }
 
@@ -310,7 +311,9 @@ async function execGetGuestContext(ctx: ToolContext): Promise<ToolResult> {
   };
 }
 
-async function execLookupEvents(input: Record<string, unknown>): Promise<ToolResult> {
+async function execLookupEvents(
+  input: Record<string, unknown>
+): Promise<ToolResult> {
   const filter = typeof input.filter === "string" ? input.filter : "all";
   const events = await listEvents();
   // Phase 2: implement "all" and "by event_id"; the day filters (today,
@@ -324,11 +327,18 @@ async function execLookupEvents(input: Record<string, unknown>): Promise<ToolRes
   };
 }
 
-async function execLookupVenue(input: Record<string, unknown>): Promise<ToolResult> {
+async function execLookupVenue(
+  input: Record<string, unknown>
+): Promise<ToolResult> {
   const id = typeof input.venue_id === "string" ? input.venue_id : "";
   if (!id) return {output: {error: "missing_venue_id"}, errored: true};
   const v = await getVenue(id);
-  if (!v) return {output: {error: "venue_not_found", venue_id: id}, errored: true};
+  if (!v) {
+    return {
+      output: {error: "venue_not_found", venue_id: id},
+      errored: true,
+    };
+  }
   return {output: {venue: v}};
 }
 

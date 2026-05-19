@@ -34,8 +34,12 @@ export function pick<T>(bundle: Bilingual<T>, lang: Language): T {
  * (Thora — `02-conversation-design.md` §9 "Claude API error").
  */
 export const DEFAULT_FALLBACK_ERROR: Bilingual = {
-  es: "Perdona, tengo un microcorte 🐾 Inténtalo en un momento o escribe *ayuda*.",
-  en: "Sorry — quick blip on my end 🐾 Try again in a moment, or write *help*.",
+  es:
+    "Perdona, tengo un microcorte 🐾 " +
+    "Inténtalo en un momento o escribe *ayuda*.",
+  en:
+    "Sorry — quick blip on my end 🐾 " +
+    "Try again in a moment, or write *help*.",
 };
 
 /** Rate-limit notice copy (config override: `rateLimit.throttleNoticeText`). */
@@ -46,8 +50,12 @@ export const DEFAULT_RATE_LIMIT_NOTICE: Bilingual = {
 
 /** Allowlist refusal (unknown phone — `02-conversation-design.md` §9, §10). */
 export const ALLOWLIST_REFUSAL: Bilingual = {
-  es: "Hmm, no te encuentro en mi lista. Si crees que es un error, escribe a mis humanos directamente 🐾",
-  en: "Hmm, can't find you on my list. If you think that's a mistake, ping my humans directly 🐾",
+  es:
+    "Hmm, no te encuentro en mi lista. Si crees que es un error, " +
+    "escribe a mis humanos directamente 🐾",
+  en:
+    "Hmm, can't find you on my list. If you think that's a mistake, " +
+    "ping my humans directly 🐾",
 };
 
 /** Stop / opt-out ack (F14, `02-conversation-design.md` §4 row "Stop"). */

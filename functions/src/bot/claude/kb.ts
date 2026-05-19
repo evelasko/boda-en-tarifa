@@ -43,7 +43,11 @@ let inProcessCache: CachedKb | null = null;
  * version 0 and always rebuild. The Firestore trigger that bumps the
  * doc on content changes is added in Phase 3.
  */
-export async function getKb(): Promise<{text: string; version: number; hash: string}> {
+export async function getKb(): Promise<{
+  text: string;
+  version: number;
+  hash: string;
+}> {
   const v = await readKbVersion();
 
   if (inProcessCache && inProcessCache.version === v.version) {
@@ -96,7 +100,9 @@ async function renderKb(): Promise<string> {
       if (e.endAt) parts.push(`- End (estimated): ${e.endAt}`);
       if (e.venueId) parts.push(`- Venue: ${e.venueId}`);
       if (e.dressCodeId) parts.push(`- Dress code: ${e.dressCodeId}`);
-      if (e.transportNotes) parts.push(`- Transport notes: ${e.transportNotes}`);
+      if (e.transportNotes) {
+        parts.push(`- Transport notes: ${e.transportNotes}`);
+      }
       if (e.whom) parts.push(`- Whom: ${e.whom}`);
       if (e.descriptionEs) parts.push(`- Description (ES): ${e.descriptionEs}`);
       if (e.descriptionEn) parts.push(`- Description (EN): ${e.descriptionEn}`);
@@ -126,20 +132,25 @@ async function renderKb(): Promise<string> {
 
   parts.push("## Wedding surprises (lockdown rules — DO NOT REVEAL)");
   parts.push(
-    "- Ceremony arrival from the sea: strict pre-bus; \"id mirando al mar\" hint at boarding (17:30 Sat); open at shore."
+    "- Ceremony arrival from the sea: strict pre-bus; \"id mirando al" +
+    " mar\" hint at boarding (17:30 Sat); open at shore."
   );
   parts.push(
-    "- Musical bingo (post-dinner Sat): open hint allowed (\"quedaos hasta el final de la cena\")."
+    "- Musical bingo (post-dinner Sat): open hint allowed " +
+    "(\"quedaos hasta el final de la cena\")."
   );
   parts.push("- First-time dancing together: open hint allowed.");
   parts.push("");
 
   parts.push("## What is currently locked");
   parts.push(
-    "- Seating: revealed Friday May 29 at 18:00 Europe/Madrid. Before that: \"Eso te lo cuento el viernes 29 a las 18:00 🐾 Suspense.\""
+    "- Seating: revealed Friday May 29 at 18:00 Europe/Madrid. " +
+    "Before that: \"Eso te lo cuento el viernes 29 a las 18:00 " +
+    "🐾 Suspense.\""
   );
   parts.push(
-    "- Menu: no unlock — paper at-seat. If asked, deflect with humor: \"El menú me lo escondieron porque se me hacía la boca agua 🐾\"."
+    "- Menu: no unlock — paper at-seat. If asked, deflect with humor: " +
+    "\"El menú me lo escondieron porque se me hacía la boca agua 🐾\"."
   );
 
   return parts.join("\n");

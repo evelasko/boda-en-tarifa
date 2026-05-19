@@ -39,7 +39,10 @@ export async function loadHistory(
 }
 
 /** True iff `now` is still inside the 24h customer-service window. */
-export function isCswOpen(lastInboundAt: Date | Timestamp, now: Date = new Date()): boolean {
+export function isCswOpen(
+  lastInboundAt: Date | Timestamp,
+  now: Date = new Date()
+): boolean {
   const last = lastInboundAt instanceof Timestamp ?
     lastInboundAt.toDate() :
     lastInboundAt;
