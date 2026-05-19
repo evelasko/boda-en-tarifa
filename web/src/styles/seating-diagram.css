@@ -226,33 +226,31 @@
  * Print rules — shared between /admin/seating and /staff/tables.
  * ----------------------------------------------------------------------------
  * Both pages render the same .seating-diagram tree; the chrome around it
- * differs (admin has a <aside>+<header>; staff has neither). The selectors
- * below are intentionally broad enough to hide either form of chrome without
- * coupling to admin-specific class names.
+ * differs (admin has a <aside>+<header>). Chrome hiding is scoped to
+ * body:has(.seating-diagram) so /staff/data is unaffected.
  * ============================================================================ */
 
 @media print {
+  /* Scoped to seating diagram routes only — do not use bare `header` / `aside`
+   * (that hid /staff/data report title and unassigned list). */
   @page {
     size: A3 landscape;
-    margin: var(--seating-print-margin);
+    margin: 8mm;
   }
 
-  body {
+  body:has(.seating-diagram) {
     background: white !important;
   }
 
-  /* Hide the admin shell (and the staff page's screen-only controls).
-   * Selectors are harmless on the staff page where <aside>/<header> don't
-   * exist. */
-  aside,
-  header,
-  .seating-actions,
-  .seating-unassigned {
+  body:has(.seating-diagram) aside,
+  body:has(.seating-diagram) header,
+  body:has(.seating-diagram) .seating-actions,
+  body:has(.seating-diagram) .seating-unassigned {
     display: none !important;
   }
 
-  /* Collapse the page <main>'s padding for both layouts. */
-  main {
+  /* Collapse padding only on seating diagram pages (not /staff/data). */
+  main:has(.seating-diagram) {
     padding: 0 !important;
     background: white !important;
     min-height: 0 !important;

@@ -20,6 +20,10 @@ export const WHATSAPP_PHONE_NUMBER_ID = defineSecret(
 export const WHATSAPP_BUSINESS_ACCOUNT_ID = defineSecret(
   "WHATSAPP_BUSINESS_ACCOUNT_ID"
 );
+export const ANTHROPIC_API_KEY = defineSecret("ANTHROPIC_API_KEY");
+
+// export const CLOUDINARY_API_SECRET = defineSecret("CLOUDINARY_API_SECRET");
+// export const CLOUDINARY_CLOUD_NAME = defineSecret("CLOUDINARY_CLOUD_NAME");
 
 /**
  * Subset of secrets needed by the inbound webhook scaffold (Phase 1).

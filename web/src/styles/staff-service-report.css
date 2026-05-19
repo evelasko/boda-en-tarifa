@@ -1,0 +1,278 @@
+/* Staff service data sheet — /staff/data (print-oriented banquet run sheet) */
+
+:root {
+  --ssr-print-inset: 15mm;
+  --ssr-print-font: Georgia, 'Times New Roman', serif;
+  --ssr-print-color: #1a1a1a;
+}
+
+.staff-service-report {
+  max-width: 52rem;
+  margin-inline: auto;
+}
+
+.staff-service-report__banner {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-charcoal) 20%, transparent);
+}
+
+.staff-service-report__title {
+  font-family: var(--font-display, Georgia, serif);
+  letter-spacing: 0.02em;
+}
+
+.staff-service-report__meta {
+  font-size: 0.8125rem;
+  color: color-mix(in srgb, var(--color-charcoal) 65%, transparent);
+}
+
+.staff-service-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.staff-service-report__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.staff-service-stat {
+  border: 1px solid color-mix(in srgb, var(--color-charcoal) 15%, transparent);
+  border-radius: 0.375rem;
+  padding: 0.625rem 0.75rem;
+  text-align: center;
+  background: white;
+}
+
+.staff-service-stat__value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.staff-service-stat__label {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--color-charcoal) 60%, transparent);
+  margin-top: 0.25rem;
+}
+
+.staff-service-table {
+  margin-bottom: 1.75rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.staff-service-table__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.375rem;
+  border-bottom: 2px solid var(--color-charcoal);
+}
+
+.staff-service-table__name {
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+.staff-service-table__counts {
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--color-charcoal) 70%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+
+.staff-service-guest-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.staff-service-guest-table th,
+.staff-service-guest-table td {
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-charcoal) 12%, transparent);
+}
+
+.staff-service-guest-table th {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--color-charcoal) 55%, transparent);
+}
+
+.staff-service-guest-table .col-seat {
+  width: 2.5rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.staff-service-guest-table .col-flags {
+  width: 4.5rem;
+  white-space: nowrap;
+}
+
+.staff-service-guest-table .col-course {
+  width: 6.5rem;
+}
+
+.staff-service-flag {
+  display: inline-block;
+  margin-right: 0.15rem;
+}
+
+.staff-service-dietary {
+  color: color-mix(in srgb, var(--color-coral, #6f3721) 85%, var(--color-charcoal));
+  font-style: italic;
+}
+
+.staff-service-unassigned {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px dashed color-mix(in srgb, var(--color-coral, #6f3721) 50%, transparent);
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--color-coral, #6f3721) 6%, white);
+}
+
+.staff-service-unassigned h2 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.staff-service-unassigned ul {
+  font-size: 0.8125rem;
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+
+/* ============================================================================
+ * Print — scoped to /staff/data via .staff-service-page (loaded on that route).
+ * All rules use html/body:has(.staff-service-page) so they never fight the
+ * seating diagram print sheet and are not affected by its chrome-hiding rules.
+ * ============================================================================ */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+
+  html:has(.staff-service-page),
+  html:has(.staff-service-page) body {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  /* Lenis smooth-scroll wrapper can clip print output via transform/overflow. */
+  html:has(.staff-service-page) .lenis,
+  html:has(.staff-service-page) .lenis-smooth,
+  html:has(.staff-service-page) [data-lenis-prevent],
+  html:has(.staff-service-page) [data-lenis-root] {
+    overflow: visible !important;
+    transform: none !important;
+    height: auto !important;
+  }
+
+  html:has(.staff-service-page) .staff-service-actions {
+    display: none !important;
+  }
+
+  html:has(.staff-service-page) main.staff-service-page {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  html:has(.staff-service-page) .staff-service-report {
+    display: block !important;
+    visibility: visible !important;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    /* Extra inset when @page margin is overridden (print dialog “None”). */
+    padding: 15mm !important;
+    font-family: var(--ssr-print-font);
+    color: var(--ssr-print-color);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.staff-service-page) .staff-service-report__banner {
+    display: block !important;
+    visibility: visible !important;
+    border-bottom-color: #ccc;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  html:has(.staff-service-page) .staff-service-report__title {
+    display: block !important;
+    visibility: visible !important;
+    font-size: 14pt !important;
+    line-height: 1.25 !important;
+    margin: 0 0 0.35rem !important;
+    color: #111 !important;
+  }
+
+  html:has(.staff-service-page) .staff-service-report__meta {
+    display: block !important;
+    visibility: visible !important;
+    color: #333 !important;
+  }
+
+  html:has(.staff-service-page) .staff-service-unassigned {
+    display: block !important;
+    visibility: visible !important;
+    page-break-before: always;
+    border-color: #999;
+    background: white;
+  }
+
+  html:has(.staff-service-page) .staff-service-guest-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  html:has(.staff-service-page) .staff-service-guest-table th,
+  html:has(.staff-service-page) .staff-service-guest-table td {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    border-bottom-color: #ddd;
+  }
+
+  html:has(.staff-service-page) .staff-service-stat {
+    border-color: #ccc;
+    box-shadow: none;
+  }
+
+  html:has(.staff-service-page) .staff-service-table {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  html:has(.staff-service-page) .staff-service-table + .staff-service-table {
+    margin-top: 0.5rem;
+  }
+}
