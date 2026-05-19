@@ -8,6 +8,8 @@ export interface Guest {
   uid: string;
   email: string;
   fullName: string;
+  /** How the WhatsApp bot addresses the guest (overrides first token of fullName). */
+  preferredName?: string;
   photoUrl?: string;
   phoneE164?: string;
   whatsappNumber?: string;
@@ -54,6 +56,7 @@ export interface GuestWithSeating extends GuestWithRSVP {
 
 export interface CreateGuestInput {
   fullName: string;
+  preferredName?: string;
   email?: string;
   side: GuestSide;
   relationToGrooms: string;
@@ -72,6 +75,7 @@ export interface CreateGuestInput {
 
 export interface UpdateGuestInput {
   fullName?: string;
+  preferredName?: string;
   email?: string;
   side?: GuestSide;
   relationToGrooms?: string;

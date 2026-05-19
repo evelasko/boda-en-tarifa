@@ -50,6 +50,7 @@ export async function GET(request: NextRequest) {
         uid: doc.id,
         email: raw.email ?? '',
         fullName: raw.fullName ?? '',
+        preferredName: raw.preferredName,
         photoUrl: raw.photoUrl,
         phoneE164: raw.phoneE164,
         whatsappNumber: raw.whatsappNumber,
@@ -87,6 +88,7 @@ export async function GET(request: NextRequest) {
       guests = guests.filter(
         (g) =>
           g.fullName.toLowerCase().includes(search) ||
+          (g.preferredName ?? '').toLowerCase().includes(search) ||
           g.email.toLowerCase().includes(search) ||
           (g.phoneE164 ?? '').toLowerCase().includes(search) ||
           (g.whatsappNumber ?? '').toLowerCase().includes(search)
@@ -162,6 +164,7 @@ export async function POST(request: NextRequest) {
 
     const now = new Date().toISOString();
     const docRef = adminFirestore.collection(GUESTS_COLLECTION).doc();
+    const preferredName = body.preferredName?.trim();
     const guest: Omit<Guest, 'uid'> = {
       fullName: body.fullName.trim(),
       email: normalizedEmail,
@@ -188,6 +191,9 @@ export async function POST(request: NextRequest) {
     }
     if (contactPending && !isChild) {
       guest.contactPending = true;
+    }
+    if (preferredName) {
+      guest.preferredName = preferredName;
     }
 
     await docRef.set(guest);

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { FieldValue } from 'firebase-admin/firestore';
 import { adminFirestore } from '@/lib/firebase-admin';
 import { requireAdmin } from '@/lib/admin-api-auth';
 import { normalizeE164Phone, normalizeWhatsappNumber } from '@/lib/phone';
@@ -65,6 +66,10 @@ export async function PUT(
     }
     if (guestFields.fullName) {
       updateData.fullName = guestFields.fullName.trim();
+    }
+    if (guestFields.preferredName !== undefined) {
+      const trimmed = guestFields.preferredName.trim();
+      updateData.preferredName = trimmed ? trimmed : FieldValue.delete();
     }
     if (guestFields.phoneE164 !== undefined) {
       const normalized = normalizeE164Phone(guestFields.phoneE164);

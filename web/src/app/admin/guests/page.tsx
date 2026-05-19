@@ -128,7 +128,10 @@ export default function GuestsPage() {
     if (search) {
       const q = search.toLowerCase();
       result = result.filter(
-        (g) => g.fullName.toLowerCase().includes(q) || g.email.toLowerCase().includes(q)
+        (g) =>
+          g.fullName.toLowerCase().includes(q) ||
+          (g.preferredName ?? '').toLowerCase().includes(q) ||
+          g.email.toLowerCase().includes(q)
       );
     }
     if (filterSide !== 'all') {

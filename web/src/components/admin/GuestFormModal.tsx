@@ -41,6 +41,7 @@ export default function GuestFormModal({
   const isEditing = !!guest;
 
   const [fullName, setFullName] = useState('');
+  const [preferredName, setPreferredName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneE164, setPhoneE164] = useState('');
   const [side, setSide] = useState<GuestSide>('ambos');
@@ -60,6 +61,7 @@ export default function GuestFormModal({
     if (open) {
       if (guest) {
         setFullName(guest.fullName);
+        setPreferredName(guest.preferredName ?? '');
         setEmail(guest.email);
         setSide(guest.side);
         setRelationToGrooms(guest.relationToGrooms);
@@ -76,6 +78,7 @@ export default function GuestFormModal({
         setTableCaptain(Boolean(guest.tableCaptain));
       } else {
         setFullName('');
+        setPreferredName('');
         setEmail('');
         setSide('ambos');
         setRelationToGrooms('');
@@ -139,6 +142,7 @@ export default function GuestFormModal({
 
       await onSave({
         fullName: fullName.trim(),
+        preferredName: preferredName.trim(),
         email: email.trim(),
         phoneE164: phoneE164.trim() || undefined,
         side,
@@ -185,6 +189,19 @@ export default function GuestFormModal({
               placeholder="Nombre y apellidos"
             />
             {errors.fullName && <p className="text-xs text-red-600">{errors.fullName}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="preferredName">Nombre preferido (opcional)</Label>
+            <Input
+              id="preferredName"
+              value={preferredName}
+              onChange={(e) => setPreferredName(e.target.value)}
+              placeholder="Ej: Tito (cómo le llama el bot de WhatsApp)"
+            />
+            <p className="text-xs text-charcoal/55">
+              Si está vacío, el bot usa la primera palabra del nombre completo.
+            </p>
           </div>
 
           <div className="space-y-2">
