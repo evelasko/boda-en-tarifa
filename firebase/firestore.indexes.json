@@ -35,6 +35,71 @@
         { "fieldPath": "isDirectoryVisible", "order": "ASCENDING" },
         { "fieldPath": "relationshipStatus", "order": "ASCENDING" }
       ]
+    },
+    {
+      "__comment": "Bot: broadcast audience filtering by enrollment + language (bot/specs/04-data-model.md §3)",
+      "collectionGroup": "guests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "botEnrolled", "order": "ASCENDING" },
+        { "fieldPath": "language", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "__comment": "Bot: RSVP-reminder broadcast (rsvpStatus + botEnrolled)",
+      "collectionGroup": "guests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "rsvpStatus", "order": "ASCENDING" },
+        { "fieldPath": "botEnrolled", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "__comment": "Bot: open escalation queue ordered by createdAt",
+      "collectionGroup": "bot_escalations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "__comment": "Bot: priority-sorted escalation queue",
+      "collectionGroup": "bot_escalations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "urgency", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "__comment": "Bot: dedup outbound proactive sends by trigger + guest",
+      "collectionGroup": "bot_send_log",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "trigger", "order": "ASCENDING" },
+        { "fieldPath": "guestId", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "__comment": "Bot: feed_posts moderation queue (source + status + createdAt)",
+      "collectionGroup": "feed_posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "source", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "__comment": "Bot: unknown-inbound admin queue (resolved + receivedAt)",
+      "collectionGroup": "bot_unknown_inbound",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "resolved", "order": "ASCENDING" },
+        { "fieldPath": "receivedAt", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

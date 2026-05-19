@@ -26,14 +26,15 @@ export const ANTHROPIC_API_KEY = defineSecret("ANTHROPIC_API_KEY");
 // export const CLOUDINARY_CLOUD_NAME = defineSecret("CLOUDINARY_CLOUD_NAME");
 
 /**
- * Subset of secrets needed by the inbound webhook scaffold (Phase 1).
- * Other secrets are bound by handlers as they come online.
+ * Webhook secrets — bound to the inbound function. Phase 2 adds the
+ * Anthropic key (Claude pipeline) to the same binding set.
  */
 export const WEBHOOK_SECRETS = [
   WHATSAPP_ACCESS_TOKEN,
   WHATSAPP_APP_SECRET,
   WHATSAPP_VERIFY_TOKEN,
   WHATSAPP_PHONE_NUMBER_ID,
+  ANTHROPIC_API_KEY,
 ];
 
 // ── Constants ──────────────────────────────────────────────────────────────
@@ -49,6 +50,29 @@ export const META_GRAPH_API_BASE = `https://graph.facebook.com/${META_GRAPH_API_
 
 /** TTL for `bot_dedupe` entries (matches Meta's retry window with margin). */
 export const DEDUPE_TTL_MS = 24 * 60 * 60 * 1000;
+
+/** TTL for `bot_rate` 5-minute buckets — bucket end + 1h. */
+export const RATE_BUCKET_TTL_MS = 65 * 60 * 1000;
+
+/** Anthropic model IDs. */
+export const CLAUDE_SONNET_MODEL = "claude-sonnet-4-6";
+export const CLAUDE_HAIKU_MODEL = "claude-haiku-4-5-20251001";
+
+/** Display timezone for all wall-clock formatting. */
+export const WEDDING_TIMEZONE = "Europe/Madrid";
+
+/**
+ * Conversation defaults — mirrored in `config/bot.history` /
+ * `config/bot.rateLimit`. Used when the Firestore config doc has not
+ * been seeded yet (`scripts/seed-bot-config.ts`, Phase 6).
+ */
+export const DEFAULT_HISTORY_TURNS = 8;
+export const DEFAULT_RATE_LIMIT_PER_5MIN = 30;
+export const DEFAULT_MAX_TOOL_ITERATIONS = 5;
+export const DEFAULT_CLAUDE_MAX_TOKENS = 1024;
+
+/** 24h Meta customer-service window in ms. */
+export const CSW_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 /** Phase 1 hardcoded reply (replaced by Claude in Phase 2). */
 export const PHASE1_PLACEHOLDER_REPLY =

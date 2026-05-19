@@ -3,8 +3,8 @@ import * as logger from "firebase-functions/logger";
 import type {Response} from "express";
 import {randomUUID} from "node:crypto";
 import {
+  ANTHROPIC_API_KEY,
   BOT_REGION,
-  PHASE1_PLACEHOLDER_REPLY,
   WEBHOOK_SECRETS,
   WHATSAPP_ACCESS_TOKEN,
   WHATSAPP_APP_SECRET,
@@ -15,7 +15,7 @@ import {fromMetaWaId, maskPhone} from "../lib/phone.js";
 import {handleHandshake, verifySignature} from "./verify.js";
 import {claimMessageId, markProcessed} from "./dedupe.js";
 import {classifyEvents, type ClassifiedEvent} from "./classify.js";
-import {sendText} from "../whatsapp/send.js";
+import {handleInboundText} from "../handlers/conversation.js";
 
 /**
  * WhatsApp Cloud API webhook entry point.
@@ -218,24 +218,35 @@ async function dispatchEvent(
   });
 
   try {
-    const result = await sendText({
-      to: fromE164,
-      body: PHASE1_PLACEHOLDER_REPLY,
-      requestId,
-      phoneNumberId: WHATSAPP_PHONE_NUMBER_ID.value(),
-      accessToken: WHATSAPP_ACCESS_TOKEN.value(),
-    });
-    logger.info("bot.webhook.replied", {
+    const result = await handleInboundText(
+      {
+        phone: fromE164,
+        text: event.text,
+        requestId,
+        inboundMetaMessageId: event.messageId,
+        profileName: event.profileName,
+      },
+      {
+        whatsappPhoneNumberId: WHATSAPP_PHONE_NUMBER_ID.value(),
+        whatsappAccessToken: WHATSAPP_ACCESS_TOKEN.value(),
+        anthropicApiKey: ANTHROPIC_API_KEY.value(),
+      }
+    );
+    logger.info("bot.webhook.handled", {
       ...baseLog,
-      outboundMetaMessageId: result.metaMessageId,
+      outcome: result.outcome,
+      toolCalls: result.toolCallCount,
     });
-    await markProcessed(event.messageId);
+    // markProcessed only on outcomes that produced (or deliberately
+    // suppressed) a reply. Unhandled errors leave the dedupe entry
+    // as a "claimed but unprocessed" marker for ops review.
+    if (result.outcome !== "error") {
+      await markProcessed(event.messageId);
+    }
   } catch (err) {
-    logger.error("bot.webhook.send_failed", {
+    logger.error("bot.webhook.handler_failed", {
       ...baseLog,
       err: err instanceof Error ? err.message : String(err),
     });
-    // Intentionally do not markProcessed on send failure — the dedupe
-    // entry remains as a "claimed but unprocessed" marker for ops review.
   }
 }
