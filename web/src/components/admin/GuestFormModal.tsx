@@ -31,6 +31,10 @@ interface GuestFormModalProps {
   existingSeating?: { tableName: string; seatNumber: number } | null;
 }
 
+/** Portaled dialogs don't inherit admin layout colors; pin readable admin palette. */
+const inputClassName =
+  'border-charcoal/20 bg-white text-charcoal placeholder:text-charcoal/45';
+
 export default function GuestFormModal({
   open,
   onOpenChange,
@@ -165,7 +169,7 @@ export default function GuestFormModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto border-charcoal/15 bg-white text-charcoal">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? 'Editar Invitado' : 'Añadir Invitado'}
@@ -184,6 +188,7 @@ export default function GuestFormModal({
             <Label htmlFor="fullName">Nombre completo *</Label>
             <Input
               id="fullName"
+              className={inputClassName}
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Nombre y apellidos"
@@ -195,11 +200,12 @@ export default function GuestFormModal({
             <Label htmlFor="preferredName">Nombre preferido (opcional)</Label>
             <Input
               id="preferredName"
+              className={inputClassName}
               value={preferredName}
               onChange={(e) => setPreferredName(e.target.value)}
               placeholder="Ej: Tito (cómo le llama el bot de WhatsApp)"
             />
-            <p className="text-xs text-charcoal/55">
+            <p className="text-xs text-charcoal/70">
               Si está vacío, el bot usa la primera palabra del nombre completo.
             </p>
           </div>
@@ -209,6 +215,7 @@ export default function GuestFormModal({
             <Input
               id="email"
               type="email"
+              className={inputClassName}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="email@ejemplo.com"
@@ -221,6 +228,7 @@ export default function GuestFormModal({
             <Input
               id="phoneE164"
               type="tel"
+              className={inputClassName}
               value={phoneE164}
               onChange={(e) => setPhoneE164(e.target.value)}
               placeholder="+34 600 000 000"
@@ -265,6 +273,7 @@ export default function GuestFormModal({
             <Label htmlFor="relationToGrooms">Relación con los novios *</Label>
             <Input
               id="relationToGrooms"
+              className={inputClassName}
               value={relationToGrooms}
               onChange={(e) => setRelationToGrooms(e.target.value)}
               placeholder="Ej: Primo, Compañero de trabajo, Amigo de la infancia"
@@ -280,7 +289,7 @@ export default function GuestFormModal({
                 <Label htmlFor="awaitingContact" className="text-sm font-medium">
                   Sin contacto aún (RSVP pendiente)
                 </Label>
-                <p className="text-xs text-charcoal/55">
+                <p className="text-xs text-charcoal/70">
                   Actívalo para guardar sin email ni teléfono (como en la hoja antes del RSVP).
                 </p>
               </div>
@@ -297,6 +306,7 @@ export default function GuestFormModal({
             <Input
               id="whatsapp"
               type="tel"
+              className={inputClassName}
               value={whatsappNumber}
               onChange={(e) => setWhatsappNumber(e.target.value)}
               placeholder="34600000000 o +34600000000"
@@ -319,19 +329,19 @@ export default function GuestFormModal({
             <>
               <Separator />
               <div className="space-y-2">
-                <p className="text-sm font-medium text-charcoal/70">Campos del invitado (solo lectura)</p>
+                <p className="text-sm font-medium text-charcoal">Campos del invitado (solo lectura)</p>
                 {guest.photoUrl && (
-                  <div className="flex items-center gap-2 text-sm text-charcoal/60">
+                  <div className="flex items-center gap-2 text-sm text-charcoal/80">
                     <span className="font-medium">Foto:</span>
                     <span className="truncate">{guest.photoUrl}</span>
                   </div>
                 )}
                 {guest.funFact && (
-                  <div className="text-sm text-charcoal/60">
+                  <div className="text-sm text-charcoal/80">
                     <span className="font-medium">Fun fact:</span> {guest.funFact}
                   </div>
                 )}
-                <div className="text-sm text-charcoal/60">
+                <div className="text-sm text-charcoal/80">
                   <span className="font-medium">Perfil reclamado:</span>{' '}
                   {guest.profileClaimed ? 'Sí' : 'No'}
                 </div>
@@ -344,7 +354,7 @@ export default function GuestFormModal({
               <Label htmlFor="tableCaptain" className="text-sm font-medium">
                 Capitán de mesa
               </Label>
-              <p className="text-xs text-charcoal/55">
+              <p className="text-xs text-charcoal/70">
                 Punto de contacto del personal de servicio en la mesa (columna U de la hoja).
               </p>
             </div>
@@ -357,12 +367,13 @@ export default function GuestFormModal({
 
           <Separator />
 
-          <p className="text-sm font-medium text-charcoal/70">Asiento</p>
+          <p className="text-sm font-medium text-charcoal">Asiento</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="tableName">Mesa</Label>
               <Input
                 id="tableName"
+                className={inputClassName}
                 value={tableName}
                 onChange={(e) => setTableName(e.target.value)}
                 placeholder="Ej: Mesa 1"
@@ -373,6 +384,7 @@ export default function GuestFormModal({
               <Input
                 id="seatNumber"
                 type="number"
+                className={inputClassName}
                 value={seatNumber}
                 onChange={(e) => setSeatNumber(e.target.value)}
                 placeholder="Ej: 3"
