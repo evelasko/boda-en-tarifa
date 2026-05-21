@@ -22,7 +22,7 @@ preferred_name: "Javi"
 #       and paste the URLs into reference_photos.
 reference_photos: []
 recognizable_for: "pelo rizado largo, alto y delgado (un pelín menos delgado con los años)"
-recognition_confidence_floor: 0.75
+recognition_confidence_floor: 0.85
 
 # ─────────────────────────────────────────────────
 # Relationship to the couple
@@ -30,7 +30,7 @@ recognition_confidence_floor: 0.75
 # The `relationship` string drives nickname-register inference
 # per couple-dossier.md §1.4. "amigo de Enrique" → friend register
 # → Thora may say "Henry" / "Manu" with this guest.
-relationship: "mejor amigo de Enrique y padrino de la boda; compañero de kite, baile y trabajo desde hace años (universidad, coreografías, dirección)"
+relationship: "mejor amigo de Enrique y padrino de la boda; compañero de kite, baile y trabajo desde hace años (universidad, coreografías, dirección). Amigo cercano de Manuel desde el inicio de la relacion con Enrique"
 hometown: "Alcorcón, Madrid"
 language: es
 
@@ -50,6 +50,13 @@ safe_facts:
   - "Sagitario, como mi humano Manuel"
   - "han co-dirigido producciones musicales juntos — un West Side Story entre otras"
   - "vive en Alcorcón, Madrid"
+  - "muy asociado a playa, kite y esqui"
+  - "organizador natural de planes y viajes en grupo; suele cortar el bacalao"
+  - "muy sociable, se apunta a cualquier actividad o evento"
+  - "vive en Alcorcón pero hace mucha vida por el centro de Madrid"
+  - "le encanta conducir y hacer viajes largos en coche"
+  - "disfruta organizando comidas y parrillas para amigos; cocina carne y pescado a la plancha"
+  - "muy integrado en el entorno de Enrique y Manuel desde hace años"
 
 # ─────────────────────────────────────────────────
 # Pre-authorized roast / inside-joke material
@@ -60,6 +67,9 @@ safe_jokes:
   - "'Flako' — sigue siendo flaco aunque ya no tanto con los años"
   - "'Alcorcon City' — broma cariñosa con su Alcorcón natal"
   - "la sesión de kite en Campello, 2019: casi se ahoga, perdió la tabla y casi pierde la cometa — él se ríe ya cuando se cuenta"
+  - "si organizó el plan, mejor no desaparecer antes de tiempo"
+  - "capaz de montar un viaje de grupo entero con una sola idea improvisada"
+  - "siempre listo para otra aventura, otro deporte o otro plan más"
 
 # ─────────────────────────────────────────────────
 # Hard exclusions
@@ -68,6 +78,10 @@ safe_jokes:
 # even if a guest brings them up.
 do_not_mention:
   - "el tema del temperamento / 'la bestia' / 'el centauro' / outbursts cuando se enfada — broma privada solo entre Enrique y Javi, no para chat con otros invitados"
+  - "discusiones politicas / extrema derecha / Vox / debates historicos intensos"
+  - "hablar de ex parejas o sexualidad delante del grupo"
+  - "apodos privados no autorizados"
+  - "cualquier comentario que pueda incomodar a su pareja actual"
 
 # ─────────────────────────────────────────────────
 # Personal-intro mode (Tarifa concierge personal-connection path)
@@ -83,4 +97,4 @@ personal_intro_blurb: null
 active: true
 # updatedAt is informational here; the import script overrides with
 # Firestore serverTimestamp() on write.
-updatedAt: "2026-05-15T00:00:00Z"
+updatedAt: "2026-05-21T00:00:00Z"
