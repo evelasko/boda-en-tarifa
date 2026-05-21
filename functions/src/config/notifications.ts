@@ -57,7 +57,7 @@ export const contentUnlockNotifications: ContentUnlockNotification[] = [
   },
   {
     id: "seating_chart_unlock",
-    sendAt: "2026-05-30T19:50:00Z", // 21:50 CEST
+    sendAt: "2026-05-30T17:30:00Z", // 19:30 CEST
     title: "¡Tu mesa está lista!",
     body: "Mira dónde te sientas esta noche.",
     contentType: "seatingChart",
@@ -101,6 +101,14 @@ export const eventNotifications: EventNotification[] = [
     title: "¡La cena está servida!",
     body: "La cena empieza en 30 minutos. ¡Es hora de arreglarse!",
     eventId: "dinner",
+    enabled: true,
+  },
+  {
+    id: "song_request_party_open",
+    sendAt: "2026-05-30T22:00:00Z", // 00:00 CEST (Sun May 31) — party song requests open
+    title: "¡Peticiones al DJ abiertas!",
+    body: "Pide tu canción y Thora se la pasa directa al DJ.",
+    eventId: "reception",
     enabled: true,
   },
 

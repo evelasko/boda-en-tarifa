@@ -144,8 +144,8 @@ async function renderKb(): Promise<string> {
 
   parts.push("## What is currently locked");
   parts.push(
-    "- Seating: revealed Friday May 29 at 18:00 Europe/Madrid. " +
-    "Before that: \"Eso te lo cuento el viernes 29 a las 18:00 " +
+    "- Seating: revealed Saturday May 30 at 19:30 Europe/Madrid. " +
+    "Before that: \"Eso te lo cuento el sábado 30 a las 19:30 " +
     "🐾 Suspense.\""
   );
   parts.push(

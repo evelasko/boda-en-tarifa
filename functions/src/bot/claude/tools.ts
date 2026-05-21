@@ -159,21 +159,13 @@ export const TOOLS: Anthropic.Messages.Tool[] = [
     name: "trigger_flow",
     description:
       "Trigger a WhatsApp Flow for structured input. Available flows: " +
-      "rsvp_full, brunch_attendance, song_request, logistics_intake, " +
-      "photo_consent, feedback.",
+      "song_request.",
     input_schema: {
       type: "object",
       properties: {
         flow_name: {
           type: "string",
-          enum: [
-            "rsvp_full",
-            "brunch_attendance",
-            "song_request",
-            "logistics_intake",
-            "photo_consent",
-            "feedback",
-          ],
+          enum: ["song_request"],
         },
       },
       required: ["flow_name"],

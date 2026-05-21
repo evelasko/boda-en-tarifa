@@ -372,7 +372,7 @@ Firestore composite indexes required (add to `firebase/firestore.indexes.json`):
 | Collection | Fields | Order | Used by |
 |---|---|---|---|
 | `guests` | `botEnrolled` ASC, `language` ASC | | broadcast audience filtering |
-| `guests` | `rsvpStatus` ASC, `botEnrolled` ASC | | RSVP-reminder broadcast |
+| `guests` | `rsvpStatus` ASC, `botEnrolled` ASC | | RSVP-segmented queries |
 | `bot_conversations` | `lastMessageAt` DESC | single-field | recent conversations list |
 | `bot_conversations/{p}/messages` | `createdAt` DESC | single-field | history fetch |
 | `bot_escalations` | `status` ASC, `createdAt` DESC | | operator open queue |

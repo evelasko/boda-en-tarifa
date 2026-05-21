@@ -7,26 +7,23 @@
 | Logical name | Meta name (es / en) | Category | Variables | Triggered by | Audience |
 |---|---|---|---|---|---|
 | `welcome_onboarding` | `welcome_onboarding_es` / `_en` | Utility | `{{1}}` first name | Operator (one-time, D-7, after D-8 pilot to ~5) | All `botEnrolled` guests |
-| `rsvp_reminder` | `rsvp_reminder_es` / `_en` | Utility | `{{1}}` first name | Operator (manual, conditional) | Guests with `rsvpStatus: pending` |
 | `event_reminder_30min` | `event_reminder_30min_es` / `_en` | Utility | `{{1}}` event name, `{{2}}` venue, `{{3}}` time | Scheduled (`sendEventReminder`) | Guests attending event. **Note:** for the ceremony, this is REPLACED by T12+T13 bus templates. |
-| `seating_unlock` | `seating_unlock_es` / `_en` | Utility | `{{1}}` first name, `{{2}}` table label, `{{3}}` signed token | Scheduled (`sendContentUnlockNotification`, 18:00 Fri May 29) | All attending guests |
+| `seating_unlock` | `seating_unlock_es` / `_en` | Utility | `{{1}}` first name, `{{2}}` table label, `{{3}}` signed token | Scheduled (`sendContentUnlockNotification`, 19:30 Sat May 30) | All attending guests |
 | ~~`menu_unlock`~~ | — | **DROPPED** | — | — | Menus are paper at-seat. Thora deflects in chat instead. |
 | `film_developed` | `film_developed_es` / `_en` | Utility | `{{1}}` first name | Scheduled (`triggerFilmDevelopment`, **20:00 May 31**) | All `botEnrolled` |
 | `weather_morning_brief` | `weather_morning_brief_es` / `_en` | Utility | `{{1}}` weather summary, `{{2}}` wind summary | Scheduled (08:00 each event day) | All attending guests of that day |
 | `farewell_thanks` | `farewell_thanks_es` / `_en` | Utility | `{{1}}` first name | Operator (manual, ~14:00 June 1) | All `botEnrolled` |
 | `manual_announcement` | `manual_announcement_es` / `_en` | Utility | `{{1}}` body text | Operator (ad-hoc) | Selected audience |
 | `escalation_followup` | `escalation_followup_es` / `_en` | Utility | `{{1}}` operator message text | Auto fallback when operator replies > 24h after CSW closed AND cannot use personal number | Single guest |
-| `feedback_request` | `feedback_request_es` / `_en` | Utility | `{{1}}` first name | Scheduled (12:00 June 1) | All `botEnrolled` |
 | **`bus_pickup_early`** | `bus_pickup_early_es` / `_en` | Utility | none | Scheduled (14:00 Sat May 30) | All ceremony attendees |
 | **`bus_pickup_last`** | `bus_pickup_last_es` / `_en` | Utility | none | Scheduled (16:45 Sat May 30) | All ceremony attendees |
 | **`pre_wedding_drinks`** | `pre_wedding_drinks_es` / `_en` | Utility | none | Scheduled (21:00 Fri May 29) | All pre-wedding attendees |
-| **`amenities_cocktail`** | `amenities_cocktail_es` / `_en` | Utility | none | Scheduled (~20:30 Sat May 30) | All cocktail attendees |
-| **`pitonisa_now`** | `pitonisa_now_es` / `_en` | Utility | none | Scheduled (~01:55 Sun May 31) | All party attendees still in CSW |
-| **`arrival_day_nudge`** | `arrival_day_nudge_es` / `_en` | Utility | `{{1}}` first name | Per-guest scheduled (morning of their `arrival_date`) | Each guest individually |
+| **`arrival_day_nudge`** | `arrival_day_nudge_es` / `_en` | Utility | `{{1}}` first name | Per-guest scheduled (15:00 on their `arrival_date`) | Each guest individually |
+| **`song_request_party_open`** | `song_request_party_open_es` / `_en` | Utility | none | Scheduled (00:00 Sun May 31, i.e. Saturday night party start) | Reception/party attendees |
 
 All templates are **Utility** category. None are Marketing. None are Authentication.
 
-**Total templates to submit: 16 logical × 2 languages = 32 templates** (was 22 originally; +6 new, -1 dropped, -lost some quick replies' explicit ack message routing).
+**Total templates to submit: 13 logical × 2 languages = 26 templates**.
 
 ## 2. Authoring conventions
 
@@ -57,14 +54,15 @@ For each template: header, body, footer, buttons, variables, when it fires, and 
 
 **Body — ES:**
 ```
-¡Guau {{1}}! 🐾
+¡Guau Guau {{1}}! 🐾
 
-Soy Thora — sí, la perra de Enrique y Manuel. Me han dado teclado para la boda (29-31 de mayo en Tarifa) y resulta que se me da bien.
+Soy Thora! sí, la perra de Enrique y Manuel. Mis papis me han regalado un teléfono para que encargue de atenderos y ayudaros durante estos días. Ya solo queda una semana y los tres queremos que lo pases fenomenal!
 
-Pregúntame lo que necesites: horarios, ubicaciones, cómo llegar, qué llevar, lo que sea. Tu mensaje abre la conversación.
+Me han entrenado muy bien, así que pregúntame lo que necesites: horarios, ubicaciones, cómo llegar, qué llevar, lo que sea. Tu mensaje abre la conversación.
 ```
 
 **Body — EN:**
+
 ```
 Woof {{1}}! 🐾
 
@@ -91,9 +89,9 @@ Ask me anything: schedule, venues, how to get there, what to wear. Just send me 
 
 ---
 
-### T2: `rsvp_reminder`
+### T2: `rsvp_reminder` — **DROPPED**
 
-**Purpose:** Nudge guests who haven't completed RSVP. Triggers the RSVP Flow directly.
+**Purpose:** Removed from operations. All guests have already submitted RSVP, so no RSVP reminder template is needed.
 
 **Body — ES:**
 ```
@@ -117,7 +115,7 @@ Quick reminder: I don't have your RSVP yet for my humans' wedding. Takes 1 minut
 
 **Variables:** `{{1}}` = guest first name.
 
-**Trigger:** operator manual or scheduled, audience filtered by `rsvpStatus: 'pending'`.
+**Trigger:** none (template not submitted, not used).
 
 ---
 
@@ -172,16 +170,18 @@ See you there!
 
 ### T4: `seating_unlock`
 
-**Purpose:** Reveal each guest's table on Friday 18:00 — the first time-gated reveal.
+**Purpose:** Reveal each guest's table on Saturday 19:30 — the first time-gated reveal.
 
 **Body — ES:**
+
 ```
 🐾 Te he buscado sitio yo misma, {{1}}.
 
-Estás en *{{2}}*. Con quién más, dale al botón.
+Estás en *{{2}}*. Con quién más? dale al botón.
 ```
 
 **Body — EN:**
+
 ```
 🐾 I picked your seat myself, {{1}}.
 
@@ -199,7 +199,7 @@ You're at *{{2}}*. For who else is at your table, tap below.
 - `{{2}}` = table label (e.g., "Mesa 7 — La Calma")
 - `{{3}}` = signed token for the personal seating page
 
-**Trigger:** scheduled `sendContentUnlockNotification` for `seating` content at unlock time (configured in `time_gated_content/seating`, default 18:00 Fri May 29).
+**Trigger:** scheduled `sendContentUnlockNotification` for `seating` content at unlock time (configured in `time_gated_content/seating`, **Saturday May 30 at 19:30 Europe/Madrid**).
 
 ---
 
@@ -224,6 +224,7 @@ This template was originally specified to reveal the dinner menu. **Removed** du
 **Header (image):** static PNG with retro-film aesthetic, ideally featuring Thora. URL: `https://bodaentarifa.com/og/film-developed.jpg`.
 
 **Body — ES:**
+
 ```
 🐾 Buenas tardes {{1}}.
 
@@ -282,7 +283,7 @@ Need anything, you know where to find me.
 - `{{1}}` = weather summary (e.g., "soleado, 24°C max" / "sunny, 24°C max")
 - `{{2}}` = wind summary (e.g., "Levante, 22 km/h" / "Levante, 22 km/h")
 
-**Trigger:** scheduled at 08:00 each event day (Fri May 29, Sat May 30, Sun May 31). Pulls from Open-Meteo (cached 30 min).
+**Trigger:** scheduled at 09:00 each event day (Fri May 29, Sat May 30, Sun May 31). Pulls from Open-Meteo (cached 30 min).
 
 **Notes:**
 - **Strong-wind variant**: when Levante > 25 km/h or Poniente > 30 km/h, the wind summary string `{{2}}` is constructed with a trailing tip baked in by the pipeline (rather than a separate template — single template, dynamic value): e.g., `"Levante, 28 km/h — gorros y gafas si vais a la playa"`. Template-safe because variable interpolation doesn't change.
@@ -298,7 +299,7 @@ Need anything, you know where to find me.
 
 **Body — ES:**
 ```
-{{1}}, ya estoy en el sofá con mis humanos derrotados.
+{{1}}, ya estoy camino a casa con mis humanos derrotados.
 
 Gracias por venir — no habría sido lo mismo sin vosotros 🌅 Si subís alguna foto más estos días, mandádmela y la añado al álbum.
 
@@ -381,9 +382,9 @@ If you want to keep talking, just message me and we'll resume.
 
 ---
 
-### T11: `feedback_request`
+### T11: `feedback_request` — **DROPPED**
 
-**Purpose:** Post-event feedback Flow trigger; the last scheduled message Thora sends.
+**Purpose:** Removed from operations. Flow F6 (`feedback`) was removed, so this template is no longer used.
 
 **Body — ES:**
 ```
@@ -399,12 +400,11 @@ If you want to keep talking, just message me and we'll resume.
 How was it for you? Quick form (30 seconds) — tap below.
 ```
 
-**Buttons:**
-- **Flow button** labeled `Dar feedback` (ES) / `Give feedback` (EN) → opens feedback Flow.
+**Buttons:** none (template not submitted).
 
 **Variables:** `{{1}}` = first name.
 
-**Trigger:** scheduled, 12:00 June 1, 2026.
+**Trigger:** none (template not submitted, not used).
 
 ---
 
@@ -413,15 +413,17 @@ How was it for you? Quick form (30 seconds) — tap below.
 **Purpose:** First of two bus-pickup reminders. Lands at **14:00 Saturday** so guests read it before they start getting ready. Replaces the generic 30-min `event_reminder_30min` for the ceremony (which would arrive too late).
 
 **Body — ES:**
+
 ```
-🐾 Tarde grande hoy.
+🐾 llegó el gran día!
 
 Recordad: los autobuses para la ceremonia salen del parking del hotel *100% Fun* a las *17:30*. Mejor estad allí a las *17:15*.
 
-Daos un baño antes 🌊
+Aún queda tiempo para un bañito 🌊
 ```
 
 **Body — EN:**
+
 ```
 🐾 Big afternoon today.
 
@@ -452,7 +454,7 @@ Squeeze in a swim first 🌊
 
 Parking del hotel *100% Fun*, salida a las *17:30*. Los novios están al caer 🌊
 
-¡Id yendo!
+¡Id yendo! Sed puntuales que los autobuseros no esperan…
 ```
 
 **Body — EN:**
@@ -486,7 +488,7 @@ Head over!
 
 En hora y media empezamos en *Casa Explora* (1 min andando desde Tres Mares por el jardín de la piscina).
 
-Sin código de vestimenta, ven cuando puedas. Hasta las 2 de la mañana 🌅
+Sin código de vestimenta, ven cuando puedas. Hasta las 2 de la mañana 🍾
 ```
 
 **Body — EN:**
@@ -508,86 +510,21 @@ No dress code, come whenever. Open till 2am 🌅
 
 ---
 
-### T15: `amenities_cocktail`
-
-**Purpose:** Summary of party-night amenities + Thora's "iPad excuse" handoff. Fires at cocktail start (~20:30 Sat).
-
-**Body — ES:**
-```
-🐾 ¡Bienvenidos al cóctel!
-
-Cosas que andan por ahí esta noche:
-- *Teléfono físico* para dejar mensaje a mis humanos (hall, a la izquierda durante el cóctel; en la fiesta, a la izquierda de la barra)
-- *Póster de huellas* (junto al teléfono — solo durante el cóctel)
-- *Fotomatón* (os indicarán al llegar)
-
-Yo me retiro a la habitación. El wifi llega — dadme un toque si necesitáis algo 💛
-```
-
-**Body — EN:**
-```
-🐾 Welcome to the cocktail!
-
-Things waiting for you tonight:
-- *Physical phone* for messages to my humans (hall, on the left during cocktail; in the party room, left of the bar)
-- *Fingerprint poster* (next to the phone — cocktail only)
-- *Photobooth* (they'll show you on arrival)
-
-I'm retreating to the bedroom. Wifi reaches — give me a shout if you need anything 💛
-```
-
-**Footer:** `Thora al habla`
-
-**Variables:** none.
-
-**Trigger:** scheduled `bot/scheduled/amenitiesCocktail.ts.run` at 20:30 Sat May 30, 2026.
-
-**Audience:** all attending guests (`rsvp_responses[].events.reception == true`).
-
----
-
-### T16: `pitonisa_now`
-
-**Purpose:** Solo announcement for the fortune teller appearing at ~2am. It's an event-within-event, deserves its own moment.
-
-**Body — ES:**
-```
-🐾 *La pitonisa* está lista — detrás de la piscina.
-
-¿Quién es valiente?
-```
-
-**Body — EN:**
-```
-🐾 *The fortune teller* is ready — behind the pool.
-
-Who's brave?
-```
-
-**Footer:** `Thora al habla`
-
-**Variables:** none.
-
-**Trigger:** scheduled `bot/scheduled/pitonisa.ts.run` at 01:55 Sun May 31, 2026 (5 min before her arrival).
-
-**Audience:** guests with open CSW (i.e., who messaged in the last 24h) AND attending reception. **Important**: this is a 2am ping; most older guests will have an inactive CSW and won't get it, which is the intended behavior. Younger party-active guests stay in CSW longer.
-
----
-
 ### T17: `arrival_day_nudge`
 
 **Purpose:** Per-guest welcome on the morning of their arrival in Tarifa. Triggered by the lightweight conversational `arrival_date` captured by Thora (D17, `02-conversation-design.md` §4 intent: Arrival).
 
 **Body — ES:**
 ```
-🐾 ¡Bienvenido a Tarifa, {{1}}!
+🐾 ¡Calentando motores {{1}}!
 
-Si quieres pasar por *Chiringuito Bora* (junto a Tres Mares, el más cercano), allí estamos los novios. Buena música, refrescos, sin horarios.
+Si estás por Tarifa y te apetece vamos a estar en el *Chiringuito Bora*: buena música, refrescos, sin horarios.
 
 Nos vemos cuando llegues 🌊
 ```
 
 **Body — EN:**
+
 ```
 🐾 Welcome to Tarifa, {{1}}!
 
@@ -600,17 +537,53 @@ See you whenever 🌊
 
 **Variables:** `{{1}}` = first name.
 
-**Trigger:** per-guest scheduled at 10:00 on the guest's `arrival_date` (if known). Skipped if arrival_date == wedding day (no point) or unknown.
+**Trigger:** per-guest scheduled at **15:00** on the guest's `arrival_date` (if known). Skipped if arrival_date == wedding day (no point) or unknown.
 
 **Audience:** single guest.
 
 **Idempotency:** key `(template="arrival_day_nudge", arrivalDate, guestId)`.
 
+---
+
+### T18: `song_request_party_open`
+
+**Purpose:** Kick off song-request mode right as the party opens (midnight boundary). Thora invites guests to submit requests and clarifies she'll pass them directly to the DJ.
+
+**Body — ES:**
+```
+🐾 La fiesta ya está en marcha.
+
+Si quieres pedir canción, ahora es el momento: te paso el botón y yo se la mando directa al DJ.
+
+A ver esos temazos 💛
+```
+
+**Body — EN:**
+```
+🐾 Party mode is on.
+
+If you want to request a song, now's the time: tap below and I'll pass it straight to the DJ.
+
+Let's hear your bangers 💛
+```
+
+**Footer:** `Thora al habla`
+
+**Buttons (Flow):**
+- ES: `Pedir canción` → opens Flow `song_request` (see `06-whatsapp-flows.md` F3).
+- EN: `Request song` → opens Flow `song_request` (see `06-whatsapp-flows.md` F3).
+
+**Variables:** none.
+
+**Trigger:** scheduled `bot/scheduled/songRequestPartyOpen.ts.run` at **00:00 Sun May 31, 2026** (`Europe/Madrid`) — this is the Saturday-night party start boundary.
+
+**Audience:** guests attending reception/party (`rsvp_responses[].events.reception == true`) with `botEnrolled: true`.
+
 ## 4. Submission instructions (operator)
 
-For each of the **16 active logical templates × 2 languages = 32 templates** to submit.
+For each of the **13 active logical templates × 2 languages = 26 templates** to submit.
 
-(`menu_unlock` is **dropped** — do not submit. T1-T11 minus T5 + T12-T17 = 16 active.)
+(`rsvp_reminder`, `menu_unlock`, `amenities_cocktail`, and `pitonisa_now` are dropped — do not submit.)
 
 1. Meta Business Suite → WhatsApp Manager → select WABA → Message Templates → Create.
 2. Category: **Utility**.
@@ -629,7 +602,7 @@ If a template is rejected:
 
 ## 5. Lifecycle
 
-- **Pre-launch:** all 22 templates submitted by Day 4. Mark `config/bot.templates.activeNames` once approved.
+- **Pre-launch:** all 26 templates submitted by Day 4. Mark `config/bot.templates.activeNames` once approved.
 - **Mid-event:** templates can't be edited; deletion + re-create only, with new approval. So lock copy.
 - **Post-event:** templates remain on the WABA. After decommission (90 days post-wedding), delete to keep the WABA clean.
 
@@ -640,7 +613,6 @@ In `bot/whatsapp/templates.ts`:
 ```ts
 export type TemplateName =
   | 'welcome_onboarding'
-  | 'rsvp_reminder'
   | 'event_reminder_30min'
   | 'seating_unlock'
   // | 'menu_unlock'         ← DROPPED (2026-05-14 design session)
@@ -649,13 +621,11 @@ export type TemplateName =
   | 'farewell_thanks'
   | 'manual_announcement'
   | 'escalation_followup'
-  | 'feedback_request'
   | 'bus_pickup_early'
   | 'bus_pickup_last'
   | 'pre_wedding_drinks'
-  | 'amenities_cocktail'
-  | 'pitonisa_now'
-  | 'arrival_day_nudge';
+  | 'arrival_day_nudge'
+  | 'song_request_party_open';
 
 export interface TemplateDef<V extends Record<string, string>> {
   name: TemplateName;
@@ -686,4 +656,4 @@ It handles:
 - **Unit:** every template's `buildPayload` produces the expected JSON for sample inputs in both languages.
 - **Integration (emulator):** simulate scheduled function firing → verifies template name, variables, and idempotency record.
 - **Live (test number, day -10):** send each template once to operator's own number in both languages; visually verify rendering on iOS and Android.
-- **Approval audit (day -7):** confirm all 22 templates show `Approved` in Meta Business Suite. Halt launch if any are pending.
+- **Approval audit (day -7):** confirm all 26 templates show `Approved` in Meta Business Suite. Halt launch if any are pending.

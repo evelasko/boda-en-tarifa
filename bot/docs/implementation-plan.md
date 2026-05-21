@@ -8,7 +8,7 @@
 - **Day 14** = 2026-05-22 (target launch readiness — full guest onboarding broadcast)
 - **Day 21** = 2026-05-29 (wedding starts)
 - **Day 23** = 2026-05-31 (wedding ends)
-- **Day 24** = 2026-06-01 (post-event feedback push)
+- **Day 24** = 2026-06-01 (post-event wind-down)
 
 The plan front-loads operator setup work (Meta verification has unpredictable latency) and gives an 8-day buffer between launch readiness and wedding for guest engagement, fixes, and template polishing.
 
@@ -36,7 +36,7 @@ The plan front-loads operator setup work (Meta verification has unpredictable la
                                                                               [D21-D23 event]
                                                                                          │
                                                                                          ▼
-                                                                          [D24 feedback push]
+                                                                          [D24 post-event wrap-up]
                                                                                          │
                                                                                          ▼
                                                                   [D+90 decommissioning]
@@ -156,7 +156,7 @@ Each phase has: deliverable, files touched, definition of done, and a daily chec
 
 **Goal:** all tools functional, photo intake working, Flows published and routable.
 
-**Deliverable:** the bot can send location pins, fetch live weather, look up seating (with locked-state respect), receive photos, trigger and process all 6 Flows.
+**Deliverable:** the bot can send location pins, fetch live weather, look up seating (with locked-state respect), receive photos, and trigger/process the `song_request` Flow (ES/EN).
 
 **Files created:**
 
@@ -166,30 +166,28 @@ Each phase has: deliverable, files touched, definition of done, and a daily chec
 - `functions/src/bot/whatsapp/media.ts`
 - `functions/src/bot/whatsapp/flows.ts`
 - `functions/src/bot/whatsapp/templates.ts` (full registry, templates already submitted by Op-4)
-- `functions/src/bot/services/rsvp.ts`
 - `functions/src/bot/services/seating.ts`
 - `functions/src/bot/services/menu.ts`
 - `functions/src/bot/services/weather.ts` (Open-Meteo fetcher + cache)
 - `functions/src/bot/services/photos.ts`
 - `functions/src/bot/services/escalation.ts`
 - `functions/src/bot/services/songs.ts`
-- `functions/src/bot/services/feedback.ts`
 
 **Operator parallel:**
 
-- Submit all 22 templates and 6 Flows via Meta UI on Op-4.
+- Submit all 26 templates and 2 Flow versions via Meta UI on Op-4.
 - Verify approvals on Op-5 to Op-7. Re-submit any rejections.
 
 **Definition of done:**
 
 - Photo sent → uploaded to Cloudinary → `feed_posts/{auto}` created with `status: pending_moderation` → bot acks.
-- Each Flow triggered, submitted, and parsed correctly. Submissions visible in admin (or directly in Firestore for now).
+- `song_request` Flow triggered, submitted, and parsed correctly. Submissions visible in admin (or directly in Firestore for now).
 - `lookup_seating` returns "locked" before unlock time, real data after.
 - `get_current_weather` returns a real Tarifa snapshot.
 - Escalation tool creates a `bot_escalations` doc.
 - Privacy boundaries hold: G4 (other-guest attendance), G5 (time-gated), G14 (operator forwarding).
 
-**Daily checkpoint:** end of Day 8, operator runs RSVP Flow end-to-end on real test phone in both languages.
+**Daily checkpoint:** end of Day 8, operator runs song-request Flow end-to-end on real test phone in both languages.
 
 ---
 
@@ -252,7 +250,6 @@ Each phase has: deliverable, files touched, definition of done, and a daily chec
 - `functions/src/bot/scheduled/contentUnlock.ts`
 - `functions/src/bot/scheduled/filmDeveloped.ts`
 - `functions/src/bot/scheduled/weatherMorningBrief.ts`
-- `functions/src/bot/scheduled/feedbackRequest.ts`
 - `functions/src/bot/scheduled/keepKbWarm.ts`
 - `functions/src/bot/scheduled/retryOutboundPending.ts`
 - `functions/src/bot/scheduled/purgeExpiredMessages.ts`
@@ -389,9 +386,9 @@ Each phase has: deliverable, files touched, definition of done, and a daily chec
 
 **Friday May 29:** welcome dinner reminder fires automatically; weather brief in the morning.
 
-**Saturday May 30:** seating unlock at 18:00; ceremony reminder at 17:30; menu unlock at 12:00; reception reminder at 19:30.
+**Saturday May 30:** bus reminders at 14:00 and 16:45; ceremony context reminders active; seating unlock at 19:30; at 00:00 (Saturday-night boundary into May 31) `song_request_party_open` invites requests for DJ forwarding.
 
-**Sunday May 31:** at 05:00, `film_developed` template fires; album becomes public; this is the most emotionally weighted send. **Operator should review the album content the night before and approve final state.**
+**Sunday May 31:** at 20:00, `film_developed` template fires; album becomes public; this is the most emotionally weighted send. **Operator should review the album content beforehand and approve final state.**
 
 **Continuous:** photo intake throughout. Approved photos go live in album as `film_developed` flips public visibility.
 
@@ -399,7 +396,6 @@ Each phase has: deliverable, files touched, definition of done, and a daily chec
 
 ### Phase 11 — Post-event (Day 24+)
 
-- **Day 24 (June 1) 12:00:** `feedback_request` template fires.
 - **Day 24 14:00:** operator sends `farewell_thanks` template manually.
 - **Day 25–30:** review feedback. Save as a keepsake.
 - **Day 30:** archive the bot to "wind-down" mode — `config/bot.enabled = false` after a final farewell.

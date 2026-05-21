@@ -190,7 +190,7 @@ function buildTimeGatedContent() {
         seating_chart: {
             title: "Plano de Mesas",
             type: "seatingChart",
-            unlockAt: Timestamp.fromDate(new Date("2026-05-30T19:50:00Z")),
+            unlockAt: Timestamp.fromDate(new Date("2026-05-30T17:30:00Z")),
             content: {
                 totalTables: 12,
                 floorPlanUrl: "https://res.cloudinary.com/demo/image/upload/v1/seed/floor-plan.png",

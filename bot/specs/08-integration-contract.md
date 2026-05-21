@@ -339,7 +339,6 @@ All in `functions/src/bot/scheduled/`. Cron expressions in Europe/Madrid.
 | `botContentUnlockTick` | `*/5 * * * *` | Send `seating_unlock`/`menu_unlock` when unlock time passes |
 | `botFilmDeveloped` | `0 5 31 5 *` (05:00 May 31 2026) | Flip album public + send `film_developed` to all |
 | `botWeatherMorningBrief` | `0 8 29-31 5 *` | 08:00 each event day, send `weather_morning_brief` |
-| `botFeedbackRequest` | `0 12 1 6 *` (12:00 June 1 2026) | Send `feedback_request` |
 | `botKeepKbWarm` | `*/4 28-31 5 *` (every 4 min, May 28-31) | Anthropic prompt-cache keep-warm |
 | `botRetryOutboundPending` | `*/5 * * * *` | Drain `bot_outbound_pending` |
 | `botPurgeExpiredMessages` | `0 3 * * *` | Daily 03:00 — delete messages older than retention window |
