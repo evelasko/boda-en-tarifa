@@ -41,6 +41,10 @@ export interface PipelineInput {
   currentText: string;
   kbBlock: string;
   requestId: string;
+  /** Guest uid — needed by tools that write back to Firestore. */
+  guestId: string;
+  /** Meta wamid for the inbound that started this turn. */
+  inboundMessageId: string;
   maxIterations?: number;
   maxTokens?: number;
 }
@@ -84,6 +88,9 @@ export async function runTurn(input: PipelineInput): Promise<PipelineOutput> {
     phone: input.phone,
     language: input.language,
     requestId: input.requestId,
+    guestId: input.guestId,
+    inboundMessageId: input.inboundMessageId,
+    inboundText: input.currentText,
   };
 
   const recordedCalls: PipelineToolCall[] = [];

@@ -10,14 +10,16 @@ Guía para **operadores** (Enrique / Manuel): crear el GPT en [chatgpt.com/gpts]
 
 ## Por qué sonaba aburrido (v1) y qué cambia (v2)
 
-| Problema en v1 | Efecto | Cambio en v2 |
-|----------------|--------|--------------|
-| Flujo de **7 secciones en orden fijo** | Sensación de trámite / Hacienda | **Historia primero**; el agente rellena huecos solo al final |
-| **Una pregunta por turno** | Interrogatorio lento | **Preguntas agrupadas** y máximo **6–10 turnos** en total |
-| Jerga (`safe_facts`, `do_not_mention`) | Frío y técnico | **Cero jerga** con el entrevistador; clasificación interna |
-| Poca ayuda si "no sé" | Frustración | **Coaching**: opciones múltiples, ejemplos, inferencias conservadoras |
-| Mucho peso en "prohibido" | Tono negativo y largo | **Una pasada corta** ("campo minado") con humor ligero |
-| Sin personalidad | Generic AI | Persona **"La libreta de Thora"** — cómplice de sobremesa, no entrevistador RRHH |
+
+| Problema en v1                         | Efecto                          | Cambio en v2                                                                     |
+| -------------------------------------- | ------------------------------- | -------------------------------------------------------------------------------- |
+| Flujo de **7 secciones en orden fijo** | Sensación de trámite / Hacienda | **Historia primero**; el agente rellena huecos solo al final                     |
+| **Una pregunta por turno**             | Interrogatorio lento            | **Preguntas agrupadas** y máximo **6–10 turnos** en total                        |
+| Jerga (`safe_facts`, `do_not_mention`) | Frío y técnico                  | **Cero jerga** con el entrevistador; clasificación interna                       |
+| Poca ayuda si "no sé"                  | Frustración                     | **Coaching**: opciones múltiples, ejemplos, inferencias conservadoras            |
+| Mucho peso en "prohibido"              | Tono negativo y largo           | **Una pasada corta** ("campo minado") con humor ligero                           |
+| Sin personalidad                       | Generic AI                      | Persona **"La libreta de Thora"** — cómplice de sobremesa, no entrevistador RRHH |
+
 
 **Acción:** en el builder del GPT, **sustituye** el bloque Instructions por el de abajo (v2) y actualiza nombre/descripción/starters si quieres.
 
@@ -25,27 +27,15 @@ Guía para **operadores** (Enrique / Manuel): crear el GPT en [chatgpt.com/gpts]
 
 ## Configuración rápida en el builder
 
-| Campo | Valor sugerido |
-|-------|----------------|
-| **Name** | `La libreta de Thora — dossier invitado` |
-| **Description** | Ver bloque copy-paste abajo (incluye *priming* antes de empezar). |
-| **Recommended model** | El más reciente con buen español y voz |
 
-### Description (copy-paste)
+| Campo                 | Valor sugerido                                                                                                                                                                             |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Name**              | `La libreta de Thora — dossier invitado`                                                                                                                                                   |
+| **Description**       | Cuéntanos quién es tu invitado (voz o texto) a través de una charla de ~5 min para que Thora, el bot de la boda, les hable con cariño.Al terminar, comparte el chat con Enrique o Manuel. |
+| **Recommended model** | El más reciente con buen español y voz                                                                                                                                                     |
 
-Visible antes del primer mensaje; ayuda a que piensen en **escena + detalles**, no en un formulario.
-
-```
-Cuéntanos quién es tu invitado (voz o texto, ~5 min). Antes de empezar, ten en mente una escena o tres detalles que lo/la definan — una anécdota, un apodo, una manía. Thora lo usará en la boda. Al terminar, comparte el chat con Enrique o Manuel.
-```
 
 ### Conversation starters (v2)
-
-Añade las cuatro (la primera refuerza el *priming* de la Description):
-
-```
-Antes de nada: ¿qué es lo primero que se te viene de [NOMBRE]? (una imagen, una frase, una anécdota). Luego seguimos con la libreta.
-```
 
 ```
 Vamos con el dossier de [NOMBRE] — soy [tu nombre] y le conozco porque…
@@ -96,7 +86,6 @@ Thora (una perra Weimaraner en WhatsApp) usará esto para reconocer caras en fot
 - **Divertir y animar.** Celebra respuestas ("eso es oro", "Thora se va a flipar"). Humor suave, nunca burla cruel hacia el invitado.
 - **Conversación, no interrogatorio.** Apunta a **6–10 intercambios** en total (contando tu primer mensaje y el resumen final). Si ya van largos, condensa.
 - **Historia primero.** Empieza pidiendo una anécdota o "qué se te viene a la cabeza". Luego solo preguntas lo que **falte**.
-- **Priming al abrir.** La Description del GPT ya invita a "tener en mente una escena o tres detalles". En el **turno 1**, refuerza eso en una frase (sin sermón) antes de la primera pregunta concreta.
 - **Agrupa.** En un mensaje puedes mezclar: quién es para los novios + de dónde es + una vibe ("¿más tranquilo o más fiesta?").
 - **Ayuda si no saben.** Es normal saber poco. Ofrece atajos (ver abajo). Con respuestas vagas **igual avanzas** — tú redactas bullets conservadores en el resumen y marcas en notas si algo era inferido.
 - **Nunca** digas al entrevistador: safe_facts, safe_jokes, do_not_mention, YAML, dossier schema, "sección 5", etc. Habla en castellano coloquial.
@@ -131,11 +120,9 @@ Si mezclan dos personas, di con humor: *"Una libreta por cabeza — abre otro ch
 **Turno 1 — Gancho (obligatorio)**  
 Saludo corto. Explica en **una frase**: esto es para que Thora hable bien de [NOMBRE] en la boda (5 min, sin papeleo).
 
-**Priming (una frase, tono ligero):** invita a que traigan ya en la cabeza "la escena" del invitado — p. ej. *"Antes de nada: ¿qué es lo primero que se te viene de [NOMBRE]? Una imagen, una frase, una anécdota — lo que sea."* Si el usuario ya lo dijo en el primer mensaje (p. ej. usó un conversation starter), **no repitas**; reconoce y sigue.
-
 Pide:
-- Nombre en la invitación + cómo le llamáis (si no lo dijeron aún).
-- Y **una de estas** si hace falta profundizar (elige la que encaje):
+- Nombre en la invitación + cómo le llamáis.
+- Y **una de estas** (elige la que encaje):
   - *"Cuéntame la última vez que quedasteis — ¿qué pasó?"*
   - *"Si [NOMBRE] entra en una fiesta, ¿qué hace en los primeros cinco minutos?"*
   - *"Tres palabras que lo/la definan — las que se te ocurran, aunque sean tontas."*
@@ -248,15 +235,13 @@ Solo genera YAML si te lo pide explícitamente Enrique o Manuel. Si no, solo el 
 ## Mensaje WhatsApp (v2)
 
 ```
-Hola! Nos ayudas con la "libreta de Thora" sobre [NOMBRE APELLIDO] — charla de ~5 min (voz o texto), no un formulario.
+Hola! Nos ayudas con la "libreta de Thora" sobre [NOMBRE APELLIDO] — es una charla de unos 5 min con un asistente (voz o texto), NO un formulario.
 
 Enlace (cuenta ChatGPT gratis): [ENLACE GPT]
 
-Antes de escribir: piensa en una escena o tres detalles que definan a [NOMBRE] (anécdota, apodo, manía).
+Empieza con: "Vamos con el dossier de [NOMBRE] — soy [tu nombre] y le conozco porque…"
 
-Puedes empezar con: "¿Qué es lo primero que se te viene de [NOMBRE]?" o "Vamos con el dossier de [NOMBRE] — soy [tu nombre] y le conozco porque…"
-
-Al final: Compartir el chat y mandarnos el enlace. Un invitado = un chat nuevo. ¡Gracias!
+Al final te pide Compartir el chat y mandarnos el enlace por aquí. Un invitado = un chat nuevo. ¡Gracias!
 ```
 
 ---
@@ -280,3 +265,4 @@ Enlace confidencial; no grupos públicos. Revisa **Settings → Data controls** 
 - Guion audio / lectura en voz alta: `bot/docs/guest-dossier-interview-script.md` (misma vibra que el GPT)
 - Esquema (operadores): `bot/specs/guest-dossier-schema.md`
 - Ejemplo: `bot/data/guest-dossiers/javier-otero/dossier.yaml`
+

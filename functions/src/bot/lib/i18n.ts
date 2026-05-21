@@ -63,3 +63,63 @@ export const STOP_ACK: Bilingual = {
   es: "Vale, me callo. Me voy al sofá 🐾 Cualquier mensaje me reactiva.",
   en: "Okay, going quiet. Off to the sofa 🐾 Any message will wake me up.",
 };
+
+// ── Media acks (Phase 3 — `02-conversation-design.md` §4, §9) ─────────────
+
+/** Photo received, consent granted — Sunday May 31 20:00 album reveal. */
+export const PHOTO_ACK_GRANTED: Bilingual = {
+  es:
+    "¡Recibida! 🐾 Guardada para el álbum — se desvela el " +
+    "*domingo 31 a las 20:00*. Sigue mandando.",
+  en:
+    "Got it! 🐾 Saved for the album — reveal is " +
+    "*Sunday May 31 at 20:00*. Keep them coming.",
+};
+
+/** Photo received, consent declined — kept private. */
+export const PHOTO_ACK_DECLINED: Bilingual = {
+  es:
+    "Recibida 🐾 Queda guardada para mis humanos. " +
+    "No va al álbum compartido.",
+  en:
+    "Got it 🐾 Saved just for my humans. " +
+    "Won't go to the shared album.",
+};
+
+/** Photo received, consent not yet on file — operator will follow up. */
+export const PHOTO_ACK_PENDING: Bilingual = {
+  es:
+    "Recibida 🐾 Mis humanos te confirman fuera de aquí si va al " +
+    "álbum compartido o no.",
+  en:
+    "Got it 🐾 My humans will confirm separately whether it goes " +
+    "to the shared album.",
+};
+
+/** Photo received but Cloudinary upload failed (§9). */
+export const PHOTO_UPLOAD_FAILED: Bilingual = {
+  es:
+    "Recibí tu foto pero hubo un problema guardándola, " +
+    "¿me la reenvías? 🐾",
+  en:
+    "I got your photo but something went wrong saving it — " +
+    "can you re-send? 🐾",
+};
+
+/** Voice note ack (§4, §9). */
+export const AUDIO_ACK: Bilingual = {
+  es: "🐾 No tengo orejas digitales — escríbemelo y te ayudo.",
+  en: "🐾 I don't have digital ears — type it for me and I'll help.",
+};
+
+/** Document / PDF ack (§4, §9). */
+export const DOCUMENT_ACK: Bilingual = {
+  es: "🐾 Veo el documento pero no leo PDFs. ¿De qué se trata?",
+  en: "🐾 I can see the document but I can't read PDFs. What's it about?",
+};
+
+/** Sticker / video ack (§4, §9). */
+export const STICKER_ACK: Bilingual = {
+  es: "🐾",
+  en: "🐾",
+};

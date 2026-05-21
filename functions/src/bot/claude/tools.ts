@@ -14,11 +14,21 @@
  */
 
 import type Anthropic from "@anthropic-ai/sdk";
+import * as logger from "firebase-functions/logger";
 import type {E164} from "../lib/phone.js";
 import type {Language} from "../lib/i18n.js";
 import {displayName, getGuestByPhone} from "../services/guests.js";
 import {listEvents} from "../services/events.js";
 import {getVenue} from "../services/venues.js";
+import {
+  getCurrentWeather,
+  WeatherUnavailableError,
+} from "../services/weather.js";
+import {
+  createEscalation,
+  linkEscalationToConversation,
+  type Urgency,
+} from "../services/escalation.js";
 import {dayOfWedding, toMadridIso} from "../lib/time.js";
 
 // ── Tool definitions (passed to Anthropic SDK) ─────────────────────────────
@@ -221,6 +231,12 @@ export interface ToolContext {
   phone: E164;
   language: Language;
   requestId: string;
+  /** Resolved guest uid for the current turn. */
+  guestId: string;
+  /** Meta `wamid` of the inbound that triggered this turn. */
+  inboundMessageId: string;
+  /** Raw text of the inbound that triggered this turn. */
+  inboundText: string;
 }
 
 export interface ToolResult {
@@ -265,7 +281,7 @@ export async function executeTool(
   case "lookup_tarifa_guide":
     return stub(name, "tarifa guide reader lands in Phase 3");
   case "get_current_weather":
-    return stub(name, "Open-Meteo client lands in Phase 3");
+    return execGetCurrentWeather(ctx);
   case "get_now":
     return execGetNow();
   case "send_location_pin":
@@ -273,7 +289,7 @@ export async function executeTool(
   case "trigger_flow":
     return execTriggerFlow(input);
   case "escalate_to_operator":
-    return stub(name, "escalation writer lands in Phase 3");
+    return execEscalateToOperator(input, ctx);
   case "moderate_song_request":
     return stub(name, "song moderation lands in Phase 3");
   case "resolve_spotify_track":
@@ -340,6 +356,85 @@ async function execLookupVenue(
     };
   }
   return {output: {venue: v}};
+}
+
+async function execGetCurrentWeather(
+  ctx: ToolContext
+): Promise<ToolResult> {
+  try {
+    const w = await getCurrentWeather({requestId: ctx.requestId});
+    return {
+      output: {
+        temperature_c: w.temperature_c,
+        conditions: w.conditions,
+        wind_speed_kmh: w.wind_speed_kmh,
+        wind_direction: w.wind_direction,
+        wind_name: w.wind_name,
+      },
+    };
+  } catch (err) {
+    const reason = err instanceof WeatherUnavailableError ?
+      err.reason : "weather_unavailable";
+    return {
+      output: {error: "weather_unavailable", reason},
+      errored: true,
+    };
+  }
+}
+
+async function execEscalateToOperator(
+  input: Record<string, unknown>,
+  ctx: ToolContext
+): Promise<ToolResult> {
+  const reason = typeof input.reason === "string" ? input.reason : "";
+  const summary = typeof input.summary === "string" ? input.summary : "";
+  const urgencyIn = typeof input.urgency === "string" ?
+    input.urgency : "normal";
+  if (!reason || !summary) {
+    return {
+      output: {error: "missing_reason_or_summary"},
+      errored: true,
+    };
+  }
+  const allowed: Urgency[] = ["low", "normal", "high"];
+  const urgency: Urgency = (allowed as string[]).includes(urgencyIn) ?
+    (urgencyIn as Urgency) : "normal";
+
+  try {
+    const escalationId = await createEscalation({
+      guestId: ctx.guestId,
+      guestPhone: ctx.phone,
+      guestLanguage: ctx.language,
+      reason,
+      summary,
+      urgency,
+      triggeringMessageId: ctx.inboundMessageId,
+      triggeringMessageText: ctx.inboundText,
+    });
+    await linkEscalationToConversation(ctx.phone, escalationId);
+    logger.info("bot.escalation.created", {
+      requestId: ctx.requestId,
+      escalationId,
+      urgency,
+    });
+    return {
+      output: {ok: true, escalation_id: escalationId},
+      sideEffect: {
+        kind: "escalation_recorded",
+        escalationId,
+        urgency,
+      },
+    };
+  } catch (err) {
+    logger.error("bot.escalation.failed", {
+      requestId: ctx.requestId,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return {
+      output: {error: "escalation_failed"},
+      errored: true,
+    };
+  }
 }
 
 function execGetNow(): ToolResult {

@@ -205,6 +205,8 @@ export async function handleInboundText(
       currentText: text,
       kbBlock: kb.text,
       requestId,
+      guestId: guest.id,
+      inboundMessageId: input.inboundMetaMessageId,
     });
   } catch (err) {
     logger.error("bot.conversation.claude_failed", {
@@ -226,19 +228,23 @@ export async function handleInboundText(
     return {outcome: "error", replyText: fallbackText};
   }
 
+  const escalated = pipeline.sideEffects.some(
+    (se) => se.kind === "escalation_recorded"
+  );
   await sendAndLogOutbound({
     input,
     deps,
     guestId: guest.id,
     replyText: pipeline.text,
-    outcome: "replied",
+    outcome: escalated ? "escalated" : "replied",
     pipeline,
   });
 
-  // Side effects (location pins, flow triggers, escalations) wire in
-  // Phase 3. For Phase 2 we record their presence for observability.
+  // Side effects observability. Escalations are now real side effects
+  // (written by the tool executor); location pins and flow triggers
+  // remain pending — their dispatchers land in later Phase 3 tasks.
   if (pipeline.sideEffects.length > 0) {
-    logger.info("bot.conversation.side_effects_pending", {
+    logger.info("bot.conversation.side_effects", {
       ...baseLog,
       sideEffects: pipeline.sideEffects.map((se) => se.kind),
     });
@@ -310,7 +316,7 @@ async function sendAndLogOutbound(args: {
   deps: ConversationDeps;
   guestId: string;
   replyText: string;
-  outcome: "replied" | "error";
+  outcome: "replied" | "escalated" | "error";
   errorMessage?: string;
   pipeline?: PipelineOutput;
 }): Promise<void> {

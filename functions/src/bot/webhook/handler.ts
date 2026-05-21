@@ -5,6 +5,8 @@ import {randomUUID} from "node:crypto";
 import {
   ANTHROPIC_API_KEY,
   BOT_REGION,
+  CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_UPLOAD_PRESET,
   WEBHOOK_SECRETS,
   WHATSAPP_ACCESS_TOKEN,
   WHATSAPP_APP_SECRET,
@@ -16,6 +18,10 @@ import {handleHandshake, verifySignature} from "./verify.js";
 import {claimMessageId, markProcessed} from "./dedupe.js";
 import {classifyEvents, type ClassifiedEvent} from "./classify.js";
 import {handleInboundText} from "../handlers/conversation.js";
+import {
+  extractMediaPayload,
+  handleInboundMedia,
+} from "../handlers/media.js";
 
 /**
  * WhatsApp Cloud API webhook entry point.
@@ -206,6 +212,11 @@ async function dispatchEvent(
     from: maskPhone(fromE164),
   };
 
+  if (event.kind === "media") {
+    await dispatchMedia(event, fromE164, requestId, baseLog);
+    return;
+  }
+
   if (event.kind !== "text") {
     logger.info("bot.webhook.skip_non_text_phase1", baseLog);
     await markProcessed(event.messageId);
@@ -246,6 +257,68 @@ async function dispatchEvent(
   } catch (err) {
     logger.error("bot.webhook.handler_failed", {
       ...baseLog,
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+/**
+ * Media dispatcher — image upload + ack today, with non-image media
+ * getting a short Thora-voiced ack. Returns 200 to Meta via the early
+ * ack in `handlePost` — failures here are logged, never thrown.
+ */
+async function dispatchMedia(
+  event: Extract<ClassifiedEvent, {kind: "media"}>,
+  fromE164: string,
+  requestId: string,
+  baseLog: Record<string, unknown>
+): Promise<void> {
+  const payload = extractMediaPayload(event.mediaType, event.raw);
+  if (!payload) {
+    logger.warn("bot.webhook.media_payload_missing", {
+      ...baseLog,
+      reason: "no_media_id",
+    });
+    await markProcessed(event.messageId);
+    return;
+  }
+
+  logger.info("bot.webhook.media_inbound", {
+    ...baseLog,
+    mediaType: event.mediaType,
+    hasCaption: Boolean(payload.caption),
+  });
+
+  try {
+    const result = await handleInboundMedia(
+      {
+        phone: fromE164,
+        requestId,
+        inboundMetaMessageId: event.messageId,
+        mediaType: event.mediaType,
+        mediaId: payload.mediaId,
+        caption: payload.caption,
+        mimeType: payload.mimeType,
+      },
+      {
+        whatsappPhoneNumberId: WHATSAPP_PHONE_NUMBER_ID.value(),
+        whatsappAccessToken: WHATSAPP_ACCESS_TOKEN.value(),
+        cloudinaryCloudName: CLOUDINARY_CLOUD_NAME.value(),
+        cloudinaryUploadPreset: CLOUDINARY_UPLOAD_PRESET.value(),
+      }
+    );
+    logger.info("bot.webhook.media_handled", {
+      ...baseLog,
+      mediaType: event.mediaType,
+      outcome: result.outcome,
+    });
+    if (result.outcome !== "error") {
+      await markProcessed(event.messageId);
+    }
+  } catch (err) {
+    logger.error("bot.webhook.media_handler_failed", {
+      ...baseLog,
+      mediaType: event.mediaType,
       err: err instanceof Error ? err.message : String(err),
     });
   }

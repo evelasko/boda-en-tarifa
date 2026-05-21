@@ -21,4 +21,11 @@ export {sendContentUnlockNotification}
   from "./notifications/send-content-unlock.js";
 
 // Bot (WhatsApp Cloud API)
-export {whatsappWebhook} from "./bot/index.js";
+export {
+  whatsappWebhook,
+  botKbBumpOnEvents,
+  botKbBumpOnVenues,
+  botKbBumpOnFaq,
+  botKbBumpOnTimeGated,
+  botKbBumpOnConfig,
+} from "./bot/index.js";

@@ -198,6 +198,8 @@ async function runOne(args: {
       currentText: scenario.text,
       kbBlock: kbText,
       requestId,
+      guestId: "smoke-guest",
+      inboundMessageId: `smoke-${requestId.slice(0, 8)}`,
     });
     const ms = Date.now() - t0;
 

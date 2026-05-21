@@ -22,12 +22,18 @@ export const WHATSAPP_BUSINESS_ACCOUNT_ID = defineSecret(
 );
 export const ANTHROPIC_API_KEY = defineSecret("ANTHROPIC_API_KEY");
 
-// export const CLOUDINARY_API_SECRET = defineSecret("CLOUDINARY_API_SECRET");
-// export const CLOUDINARY_CLOUD_NAME = defineSecret("CLOUDINARY_CLOUD_NAME");
+// ── Cloudinary (unsigned upload preset per `08-integration-contract.md` §6)
+export const CLOUDINARY_CLOUD_NAME = defineSecret("CLOUDINARY_CLOUD_NAME");
+export const CLOUDINARY_UPLOAD_PRESET = defineSecret(
+  "CLOUDINARY_UPLOAD_PRESET"
+);
 
 /**
- * Webhook secrets — bound to the inbound function. Phase 2 adds the
- * Anthropic key (Claude pipeline) to the same binding set.
+ * Webhook secrets — bound to the inbound function. Phase 2 added the
+ * Anthropic key. Phase 3 adds Cloudinary (Task 3 — media handler).
+ *
+ * Cloudinary uses an unsigned upload preset, so only the cloud name and
+ * preset are needed at runtime; no API secret is bound here.
  */
 export const WEBHOOK_SECRETS = [
   WHATSAPP_ACCESS_TOKEN,
@@ -35,6 +41,8 @@ export const WEBHOOK_SECRETS = [
   WHATSAPP_VERIFY_TOKEN,
   WHATSAPP_PHONE_NUMBER_ID,
   ANTHROPIC_API_KEY,
+  CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_UPLOAD_PRESET,
 ];
 
 // ── Constants ──────────────────────────────────────────────────────────────

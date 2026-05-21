@@ -52,6 +52,10 @@ export interface AppendMessageArgs {
   requestId: string;
   metaMessageId?: string;
   text?: string;
+  /** Meta media id (inbound media messages). */
+  mediaId?: string;
+  /** Cloudinary public id once uploaded (inbound or outbound). */
+  cloudinaryPublicId?: string;
   toolCalls?: ToolCall[];
   claudeModel?: "sonnet-4-6" | "haiku-4-5";
   claudeUsage?: ClaudeUsage;
@@ -103,6 +107,8 @@ export async function appendMessage(args: AppendMessageArgs): Promise<void> {
     type: args.type,
     metaMessageId: args.metaMessageId ?? null,
     text: args.text ?? null,
+    mediaId: args.mediaId ?? null,
+    cloudinaryPublicId: args.cloudinaryPublicId ?? null,
     toolCalls: args.toolCalls ?? null,
     claudeModel: args.claudeModel ?? null,
     claudeUsage: args.claudeUsage ?? null,
