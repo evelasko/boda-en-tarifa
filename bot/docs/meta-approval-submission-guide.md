@@ -41,16 +41,16 @@ This guide is referenced from:
 
 Confirm each line before opening WhatsApp Manager:
 
-- [ ] **Meta Business Manager** access via your admin account. Manuel also has admin (setup §2).
-- [ ] **WABA** created and the **prod phone number** registered with **Approved** display name (setup §6).
-- [ ] **Meta App** created (`Boda en Tarifa Bot`) and linked to the WABA (setup §5).
-- [ ] **System User token** (`WHATSAPP_ACCESS_TOKEN`) is set in Firebase secrets (setup §10). Not strictly needed for UI submission, but you'll need it for any API-based re-submission and for the implementer's `bot/whatsapp/*` modules.
-- [ ] **Test recipient list** has at least Enrique's phone, Manuel's phone, and 1–2 friends (setup §12). Required to smoke-test approved templates before the prod onboarding broadcast.
+- [x] **Meta Business Manager** access via your admin account. Manuel also has admin (setup §2).
+- [x] **WABA** created and the **prod phone number** registered with **Approved** display name (setup §6).
+- [x] **Meta App** created (`Thora al habla bot`) and linked to the WABA (setup §5).
+- [x] **System User token** (`WHATSAPP_ACCESS_TOKEN`) is set in Firebase secrets (setup §10). Not strictly needed for UI submission, but you'll need it for any API-based re-submission and for the implementer's `bot/whatsapp/*` modules.
+- [x] **Test recipient list** has at least Enrique's phone, Manuel's phone, and 1–2 friends (setup §12). Required to smoke-test approved templates before the prod onboarding broadcast.
 - [ ] **Header image** for T1 `welcome_onboarding` is uploaded and reachable at a stable HTTPS URL (default: `https://bodaentarifa.com/og/thora-welcome.jpg`). PNG or JPG, ≤5 MB, ideally ≥1080 px on the long edge. **Must already be live before submission — Meta downloads it during review.**
 - [ ] **Header image** for T6 `film_developed` is uploaded at `https://bodaentarifa.com/og/film-developed.jpg` (or final URL). Same constraints.
 - [ ] **Header image** for T8 `farewell_thanks` is uploaded at `https://bodaentarifa.com/og/farewell.jpg` (or final URL). Same constraints.
 - [ ] **Privacy policy URL** is live at `https://bodaentarifa.com/privacy-bot` (required by Meta for some Utility templates with personalized content; safer to have it up).
-- [ ] **Display name** ("Boda en Tarifa" / "Thora — Wedding Concierge" / whatever you chose) is showing **Approved** on the prod phone number.
+- [x] **Display name** ("Boda en Tarifa" / "Thora — Wedding Concierge" / whatever you chose) is showing **Approved** on the prod phone number.
 - [ ] You have the **Meta Flow Builder JSON files** in front of you — provided inline below in §6 and §7 for copy-paste.
 
 If anything is missing, fix it first. Meta will reject media-header templates if the image URL 404s or returns the wrong content-type during their automated review.
