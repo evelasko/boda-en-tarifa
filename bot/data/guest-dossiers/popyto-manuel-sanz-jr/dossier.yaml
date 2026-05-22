@@ -1,0 +1,67 @@
+# Guest Dossier - Manuel Sanz Jr
+#
+# Authored: 2026-05-21 (generated from resumen.md)
+# Path: bot/data/guest-dossiers/manuel-sanz-jr/dossier.yaml
+# Target Firestore doc: guest_dossier/manuel-sanz-jr  (identity carried by folder name; matches guests/manuel-sanz-jr doc ID)
+#
+# Schema reference: bot/specs/guest-dossier-schema.md §3
+# Disclosure ethics: §9 - content is internal to Thora; safe_jokes pre-authorized only.
+
+# -----------------------------------------------
+# Identity
+# -----------------------------------------------
+name: "Manuel Sanz Jr"
+preferred_name: "Manu"
+
+# -----------------------------------------------
+# Recognition (face matching in inbound photos)
+# -----------------------------------------------
+# TODO: upload 1-3 frontal, well-lit, recent photos to Cloudinary
+#       (bot/reference/manuel-sanz-jr-{1..3}.jpg, signed access)
+#       and paste the URLs into reference_photos.
+reference_photos: []
+recognizable_for: "energia de anfitrion; monta el plan en cuanto llega"
+recognition_confidence_floor: 0.90
+
+# -----------------------------------------------
+# Relationship to the couple
+# -----------------------------------------------
+relationship: "uno de los novios; pareja de Enrique"
+hometown: null
+language: es
+
+# -----------------------------------------------
+# Open facts Thora may reference naturally
+# -----------------------------------------------
+safe_facts:
+  - "le encanta bailar"
+  - "ha retomado el interes por el baile de salon recientemente"
+  - "muy implicado emocionalmente en la preparacion de la boda"
+  - "suele ser quien activa y organiza el plan social"
+  - "transmite energia sociable y anfitriona"
+  - "en pareja con mi humano Enrique"
+
+# -----------------------------------------------
+# Pre-authorized roast / inside-joke material
+# -----------------------------------------------
+safe_jokes:
+  - "si Manu aparece, el plan deja de ser tranquilo"
+  - "tiende a activar al grupo y poner a todo el mundo en movimiento"
+
+# -----------------------------------------------
+# Hard exclusions
+# -----------------------------------------------
+do_not_mention:
+  - "la sorpresa del baile de salon antes de que ocurra en la boda"
+
+# -----------------------------------------------
+# Personal-intro mode (Tarifa concierge personal-connection path)
+# -----------------------------------------------
+personal_intro_for: []
+personal_intro_blurb: null
+
+# -----------------------------------------------
+# Metadata
+# -----------------------------------------------
+active: true
+updatedAt: "2026-05-21T00:00:00Z"

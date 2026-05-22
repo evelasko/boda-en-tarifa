@@ -18,30 +18,33 @@ Without a dossier, Thora is still warm — she just won't name or roast.
 
 ## 2. Storage
 
-- **Firestore path**: `guest_dossier/{guestId}` where `guestId` matches the `guests/{guestId}` document ID (E.164 phone).
+- **Local source of truth**: `bot/data/guest-dossiers/{slug}/dossier.yaml`. The folder name `{slug}` is the canonical guest identifier and must match the existing `guests/{slug}` document ID in Firestore (which is the Firebase Auth UID for that guest). The sync script (`bot/scripts/sync-kb.mjs`) validates this match on every run — a folder whose slug doesn't exist in `guests/` is reported as a missing-guest error and skipped.
+- **Firestore path (runtime)**: `guest_dossier/{slug}` — same ID as the corresponding `guests/{slug}` doc. The sync script reads `guests/{slug}` and **denormalizes** `phoneE164`, `firstName`, `lastName`, and `language` into the dossier doc on write, so the bot never needs a cross-collection read at runtime.
 - **Reference photos**: hosted on Cloudinary under a dedicated `bot/reference/` folder, signed access (not public). Used only by the KB build job, never served to guests.
-- **KB build job**: `bot/claude/kb.ts.buildKb()` reads all `guest_dossier/*` docs, fetches the reference photos, base64-encodes them, and includes them in Block B of the cached system prompt.
+- **KB build job**: `bot/claude/kb.ts.getKbContent()` reads all `guest_dossier/*` docs, fetches the reference photos, base64-encodes them, and includes them as `image` content blocks in Block B of the cached system prompt.
 
 ---
 
 ## 3. Schema
 
+Identity is carried by the **folder name** in `bot/data/guest-dossiers/{slug}/` — the YAML itself does NOT include a `guestId` field. On sync, the script writes the dossier to `guest_dossier/{slug}` and copies `phoneE164` + `firstName` + `lastName` + `language` from `guests/{slug}` as denormalized convenience fields.
+
 ```ts
 interface GuestDossier {
-  // Identity
-  guestId: string;                        // matches guests/{id}
+  // Identity is the folder slug (not a YAML field).
+
   name: string;                           // full, e.g., "María García"
   preferred_name?: string;                // what Thora calls them, e.g., "Mari"
 
   // Recognition
-  reference_photos: string[];             // 1-3 Cloudinary URLs (frontal, recent, well-lit)
+  reference_photos: string[];             // 1-3 Cloudinary URLs (frontal, recent, well-lit). Empty in Stage 2 (text-only).
   recognizable_for?: string;              // short visual hint, e.g., "pelirroja, gafas de pasta"
   recognition_confidence_floor: number;   // 0-1; default 0.75; below → no naming
 
   // Relationship to couple
   relationship: string;                   // free-form, e.g., "primo de Enrique"
   hometown?: string;
-  language?: 'es' | 'en';                 // (denormalized from guests doc for convenience)
+  language?: 'es' | 'en';                 // optional override; sync script also denormalizes from guests/
 
   // Personality / facts Thora can riff on
   safe_facts: string[];                   // open facts: profession, hobbies, kids' names, pet, etc.
@@ -54,7 +57,13 @@ interface GuestDossier {
 
   // Metadata
   active: boolean;                        // false → ignored by KB build
-  updatedAt: Timestamp;
+  updatedAt: Timestamp;                   // sync script overrides with serverTimestamp() on write
+
+  // Denormalized from guests/{slug} on sync — do NOT author by hand.
+  // Re-syncing refreshes these from the guests doc.
+  phoneE164?: string;
+  firstName?: string;
+  lastName?: string;
 }
 ```
 
@@ -116,8 +125,10 @@ When another guest asks for that category, Thora may offer to broker an introduc
 
 ### G-D1: Carlos (Enrique's primo, gets roasted plenty)
 
+Folder: `bot/data/guest-dossiers/carlos-velasco/`
+
 ```yaml
-guestId: "+34612000001"
+# Identity carried by folder name "carlos-velasco" — matches guests/carlos-velasco doc ID.
 name: "Carlos Velasco"
 preferred_name: "Carlitos"
 reference_photos:
@@ -144,8 +155,10 @@ active: true
 
 ### G-D2: Tía Pilar (Manuel's tía, no roasting)
 
+Folder: `bot/data/guest-dossiers/pilar-romero/`
+
 ```yaml
-guestId: "+34612000002"
+# Identity carried by folder name "pilar-romero" — matches guests/pilar-romero doc ID.
 name: "Pilar Romero"
 preferred_name: "Tía Pilar"
 reference_photos:
@@ -167,8 +180,10 @@ active: true
 
 ### G-D3: Sofía (Enrique's kitesurf instructor)
 
+Folder: `bot/data/guest-dossiers/sofia-reyes/`
+
 ```yaml
-guestId: "+34612000003"
+# Identity carried by folder name "sofia-reyes" — matches guests/sofia-reyes doc ID.
 name: "Sofía Reyes"
 preferred_name: "Sofi"
 reference_photos:
@@ -233,11 +248,12 @@ When a guest asks about a Tarifa-guide category and any dossier has `personal_in
 ## 8. Operator workflow
 
 1. **Compile candidate list** from `guests.json` (filter to ~30 most-photographed).
-2. **Collect reference photos** per guest: 1–3 frontal, well-lit, recent. No sunglasses, no extreme angles. Upload to Cloudinary `bot/reference/` folder.
-3. **Fill the YAML/JSON** per guest using the schema above. Start with closest family.
-4. **Bulk-upload to Firestore** via `functions/scripts/import-guest-dossiers.ts` (TBD in implementation phase).
-5. **Run `botRebuildKb`** callable to ingest into KB.
-6. **Test** by simulating a photo send from each dossier'd guest, verify Thora names them.
+2. **Create per-guest folder** at `bot/data/guest-dossiers/{slug}/` where `{slug}` matches the guest's `guests/{slug}` Firestore doc ID.
+3. **Collect reference photos** per guest: 1–3 frontal, well-lit, recent. No sunglasses, no extreme angles. Drop them into the folder.
+4. **Fill `dossier.yaml`** using the schema in §3. Start with closest family. Identity is the folder name — do NOT add a `guestId` field.
+5. **Upload photos** to Cloudinary signed-URL storage via `node bot/scripts/upload-reference-photos.mjs {slug}` (per `bot/data/guest-dossiers/README.md`).
+6. **Sync to Firestore** via `node bot/scripts/sync-kb.mjs --only guest-dossiers`. The script validates each folder against `guests/{slug}`, denormalizes `phoneE164`/`firstName`/`lastName`/`language` into the dossier doc, and writes to `guest_dossier/{slug}`. The corresponding `botKbBumpOnGuestDossier` Firestore trigger bumps `bot_kb_version` automatically — the bot picks up the change on the next turn.
+7. **Test** by simulating a photo send from each dossier'd guest, verify Thora names them.
 
 ---
 

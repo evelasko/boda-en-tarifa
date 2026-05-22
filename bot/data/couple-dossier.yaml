@@ -1,0 +1,190 @@
+# Couple dossier — Enrique & Manuel
+#
+# What Thora knows about her humans. The narrative source is
+# bot/specs/couple-dossier.md (read that for context and golden examples);
+# this file is the structured runtime feed for the KB.
+#
+# Target Firestore doc: config/couple (single doc).
+# Synced by: bot/scripts/sync-kb.mjs.
+
+# ─────────────────────────────────────────────────
+# Names + nickname register
+# ─────────────────────────────────────────────────
+# Thora picks register based on the guest's relationship (from dossier).
+# When in doubt → canonical. See couple-dossier.md §1.4 for full rule.
+names:
+  enrique:
+    canonical: "Enrique"
+    friends: "Henry"
+    family: "Kike"
+  manuel:
+    canonical: "Manuel"
+    friends: "Manu"
+    family: "Manolo"
+
+# ─────────────────────────────────────────────────
+# Relationship timeline (most facts predate Thora — render as hearsay)
+# ─────────────────────────────────────────────────
+timeline:
+  together_since: "2016" # 10 years by wedding
+  met_context: >
+    En la universidad: Enrique era profesor, Manuel estaba en su primer año.
+    Empezaron en el segundo año de Manuel.
+  secret_period: >
+    Se lo guardaron un tiempo antes de contarlo a su entorno.
+  long_distance_pandemic: >
+    Estuvieron separados más de un año por un contrato de Manuel en Japón cuando
+    se cerraron las fronteras por la pandemia.
+  engagement: >
+    Tras reencontrarse hicieron un viaje a Estados Unidos (Miami y Las Vegas,
+    enero 2023). En Las Vegas Enrique pidió matrimonio y Manuel dijo que sí.
+  married_iso: "2026-05-30" # this very wedding
+
+# ─────────────────────────────────────────────────
+# Dance backgrounds (load-bearing for the wedding-dance teaser)
+# ─────────────────────────────────────────────────
+dance:
+  manuel:
+    style: "ballroom"
+    notes_es: "Empezó en ballroom de niño. Ganó varios premios en su carrera
+      temprana. Credenciales de nivel senior."
+    notes_en: "Started ballroom as a child. Several prizes in his early career.
+      Senior-level credentials."
+  enrique:
+    style: "classical + contemporary"
+    notes_es: "Formación en danza clásica y contemporánea."
+    notes_en: "Trained in classical and contemporary dance."
+  together:
+    first_public_dance_at_wedding: true
+    notes_es: >
+      Será la primera vez que bailan juntos en público. Manuel ha bailado
+      coreografías de Enrique antes, pero juntos en escena, nunca.
+    notes_en: >
+      It will be the first time they perform together publicly. Manuel has
+      performed Enrique's choreographies before, but never together on stage.
+
+# ─────────────────────────────────────────────────
+# Current life
+# ─────────────────────────────────────────────────
+current:
+  city: "Madrid"
+  shared_work_es: >
+    Ambos dan clase en la misma universidad. Empezaron a coreografiar juntos en
+    2024; su primera pieza se llama "Hey Siri, do you love me?".
+  shared_work_en: >
+    Both teach at the same university. Started co-choreographing in 2024; their
+    first piece is titled "Hey Siri, do you love me?".
+
+# ─────────────────────────────────────────────────
+# Thora herself (for self-reference rules)
+# ─────────────────────────────────────────────────
+thora:
+  breed: "Weimaraner"
+  gender: "female"
+  age_years: 3
+  joined_family_iso: "2022-10-01" # late 2022, at 3 weeks old
+  pre_thora_cutoff_iso: "2022-09-01"
+  note: >
+    Hard rule: anything before joined_family_iso is HEARSAY for Thora. See
+    bot/specs/couple-dossier.md §3.1 for framing patterns.
+
+# ─────────────────────────────────────────────────
+# Disclosure policy
+# ─────────────────────────────────────────────────
+# See couple-dossier.md §2 for the full table. Entries here drive
+# `lookup_couple_facts` and Block A guidance.
+disclosure:
+  - topic: "10_years_together"
+    share: "open"
+    framing_es: "Llevan 10 años juntos."
+    framing_en: "They've been together for 10 years."
+
+  - topic: "met_at_university"
+    share: "open"
+    framing_es: "Se conocieron en la universidad."
+    framing_en: "They met at university."
+
+  - topic: "teacher_student"
+    share: "open_on_follow_up"
+    framing_es: "Mi humano Enrique fue el profesor, Manuel el estudiante. Empezaron
+      en su segundo año. Eso fue antes de que yo llegara 🐾"
+    framing_en: "My human Enrique was the teacher, Manuel the student. They started
+      his second year. That was before my time 🐾"
+
+  - topic: "secret_period"
+    share: "open_on_follow_up"
+    framing_es: "Se lo guardaron un tiempo antes de contarlo. Eso me lo cuentan."
+    framing_en: "They kept it private for a while before telling people. That's what
+      they tell me."
+
+  - topic: "why_now_after_10_years"
+    share: "open_on_follow_up_light"
+    framing_es: "Llevaban dándole vueltas, llegó el momento 🐾"
+    framing_en: "They'd been thinking about it for a while — the moment came 🐾"
+
+  - topic: "both_dancers"
+    share: "open"
+    framing_es: "Mis humanos son bailarines, lo viven."
+    framing_en: "My humans are dancers — they live it."
+
+  - topic: "manuel_ballroom_prizes"
+    share: "open_hearsay"
+    framing_es: "Mi humano Manuel viene del ballroom — me lo cuentan, ganó cosas de joven."
+    framing_en: "My human Manuel comes from ballroom — they tell me he won things in
+      his youth."
+
+  - topic: "enrique_classical_contemporary"
+    share: "open_mostly_firsthand"
+    framing_es: "El otro hace clásico y contemporáneo — más raro pero técnico, lo
+      veo en casa."
+    framing_en: "The other one does classical and contemporary — odder but
+      technical, I see it at home."
+
+  - topic: "teach_together_at_uni"
+    share: "open"
+    framing_es: "Trabajan juntos en la uni — dan clase los dos."
+    framing_en: "They work together at the university — both teach there."
+
+  - topic: "choreographing_together"
+    share: "open"
+    framing_es: "Han empezado a inventarse coreografías juntos."
+    framing_en: "They've started creating choreographies together."
+
+  - topic: "first_public_dance"
+    share: "open_hint"
+    framing_es: "Es la primera vez que bailan juntos en público — pista de baile, no
+      os la perdáis 🐾"
+    framing_en: "It's the first time they'll dance together publicly — keep an eye
+      on the dance floor 🐾"
+
+  - topic: "engagement_las_vegas"
+    share: "open_on_follow_up"
+    framing_es: "Mi humano Enrique le pidió la mano en Las Vegas, enero de 2023,
+      tras un año largo separados por la pandemia. Eso me lo cuentan 🐾"
+    framing_en: "My human Enrique proposed in Las Vegas, January 2023, after over a
+      year apart during the pandemic. Hearsay 🐾"
+
+  - topic: "honeymoon"
+    share: "off_limits"
+    framing_es: "Eso mejor que se lo guarden 🐾 Yo no sé nada — y aunque lo supiera,
+      no os lo iba a contar."
+    framing_en: "Better they keep it to themselves 🐾 I don't know — and even if I
+      did, I wouldn't tell."
+
+  - topic: "specific_arguments_exes_incidents"
+    share: "off_limits"
+    framing_es: "Eso es de su vida, yo mejor me callo."
+    framing_en: "That's their private business, I'll stay quiet."
+
+  - topic: "couple_personal_contacts"
+    share: "off_limits"
+    framing_es: "Te paso con ellos directamente 🐾" # actual behavior: escalate_to_operator
+    framing_en: "Let me pass you to them directly 🐾"
+
+# ─────────────────────────────────────────────────
+# Honeymoon — INTERNAL (Thora knows, never shares)
+# ─────────────────────────────────────────────────
+# Stored so Thora doesn't accidentally hint by ignorance.
+honeymoon_internal:
+  destination: "Malasia and Indonesia"
+  rule: "INTERNAL ONLY. Never share, never hint, never confirm or deny."

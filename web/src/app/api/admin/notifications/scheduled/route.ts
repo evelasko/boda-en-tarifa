@@ -39,6 +39,15 @@ const SCHEDULED: Omit<ScheduledNotification, 'sent'>[] = [
     enabled: true,
   },
   {
+    id: 'song_request_party_open',
+    sendAt: '2026-05-30T22:00:00Z',
+    title: '¡Peticiones al DJ abiertas!',
+    body: 'Pide tu canción y Thora se la pasa directa al DJ.',
+    type: 'event_reminder',
+    targetId: 'reception',
+    enabled: true,
+  },
+  {
     id: 'brunch_reminder',
     sendAt: '2026-05-31T09:00:00Z',
     title: '¡Buenos días!',
@@ -59,7 +68,7 @@ const SCHEDULED: Omit<ScheduledNotification, 'sent'>[] = [
   },
   {
     id: 'seating_chart_unlock',
-    sendAt: '2026-05-30T19:50:00Z',
+    sendAt: '2026-05-30T17:30:00Z',
     title: '¡Tu mesa está lista!',
     body: 'Mira dónde te sientas esta noche.',
     type: 'content_unlock',

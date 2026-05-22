@@ -27,7 +27,7 @@ Be the easiest possible way for every wedding guest to know what's happening, wh
 - 28–45, knows the area, mostly self-sufficient.
 - Will ask logistical edge cases: parking, late arrival, plus-one questions.
 - Wants: low-friction RSVP edits, song requests, "where's the after-party?"
-- **Primary success signal:** uses Flows for structured asks instead of texting Enrique directly.
+- **Primary success signal:** uses bot channels (especially song requests) instead of texting Enrique directly.
 
 ### P4: The operator — Enrique (and Manuel as secondary)
 
@@ -42,7 +42,7 @@ Be the easiest possible way for every wedding guest to know what's happening, wh
 
 1. **Universal reach.** Every RSVP'd guest is reachable via WhatsApp at <30s latency for proactive messages and <5s latency for replies.
 2. **Self-service answers.** ≥85% of guest questions are answered by the bot without operator escalation.
-3. **Structured data collection.** RSVP, dietary, brunch attendance, song requests, and post-event feedback collected via Flows with ≥80% completion rate.
+3. **Structured interaction collection.** Song requests captured via Flow with ≥80% completion rate among users who open it.
 4. **Photo collection.** Guests can share photos in chat; ≥500 photos collected across the weekend; surfaced in a public web album at 05:00 May 31.
 5. **Operator sanity.** Enrique receives ≤10 escalations per day during the event weekend.
 
@@ -96,27 +96,26 @@ Each feature has: a name, the personas served, the surface (chat / Flow / templa
 - **Trigger:** intent: "where", "how do I get to", "parking", "address".
 - **Behavior:** answer with venue details, send a location pin, link to Google Maps and to the dedicated venue page on the web.
 
-### F5: RSVP via Flow
+### F5: RSVP updates (conversational / web)
 
 - **Personas:** P1, P3 especially.
-- **Surface:** WhatsApp Flow, 4 screens (basic info → events → dietary → confirm).
-- **Trigger:** user types "RSVP" / "confirmar"; or operator sends `rsvp_reminder` template; or user replies to onboarding.
-- **Behavior:** writes to existing `rsvp_responses` Firestore collection. Mirrors the web RSVP form schema. Web admin sees all responses unified.
-- **Success:** ≥80% completion rate among guests who open the Flow.
+- **Surface:** session messages + web fallback.
+- **Trigger:** user types "RSVP" / "confirmar"; or user replies to onboarding.
+- **Behavior:** bot summarizes existing RSVP and offers updates; complex edits escalate to operator and/or web.
 
-### F6: Brunch attendance + song requests
+### F6: Song requests
 
 - **Personas:** all.
-- **Surface:** WhatsApp Flow (1–2 screens each).
-- **Trigger:** operator sends a template with the Flow attached (~3 days before event); or user-initiated.
+- **Surface:** WhatsApp Flow (1 screen).
+- **Trigger:** scheduled template `song_request_party_open` at 00:00 (start of May 31, party already running); or user-initiated.
 - **Behavior:** structured collection; results visible in web admin.
 
-### F7: Time-gated reveals (seating, menu)
+### F7: Time-gated reveal (seating)
 
 - **Personas:** all.
 - **Surface:** template message at unlock time + interactive button to view detail.
 - **Trigger:** scheduled functions (existing `sendContentUnlockNotification`).
-- **Behavior:** at 18:00 May 28 (seating), 12:00 May 29 (menu), bot DMs each guest with their personal seating / menu details. Sends a CTA URL button to the matching web page.
+- **Behavior:** at 19:30 May 30 (seating), bot DMs each guest with their personal seating details. Sends a CTA URL button to the matching web page. Menu is not time-gated in bot flows (paper at-seat).
 
 ### F8: Event reminders
 
@@ -178,12 +177,12 @@ Each feature has: a name, the personas served, the surface (chat / Flow / templa
 - **Trigger:** "help", "ayuda", "qué puedes hacer", "?", "menu".
 - **Behavior:** shows a curated list of capabilities with quick-pick options.
 
-### F16: Post-event feedback
+### F16: Post-event closeout
 
 - **Personas:** all.
-- **Surface:** Flow, 2 screens.
-- **Trigger:** template sent at ~12:00 June 1 (one day after wedding).
-- **Behavior:** captures rating + free-text. Stored for the couple's review.
+- **Surface:** manual farewell template + optional direct messages.
+- **Trigger:** operator sends `farewell_thanks` after the event.
+- **Behavior:** closes the bot loop without a dedicated feedback Flow.
 
 ## 6. Success metrics
 
@@ -193,7 +192,7 @@ Tracked in admin dashboard "Bot" page; values measured at end of weekend.
 |---|---|
 | Onboarded guests (responded to welcome) | ≥80% |
 | Conversational answers without escalation | ≥85% |
-| RSVP Flow completion (opened → submitted) | ≥80% |
+| Song request Flow completion (opened → submitted) | ≥80% |
 | Median bot reply latency | <5s |
 | P95 bot reply latency | <15s |
 | Operator escalations / day during event | ≤10 |
@@ -218,7 +217,7 @@ Tracked in admin dashboard "Bot" page; values measured at end of weekend.
 
 - Existing Firebase project (`functions/`, `firebase/`).
 - Existing Firestore collections: `guests`, `rsvp_responses`, `seating`, `feed_posts`, `notices`, `time_gated_content`, `config/*`.
-- Existing scheduled functions: `sendEventReminder`, `sendContentUnlockNotification`, `triggerFilmDevelopment`, `generateMagicLink`, `onUserCreate`.
+- Existing scheduled functions (extended for WhatsApp): `sendEventReminder`, `sendContentUnlockNotification`, `triggerFilmDevelopment`. Guest-auth Cloud Functions (`generateMagicLink`, `onUserCreate`, `cleanupExpiredMagicLinks`) retired — see `08-integration-contract.md` §4.1.
 - Existing web admin (Next.js, `web/`). Will be extended with a "Bot" section.
 - Anthropic API account with access to Sonnet 4.6 + Haiku 4.5.
 - Meta Business Manager account + WABA + verified phone number.
@@ -259,7 +258,7 @@ The bot is "done" for the wedding when **all** of the following hold:
 
 1. Operator has sent a successful onboarding broadcast to ≥10 guests on a real WABA phone number.
 2. ≥3 of those guests have completed a Q&A round-trip in their language with correct answers.
-3. RSVP Flow end-to-end test: guest submits via Flow → response visible in web admin → matches web RSVP schema.
+3. Song request Flow end-to-end test: guest submits via Flow → response visible in web admin.
 4. Photo intake end-to-end test: guest sends image → uploads to Cloudinary → appears in admin moderation queue.
 5. Scheduled `event_reminder_30min` template fires correctly in a dry run against a small audience.
 6. `escalate_to_operator` tool call surfaces in admin dashboard within 5 seconds; operator reply round-trips correctly.

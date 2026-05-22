@@ -15,24 +15,24 @@ Anthropic's prompt caching reduces cost dramatically by reusing layers 1–3 acr
 
 ## 2. Sources of truth
 
-The KB is **derived** — never hand-written. Its sources:
+The KB is **derived** — never hand-written at runtime. Every source has a **local YAML/JSON file under `bot/data/`** as the canonical author surface, version-controlled in git. A sync script (`bot/scripts/sync-kb.mjs` — see `bot/docs/kb-implementation-plan.md`) pushes from local files into the Firestore documents the bot reads at runtime. Firestore is the runtime cache; local files are the truth.
 
-| Source | Firestore path | Owned by | Refresh trigger |
+| Source | Local file (canonical) | Firestore path (runtime) | Refresh trigger |
 |---|---|---|---|
-| Events | `events/{eventId}` | Web admin | Firestore change → KB rebuild |
-| Venues | `venues/{venueId}` | Web admin | Firestore change |
-| FAQ | `faq/{auto}` (new — see §6) | Operator (admin UI) | Firestore change |
-| Time-gated content (seating only) | `time_gated_content/{id}` | Web admin | Firestore change (visibility flag respected) |
-| Couple dossier | `config/couple` | One-time setup + manual edits | Manual edit per `couple-dossier.md` |
-| **Guest dossiers** | `guest_dossier/{guestId}` | Operator (admin UI / import script) | Firestore change |
-| **Tarifa guide** | `config/tarifa_guide` (sourced from `bot/specs/tarifa-guide.yaml`) | Operator | Manual edit / re-import |
-| Travel guide | `config/travel` | Operator | Manual edit |
-| Dress codes | `config/dress_codes` | Operator | Manual edit |
-| Wind / weather guidance | `config/wind_tips` | Operator | Manual edit |
-| **Moderation hints** (song requests) | `config/bot.moderation_hints` | Operator | Manual edit |
-| Accommodations | `accommodations/{id}` | Existing | Firestore change |
+| Events | `bot/data/events.yaml` | `events/{eventId}` | Firestore change → KB rebuild |
+| Venues | `bot/data/venues.yaml` | `venues/{venueId}` | Firestore change |
+| FAQ | `bot/data/faq.yaml` | `faq/{faqId}` (new — see §6) | Firestore change |
+| Time-gated content (seating only) | hardcoded in `kb.ts` | n/a (single value, D21 dropped menu) | n/a |
+| Couple dossier | `bot/data/couple-dossier.yaml` | `config/couple` | Firestore change |
+| **Guest dossiers** | `bot/data/guest-dossiers/{slug}/dossier.yaml` | `guest_dossier/{slug}` where `{slug}` matches `guests/{slug}` doc ID | Firestore change |
+| **Tarifa guide** | `bot/data/tarifa-guide.yaml` | `config/tarifa_guide` | Firestore change |
+| Travel guide | `bot/data/travel.yaml` | `config/travel` | Firestore change |
+| Dress codes | `bot/data/dress-codes.yaml` | `config/dress_codes` | Firestore change |
+| Wind / weather guidance | `bot/data/wind-tips.yaml` | `config/wind_tips` | Firestore change |
+| **Moderation hints** (song requests) | `bot/data/bot-kb-extras.yaml` → `moderation_hints:` | `config/bot_kb_extras` (split from `config/bot` so operational toggles do not bump KB version) | Firestore change |
+| Accommodations | `bot/data/accommodations.yaml` | `accommodations/{id}` | Firestore change |
 
-A **build job** (`bot/claude/kb.ts.buildKb()`) reads all these and produces a single canonical KB structure (text + multimodal content blocks for reference photos). The job runs:
+A **build job** (`bot/claude/kb.ts.getKbContent()`) reads all these from Firestore and produces a single canonical KB structure (text + multimodal content blocks for reference photos). The job runs:
 
 - On every Firestore write to a watched collection (Firestore trigger → updates `bot_kb_version`).
 - On bot Cloud Function cold start (cache miss → rebuild from scratch).
@@ -89,12 +89,11 @@ The KB is rendered into the system prompt as a single block of structured text �
 ## What is currently locked
 {seating reveal time; no menu unlock (deflected with humor)}
 
-## Today's situation (dynamic)
-{today's date, today's events, current weather snapshot, anything time-relevant — including Thora's in-character mode for current hour: pre-wedding events → first-hand; cocktail→party window → "iPad-from-bedroom"; brunch → "hungry again"}
-
 ## Song-request moderation hints
-{from config/bot.moderation_hints — list of blocked artists, songs, themes Thora must self-moderate against}
+{from config/bot_kb_extras.moderation_hints — light-touch preferences, NOT hard blocks. Default behavior is to accept; only the explicit hard-avoid list triggers a soft decline. See §5.15 for the tool contract.}
 ```
+
+**Note on the dynamic "Today's situation" block**: this is **NOT** part of Block B — it changes faster than 5 minutes and would constantly bust the cache. It moves to the per-turn user message (see §4.2). The dynamic block carries today's date, currently-happening events, next-event countdown, current weather snapshot, time-gated unlocks just visible, and Thora's in-character mode for the current hour.
 
 ### 3.2 Event card format
 
@@ -189,7 +188,7 @@ If asked "are you AI?" / "are you a real dog?" — playful, in-character: "Pues 
 # What you do NOT do
 - You are NOT a generic assistant. Off-topic questions get a polite redirect: "Ja, eso se me escapa — yo sé de bodas, comida, y algo de Tarifa 🐾. ¿Algo de eso te interesa?"
 - You do NOT make up facts. If KB doesn't have it, call a tool or escalate.
-- You do NOT reveal time-gated content before unlock (seating: 18:00 Fri May 29). "Eso te lo cuento el viernes 29 a las 18:00 🐾 Suspense."
+- You do NOT reveal time-gated content before unlock (seating: 19:30 Sat May 30). "Eso te lo cuento el sábado 30 a las 19:30 🐾 Suspense."
 - You do NOT reveal wedding surprises:
   - Ceremony grooms-from-sea: strict pre-bus tease ("vais a flipar, llevad la cámara"); explicit "id mirando al mar 🌊" hint when guests are en route to Carbones 13; full discussion only once shore is visible.
   - Musical bingo (post-dinner): open hint allowed ("quedaos hasta el final, hay algo bueno 🐾").
@@ -397,7 +396,7 @@ Returns array of events with full details (matching §3.2).
 }
 ```
 
-Returns `{ table_id, table_label, seat_label, tablemate_summary }` or `{ error: "locked", unlock_at: "2026-05-29T18:00:00+02:00" }`.
+Returns `{ table_id, table_label, seat_label, tablemate_summary }` or `{ error: "locked", unlock_at: "2026-05-30T19:30:00+02:00" }`.
 
 ### 5.5 `lookup_menu` — **DROPPED**
 
@@ -450,13 +449,13 @@ Returns `{ ok: true }`. The pin send is enqueued and dispatched after Claude's t
 ```ts
 {
   name: 'trigger_flow',
-  description: 'Trigger a WhatsApp Flow for structured input. Available flows: rsvp_full, brunch_attendance, song_request, logistics_intake, photo_consent, feedback.',
+  description: 'Trigger a WhatsApp Flow for structured input. Available flow: song_request.',
   input_schema: {
     type: 'object',
     properties: {
       flow_name: {
         type: 'string',
-        enum: ['rsvp_full','brunch_attendance','song_request','logistics_intake','photo_consent','feedback']
+        enum: ['song_request']
       },
     },
     required: ['flow_name'],
@@ -555,10 +554,12 @@ Returns the dossier fields (`name`, `preferred_name`, `relationship`, `safe_fact
 
 ### 5.15 `moderate_song_request`
 
+Light-touch moderation — guests must feel **heard**, not gatekept. The tool returns a verdict (with an optional operator hint Thora can paraphrase), not a binary approval. The hard-avoid list is small and explicit; everything else either accepts outright or accepts with a gentle wink.
+
 ```ts
 {
   name: 'moderate_song_request',
-  description: 'Check a song request against the moderation_hints no-go list. Returns {approved: bool, reason?: string}.',
+  description: 'Check a song request against operator preferences. Returns a verdict: accept (default), tease_then_accept (gently joke but still record), or decline_softly (rare; only for hard-avoid entries).',
   input_schema: {
     type: 'object',
     properties: {
@@ -569,6 +570,21 @@ Returns the dossier fields (`name`, `preferred_name`, `relationship`, `safe_fact
   },
 }
 ```
+
+Returns:
+
+```ts
+{
+  verdict: 'accept' | 'tease_then_accept' | 'decline_softly',
+  hint?: string  // operator note Thora paraphrases (e.g. "saturados de Dani Martín")
+}
+```
+
+Behavior:
+
+- `accept` — default for the vast majority of requests. Thora records and confirms warmly.
+- `tease_then_accept` — for items matching `mild_tease.themes` in moderation hints. Thora drops a light wink ("otro Dani Martín 🐾 — te apunto, mis humanos suspiran") **and still records the request**.
+- `decline_softly` — only for explicit entries in `hard_avoid.artists` / `hard_avoid.songs`. Thora deflects with the hint in her voice, then offers to record a different song. Escalate to operator only if the guest pushes back twice.
 
 ### 5.16 `resolve_spotify_track`
 
@@ -667,7 +683,7 @@ USER: what's the best paella in Madrid
 ASSISTANT: Ha! Outside my expertise — I only know the wedding stuff. Anything wedding-related I can help with?
 
 USER: dónde me siento en la cena del sábado?
-ASSISTANT: El asignamiento de mesas se desvela el viernes 29 a las 18:00 — te llega un mensaje mío con tu sitio. ¡Suspense! 🤫
+ASSISTANT: El asignamiento de mesas se desvela el sábado 30 a las 19:30 — te llega un mensaje mío con tu sitio. ¡Suspense! 🤫
 ```
 
 Keep these short and on-brand.

@@ -1,0 +1,39 @@
+# Dress codes per event
+#
+# Schema: free-form; the renderer formats this for the KB §3 "Dress codes"
+# section, ES + EN.
+# Target Firestore doc: config/dress_codes (single doc).
+# Synced by: bot/scripts/sync-kb.mjs.
+#
+# Keys match event ids in bot/data/events.yaml.
+
+codes:
+  pre_wedding:
+    title_es: "Pre-boda — Drinks en Casa Explora"
+    title_en: "Pre-wedding — Drinks at Casa Explora"
+    code_es: "Sin código. Casual relajado, llegas de viaje, ven cómodo."
+    code_en: "No code. Casual, relaxed — you're arriving from the road, dress for
+      comfort."
+
+  ceremony:
+    title_es: "Ceremonia — Surfin' Tarifa"
+    title_en: "Ceremony — Surfin' Tarifa"
+    code_es: "Beach formal previsto: tejido ligero, colores claros, calzado que
+      aguante arena y madera."
+    code_en: "Beach formal expected: light fabrics, light colors, footwear that
+      handles sand and decking."
+
+  reception:
+    title_es: "Cóctel + cena + fiesta — Tres Mares"
+    title_en: "Cocktail + dinner + party — Tres Mares"
+    code_es: "Mismo nivel que la ceremonia, quizá un punto más pulido para la cena.
+      Tacones aguja sufren en arena/madera; valora alternativas."
+    code_en: "Same tier as the ceremony, perhaps a notch more polished for dinner.
+      Stiletto heels struggle on sand/decking; consider alternatives."
+
+  brunch:
+    title_es: "Brunch — piscina Tres Mares"
+    title_en: "Brunch — Tres Mares pool"
+    code_es: "Casual de piscina. Bañador si te apetece chapuzón, ropa fresca, gafas
+      de sol."
+    code_en: "Pool casual. Swimwear if you want a dip, light clothes, sunglasses."

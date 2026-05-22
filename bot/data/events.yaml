@@ -1,0 +1,88 @@
+# Wedding events
+#
+# Renders into KB §3.2 (Event card format). Each entry becomes a Firestore
+# doc at `events/{id}`. The id is the Firestore doc id; field names in this
+# YAML are snake_case and translated to camelCase by the sync script to
+# match the existing schema (`BotEvent` in functions/src/bot/services/events.ts).
+#
+# Target Firestore: events/{id} — one doc per entry.
+# Synced by: bot/scripts/sync-kb.mjs.
+
+events:
+  # ───────────────────────────────────────────────
+  # Friday May 29 — pre-wedding
+  # ───────────────────────────────────────────────
+  - id: pre_wedding
+    name_es: "Pre-boda — Drinks en Casa Explora"
+    name_en: "Pre-wedding — Drinks at Casa Explora"
+    start_at: "2026-05-29T22:30:00+02:00"
+    end_at: "2026-05-30T01:30:00+02:00"
+    venue_id: "casa_explora"
+    dress_code_id: "pre_wedding"
+    transport_notes: "Sin transporte organizado. Llegada por cuenta propia."
+    whom: "all"
+    description_es: >
+      Encuentro informal en Casa Explora la noche antes de la boda. Quien quiera
+      y pueda. Sin código, casual, bienvenidos los que lleguen agotados del
+      viaje.
+    description_en: >
+      Informal gathering at Casa Explora the night before the wedding. Come if
+      you can. No dress code, casual, jet-lagged welcome.
+
+  # ───────────────────────────────────────────────
+  # Saturday May 30 — wedding day
+  # ───────────────────────────────────────────────
+  - id: ceremony
+    name_es: "Ceremonia"
+    name_en: "Ceremony"
+    start_at: "2026-05-30T18:00:00+02:00"
+    end_at: "2026-05-30T19:00:00+02:00"
+    venue_id: "surfin-tarifa"
+    dress_code_id: "ceremony"
+    transport_notes: >
+      Autobús desde el parking de 100% Fun a las 17:30 (estar allí 17:15). Si te
+      lo pierdes, llegas tarde — la ceremonia tiene horario.
+    whom: "all"
+    description_es: >
+      Ceremonia frente al mar en Surfin' Tarifa. Tras la ceremonia, el bus lleva
+      a todos al lugar del cóctel en Tres Mares.
+    description_en: >
+      Oceanfront ceremony at Surfin' Tarifa. After the ceremony the bus takes
+      everyone to the cocktail venue at Tres Mares.
+
+  - id: reception
+    name_es: "Cóctel + cena + fiesta"
+    name_en: "Cocktail + dinner + party"
+    start_at: "2026-05-30T20:00:00+02:00"
+    end_at: "2026-05-31T05:00:00+02:00"
+    venue_id: "tres_mares"
+    dress_code_id: "reception"
+    transport_notes: "Llegada en el bus desde la ceremonia."
+    whom: "all"
+    description_es: >
+      Tres Mares acoge cóctel (~20:00), cena (~21:30) y fiesta hasta las 05:00.
+      Pista de baile, DJ, y la primera vez que mis humanos bailan juntos en
+      público 🐾
+    description_en: >
+      Tres Mares hosts the cocktail (~20:00), dinner (~21:30), and party until
+      05:00. Dance floor, DJ, and the first time my humans dance together
+      publicly 🐾
+
+  # ───────────────────────────────────────────────
+  # Sunday May 31 — brunch & album reveal
+  # ───────────────────────────────────────────────
+  - id: brunch
+    name_es: "Brunch"
+    name_en: "Brunch"
+    start_at: "2026-05-31T11:30:00+02:00"
+    end_at: "2026-05-31T15:30:00+02:00"
+    venue_id: "tres_mares"
+    dress_code_id: "brunch"
+    transport_notes: "Sin transporte organizado."
+    whom: "anyone"
+    description_es: >
+      Brunch relajado en la piscina de Tres Mares. Bañador opcional, paellas,
+      café, recuperación.
+    description_en: >
+      Relaxed brunch by the Tres Mares pool. Swimwear optional, paellas, coffee,
+      recovery.

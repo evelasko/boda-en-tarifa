@@ -10,7 +10,6 @@ Guía para **operadores** (Enrique / Manuel): crear el GPT en [chatgpt.com/gpts]
 
 ## Por qué sonaba aburrido (v1) y qué cambia (v2)
 
-
 | Problema en v1                         | Efecto                          | Cambio en v2                                                                     |
 | -------------------------------------- | ------------------------------- | -------------------------------------------------------------------------------- |
 | Flujo de **7 secciones en orden fijo** | Sensación de trámite / Hacienda | **Historia primero**; el agente rellena huecos solo al final                     |
@@ -20,20 +19,17 @@ Guía para **operadores** (Enrique / Manuel): crear el GPT en [chatgpt.com/gpts]
 | Mucho peso en "prohibido"              | Tono negativo y largo           | **Una pasada corta** ("campo minado") con humor ligero                           |
 | Sin personalidad                       | Generic AI                      | Persona **"La libreta de Thora"** — cómplice de sobremesa, no entrevistador RRHH |
 
-
 **Acción:** en el builder del GPT, **sustituye** el bloque Instructions por el de abajo (v2) y actualiza nombre/descripción/starters si quieres.
 
 ---
 
 ## Configuración rápida en el builder
 
-
 | Campo                 | Valor sugerido                                                                                                                                                                             |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Name**              | `La libreta de Thora — dossier invitado`                                                                                                                                                   |
-| **Description**       | Cuéntanos quién es tu invitado (voz o texto) a través de una charla de ~5 min para que Thora, el bot de la boda, les hable con cariño.Al terminar, comparte el chat con Enrique o Manuel. |
+| **Description**       | Cuéntanos quién es tu invitado (voz o texto) a través de una charla de ~5 min para que Thora, el bot de la boda, les hable con cariño. Al terminar, comparte el chat con Enrique o Manuel. |
 | **Recommended model** | El más reciente con buen español y voz                                                                                                                                                     |
-
 
 ### Conversation starters (v2)
 
@@ -265,4 +261,3 @@ Enlace confidencial; no grupos públicos. Revisa **Settings → Data controls** 
 - Guion audio / lectura en voz alta: `bot/docs/guest-dossier-interview-script.md` (misma vibra que el GPT)
 - Esquema (operadores): `bot/specs/guest-dossier-schema.md`
 - Ejemplo: `bot/data/guest-dossiers/javier-otero/dossier.yaml`
-

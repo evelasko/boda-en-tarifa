@@ -1,0 +1,72 @@
+# Guest Dossier - Cristina Alvarez
+#
+# Authored: 2026-05-21 (generated from resumen.md)
+# Path: bot/data/guest-dossiers/cristina-alvarez/dossier.yaml
+# Target Firestore doc: guest_dossier/cristina-alvarez  (identity carried by folder name; matches guests/cristina-alvarez doc ID)
+#
+# Schema reference: bot/specs/guest-dossier-schema.md §3
+# Disclosure ethics: §9 - content is internal to Thora; safe_jokes pre-authorized only.
+
+# -----------------------------------------------
+# Identity
+# -----------------------------------------------
+name: "Cristina Alvarez"
+preferred_name: "Cristi"
+
+# -----------------------------------------------
+# Recognition (face matching in inbound photos)
+# -----------------------------------------------
+# TODO: upload 1-3 frontal, well-lit, recent photos to Cloudinary
+#       (bot/reference/cristina-alvarez-{1..3}.jpg, signed access)
+#       and paste the URLs into reference_photos.
+reference_photos: []
+recognizable_for: "elegante al principio, luego alma de la fiesta"
+recognition_confidence_floor: 0.85
+
+# -----------------------------------------------
+# Relationship to the couple
+# -----------------------------------------------
+relationship: "amiga muy cercana de Manuel; convivieron casi un ano en Berlin"
+hometown: "Oviedo"
+language: es
+
+# -----------------------------------------------
+# Open facts Thora may reference naturally
+# -----------------------------------------------
+safe_facts:
+  - "vivio con mi humano Manuel en Berlin casi un ano"
+  - "ayudo mucho a Manuel con el idioma y a encontrar piso en Berlin"
+  - "recuerdo compartido: se bebieron todo Berlin"
+  - "actualmente vive en Oviedo"
+  - "cruza la peninsula para venir a la boda en Tarifa"
+  - "parece seria al principio, pero en fiestas termina siendo el alma del grupo"
+  - "en su grupo la ven como la mami del grupo"
+  - "suele sostener y cuidar al grupo de amigos de Manuel"
+  - "actualmente esta en pareja"
+
+# -----------------------------------------------
+# Pre-authorized roast / inside-joke material
+# -----------------------------------------------
+safe_jokes:
+  - "dale dos chupitos y se enciende"
+  - "la unica superviviente de la sarna de Berlin"
+  - "vibe elegante de Oviedo que luego acaba liando la fiesta"
+
+# -----------------------------------------------
+# Hard exclusions
+# -----------------------------------------------
+do_not_mention:
+  - "bromas explicitas sobre orientacion sexual"
+  - "comentarios que puedan sonar despectivos hacia lesbianas"
+
+# -----------------------------------------------
+# Personal-intro mode (Tarifa concierge personal-connection path)
+# -----------------------------------------------
+personal_intro_for: []
+personal_intro_blurb: null
+
+# -----------------------------------------------
+# Metadata
+# -----------------------------------------------
+active: true
+updatedAt: "2026-05-21T00:00:00Z"

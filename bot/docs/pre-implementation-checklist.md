@@ -56,7 +56,7 @@ File: `bot/specs/guest-dossier-schema.md`. Per-guest entries written as YAML / J
 
 | # | Task | Done |
 |---|---|---|
-| 1.2.1 | **Compile candidate list** from `guests.json` — filter to ~30 most-photographed. Save list to `bot/specs/guest-dossier-targets.md`. | ☐ |
+| 1.2.1 | **Compile candidate list** from `guests.json` — filter to ~30 most-photographed. Save list to `bot/specs/guest-dossier-targets.md`. | ☑ |
 | 1.2.2 | **Collect 1–3 reference photos** per guest. Frontal, well-lit, recent. No sunglasses, no extreme angles. | ☐ |
 | 1.2.3 | **Upload reference photos** to Cloudinary `bot/reference/{guestId}-{n}.jpg` (signed URLs). | ☐ |
 | 1.2.4 | **Fill the schema** per guest: `name`, `preferred_name`, `recognizable_for`, `relationship`, `hometown`, `safe_facts`, **`safe_jokes`** (pre-authorized roast material — ceiling is "mild roast", NOT risqué), `do_not_mention`, `recognition_confidence_floor` (default 0.75; bump to 0.85 for siblings or elderly relatives). | ☐ |
@@ -70,16 +70,16 @@ File: `bot/specs/tarifa-guide.yaml`. Each category has 1–6 items with `name`, 
 
 | # | Category | Items | Personal notes? | Done |
 |---|---|---|---|---|
-| 1.3.1 | **Beaches** (Valdevaqueros, Bolonia, Los Lances, Punta Paloma already scaffolded — add personal notes) | 4–6 | Yes per beach | ☐ |
-| 1.3.2 | **Restaurants** (paella, fish, tapas, breakfast, cocktail, chiringuito, splurge, vegetarian-friendly, family-friendly) | 6–10 | At least 1 per restaurant | ☐ |
-| 1.3.3 | **Kite & wind** — your school recommendation + instructor name (with their consent for personal-intro mode) | 2–3 | Mandatory for personal-intro | ☐ |
-| 1.3.4 | **Water** — scuba, paddle/SUP, surf | 3–5 | Optional | ☐ |
-| 1.3.5 | **Sightseeing** — castillo + mirador + Baelo Claudia + casco antiguo scaffolded — add personal notes | 4–6 | Yes | ☐ |
-| 1.3.6 | **Day trips** — Tánger, Vejer, Cádiz, Gibraltar scaffolded — add personal notes | 4–5 | Yes | ☐ |
-| 1.3.7 | **Whale watching** — pick operator (FIRMM is a common choice) | 1–2 | Yes | ☐ |
-| 1.3.8 | **Walking** — Faro de Camarinal scaffolded + add 1–2 more | 2–4 | Yes | ☐ |
-| 1.3.9 | **Nightlife** — chiringuitos / bars in town | 3–5 | Yes | ☐ |
-| 1.3.10 | **Family-friendly** — kid-friendly activities for guests with children | 2–4 | Optional | ☐ |
+| 1.3.1 | **Beaches** (Valdevaqueros, Bolonia, Los Lances, Punta Paloma already scaffolded — add personal notes) | 4–6 | Yes per beach | ☑ |
+| 1.3.2 | **Restaurants** (paella, fish, tapas, breakfast, cocktail, chiringuito, splurge, vegetarian-friendly, family-friendly) | 6–10 | At least 1 per restaurant | ☑ |
+| 1.3.3 | **Kite & wind** — your school recommendation + instructor name (with their consent for personal-intro mode) | 2–3 | Mandatory for personal-intro | ☑ |
+| 1.3.4 | **Water** — scuba, paddle/SUP, surf | 3–5 | Optional | ☑ |
+| 1.3.5 | **Sightseeing** — castillo + mirador + Baelo Claudia + casco antiguo scaffolded — add personal notes | 4–6 | Yes | ☑ |
+| 1.3.6 | **Day trips** — Tánger, Vejer, Cádiz, Gibraltar scaffolded — add personal notes | 4–5 | Yes | ☑ |
+| 1.3.7 | **Whale watching** — pick operator (FIRMM is a common choice) | 1–2 | Yes | ☑ |
+| 1.3.8 | **Walking** — Faro de Camarinal scaffolded + add 1–2 more | 2–4 | Yes | ☑ |
+| 1.3.9 | **Nightlife** — chiringuitos / bars in town | 3–5 | Yes | ☑ |
+| 1.3.10 | **Family-friendly** — kid-friendly activities for guests with children | 2–4 | Optional | ☑ |
 
 ### 1.4 Moderation hints for song requests
 
@@ -87,10 +87,10 @@ File: write directly to Firestore at `config/bot.moderation_hints` (or seed-scri
 
 | # | Task | Done |
 |---|---|---|
-| 1.4.1 | **Blocked artists** — list any artists you don't want at the wedding under any circumstance. | ☐ |
-| 1.4.2 | **Blocked songs** — specific songs to exclude (e.g., over-played wedding clichés, ex-related). | ☐ |
-| 1.4.3 | **Blocked themes** — free-form descriptions ("no religious processionals", "no songs about breakups"). | ☐ |
-| 1.4.4 | **Operator note** — short note Thora can reference when delegating ("Mis humanos están saturados de esa canción 🐾"). | ☐ |
+| 1.4.1 | **Blocked artists** — list any artists you don't want at the wedding under any circumstance. | ☑ |
+| 1.4.2 | **Blocked songs** — specific songs to exclude (e.g., over-played wedding clichés, ex-related). | ☑ |
+| 1.4.3 | **Blocked themes** — free-form descriptions ("no religious processionals", "no songs about breakups"). | ☑ |
+| 1.4.4 | **Operator note** — short note Thora can reference when delegating ("Mis humanos están saturados de esa canción 🐾"). | ☑ |
 
 ### 1.5 Event-data corrections in Firestore
 
@@ -103,7 +103,7 @@ These fix discrepancies between current `events/*` Firestore content and the des
 | 1.5.3 | **Confirm ceremony time** — currently 18:00 Sat. Verify bus departure 17:30. Update if wrong. | ⚙️ | ☐ |
 | 1.5.4 | **Confirm reception (cocktail+dinner+party) timing** — cocktail ~20:00, dinner ~21:30, party ~midnight, end 05:00. Adjust as needed. | ⚙️ | ☐ |
 | 1.5.5 | **Confirm brunch timing** — currently 11:30 Sun. Verify. | ⚙️ | ☐ |
-| 1.5.6 | **Add `venues/carbones_13`** — name, full address, lat/lng, Maps link, parking note ("self-drivers: TBD"), tarifa entrance description. | ⚙️ | ☐ |
+| 1.5.6 | **Add `venues/surfin-tarifa`** — name, full address, lat/lng, Maps link, parking note ("self-drivers: TBD"), tarifa entrance description. | ⚙️ | ☐ |
 | 1.5.7 | **Add `venues/casa_explora`** — same fields. | ⚙️ | ☐ |
 | 1.5.8 | **Update `venues/tres_mares`** — confirm the cocktail / dinner / party / brunch sub-areas; heel-plug availability noted. | ⚙️ | ☐ |
 | 1.5.9 | **Add `venues/chiringuito_bora`** — Welcoming venue (informal); lat/lng so Thora can send pin if asked. | ⚙️ | ☐ |
@@ -116,11 +116,11 @@ File: `config/dress_codes` in Firestore.
 | # | Event | Dress code | Done |
 |---|---|---|---|
 | 1.6.1 | Pre-wedding (Casa Explora) | No code, casual. | ☐ |
-| 1.6.2 | Ceremony (Carbones 13) | TBD — operator to fill. Beach formal? Cocktail? | ☐ |
+| 1.6.2 | Ceremony (Surfin' Tarifa) | TBD — operator to fill. Beach formal? Cocktail? | ☐ |
 | 1.6.3 | Reception (Tres Mares) | TBD — likely same as ceremony or slightly more polished. | ☐ |
 | 1.6.4 | Brunch (Tres Mares pool) | Casual / poolside. | ☐ |
 
-### 1.7 Self-driving parking info (Carbones 13)
+### 1.7 Self-driving parking info (Surfin' Tarifa)
 
 | # | Task | Done |
 |---|---|---|
@@ -139,9 +139,9 @@ File: `config/wind_tips` in Firestore. Used by `weather_morning_brief` template 
 
 | # | Template | Asset needed | Hosted at | Done |
 |---|---|---|---|---|
-| 1.9.1 | T1 `welcome_onboarding` | Photo of Thora (warm, slightly playful, wedding-context). | `https://bodaentarifa.com/og/thora-welcome.jpg` | ☐ |
+| 1.9.1 | T1 `welcome_onboarding` | Photo of Thora (warm, slightly playful, wedding-context). | `https://bodaentarifa.com/og/thora-welcome.jpg` | ☑ |
 | 1.9.2 | T6 `film_developed` | Retro-film aesthetic photo, ideally featuring Thora. | `https://bodaentarifa.com/og/film-developed.jpg` | ☐ |
-| 1.9.3 | T8 `farewell_thanks` | Sunset photo with Thora in frame (or group photo if you have one in time). | `https://bodaentarifa.com/og/farewell.jpg` | ☐ |
+| 1.9.3 | T8 `farewell_thanks` | Sunset photo with Thora in frame (or group photo if you have one in time). | `https://bodaentarifa.com/og/farewell.jpg` | ☑ |
 
 ### 1.10 FAQ seed entries
 
@@ -149,21 +149,21 @@ File: `faq/*` Firestore collection (created during Phase 2 — see `07-knowledge
 
 | # | Suggested FAQ topics to seed (write Q + A in ES + EN) | Done |
 |---|---|---|
-| 1.10.1 | Parking at each venue | ☐ |
-| 1.10.2 | Dress codes per event | ☐ |
-| 1.10.3 | Kids welcome? | ☐ |
-| 1.10.4 | Pets welcome? (Tarifa is dog-friendly — note Thora's presence) | ☐ |
-| 1.10.5 | Gifts / wedding list | ☐ |
-| 1.10.6 | Photo policy (consent already on web) | ☐ |
-| 1.10.7 | Late arrival to ceremony | ☐ |
-| 1.10.8 | Plus-one questions | ☐ |
-| 1.10.9 | Vegan / gluten-free options | ☐ |
-| 1.10.10 | Casa Explora dinner reservation note (mentioned in the design session as FAQ-only) | ☐ |
-| 1.10.11 | Hotel transfers between Tres Mares / Copacabana / Dulce Nombre | ☐ |
-| 1.10.12 | Wedding hashtag (if any) | ☐ |
-| 1.10.13 | Languages spoken at the wedding | ☐ |
-| 1.10.14 | What to do if you get sick / first aid | ☐ |
-| 1.10.15 | Sand / shoes for ceremony | ☐ |
+| 1.10.1 | Parking at each venue | ☑ |
+| 1.10.2 | Dress codes per event | ☑ |
+| 1.10.3 | Kids welcome? | ☑ |
+| 1.10.4 | Pets welcome? (Tarifa is dog-friendly — note Thora's presence) | ☑ |
+| 1.10.5 | Gifts / wedding list | ☑ |
+| 1.10.6 | Photo policy (consent already on web) | ☑ |
+| 1.10.7 | Late arrival to ceremony | ☑ |
+| 1.10.8 | Plus-one questions | ☑ |
+| 1.10.9 | Vegan / gluten-free options | ☑ |
+| 1.10.10 | Casa Explora dinner reservation note (mentioned in the design session as FAQ-only) | ☑ |
+| 1.10.11 | Hotel transfers between Tres Mares / Copacabana / Dulce Nombre | ☑ |
+| 1.10.12 | Wedding hashtag (if any) | ☑ |
+| 1.10.13 | Languages spoken at the wedding | ☑ |
+| 1.10.14 | What to do if you get sick / first aid | ☑ |
+| 1.10.15 | Sand / shoes for ceremony | ☑ |
 
 ---
 
@@ -171,57 +171,45 @@ File: `faq/*` Firestore collection (created during Phase 2 — see `07-knowledge
 
 Submit between D−10 and D−7 (i.e., by 2026-05-20) to leave buffer for re-submission of any rejections.
 
-### 2.1 Templates — 16 logical × 2 languages = 32 total
+### 2.1 Templates — 13 logical × 2 languages = 26 total
 
 | # | Template | Submitted | Approved |
 |---|---|---|---|
 | 2.1.1 | `welcome_onboarding_es` | ☐ | ☐ |
 | 2.1.2 | `welcome_onboarding_en` | ☐ | ☐ |
-| 2.1.3 | `rsvp_reminder_es` | ☐ | ☐ |
-| 2.1.4 | `rsvp_reminder_en` | ☐ | ☐ |
-| 2.1.5 | `event_reminder_30min_es` | ☐ | ☐ |
-| 2.1.6 | `event_reminder_30min_en` | ☐ | ☐ |
-| 2.1.7 | `seating_unlock_es` | ☐ | ☐ |
-| 2.1.8 | `seating_unlock_en` | ☐ | ☐ |
-| 2.1.9 | `film_developed_es` | ☐ | ☐ |
-| 2.1.10 | `film_developed_en` | ☐ | ☐ |
-| 2.1.11 | `weather_morning_brief_es` | ☐ | ☐ |
-| 2.1.12 | `weather_morning_brief_en` | ☐ | ☐ |
-| 2.1.13 | `farewell_thanks_es` | ☐ | ☐ |
-| 2.1.14 | `farewell_thanks_en` | ☐ | ☐ |
-| 2.1.15 | `manual_announcement_es` | ☐ | ☐ |
-| 2.1.16 | `manual_announcement_en` | ☐ | ☐ |
-| 2.1.17 | `escalation_followup_es` | ☐ | ☐ |
-| 2.1.18 | `escalation_followup_en` | ☐ | ☐ |
-| 2.1.19 | `feedback_request_es` | ☐ | ☐ |
-| 2.1.20 | `feedback_request_en` | ☐ | ☐ |
-| 2.1.21 | `bus_pickup_early_es` | ☐ | ☐ |
-| 2.1.22 | `bus_pickup_early_en` | ☐ | ☐ |
-| 2.1.23 | `bus_pickup_last_es` | ☐ | ☐ |
-| 2.1.24 | `bus_pickup_last_en` | ☐ | ☐ |
-| 2.1.25 | `pre_wedding_drinks_es` | ☐ | ☐ |
-| 2.1.26 | `pre_wedding_drinks_en` | ☐ | ☐ |
-| 2.1.27 | `amenities_cocktail_es` | ☐ | ☐ |
-| 2.1.28 | `amenities_cocktail_en` | ☐ | ☐ |
-| 2.1.29 | `pitonisa_now_es` | ☐ | ☐ |
-| 2.1.30 | `pitonisa_now_en` | ☐ | ☐ |
-| 2.1.31 | `arrival_day_nudge_es` | ☐ | ☐ |
-| 2.1.32 | `arrival_day_nudge_en` | ☐ | ☐ |
+| 2.1.3 | `event_reminder_30min_es` | ☐ | ☐ |
+| 2.1.4 | `event_reminder_30min_en` | ☐ | ☐ |
+| 2.1.5 | `seating_unlock_es` | ☐ | ☐ |
+| 2.1.6 | `seating_unlock_en` | ☐ | ☐ |
+| 2.1.7 | `film_developed_es` | ☐ | ☐ |
+| 2.1.8 | `film_developed_en` | ☐ | ☐ |
+| 2.1.9 | `weather_morning_brief_es` | ☐ | ☐ |
+| 2.1.10 | `weather_morning_brief_en` | ☐ | ☐ |
+| 2.1.11 | `farewell_thanks_es` | ☐ | ☐ |
+| 2.1.12 | `farewell_thanks_en` | ☐ | ☐ |
+| 2.1.13 | `manual_announcement_es` | ☐ | ☐ |
+| 2.1.14 | `manual_announcement_en` | ☐ | ☐ |
+| 2.1.15 | `escalation_followup_es` | ☐ | ☐ |
+| 2.1.16 | `escalation_followup_en` | ☐ | ☐ |
+| 2.1.17 | `bus_pickup_early_es` | ☐ | ☐ |
+| 2.1.18 | `bus_pickup_early_en` | ☐ | ☐ |
+| 2.1.19 | `bus_pickup_last_es` | ☐ | ☐ |
+| 2.1.20 | `bus_pickup_last_en` | ☐ | ☐ |
+| 2.1.21 | `pre_wedding_drinks_es` | ☐ | ☐ |
+| 2.1.22 | `pre_wedding_drinks_en` | ☐ | ☐ |
+| 2.1.23 | `arrival_day_nudge_es` | ☐ | ☐ |
+| 2.1.24 | `arrival_day_nudge_en` | ☐ | ☐ |
+| 2.1.25 | `song_request_party_open_es` | ☐ | ☐ |
+| 2.1.26 | `song_request_party_open_en` | ☐ | ☐ |
 
-### 2.2 Flows — 4 logical × 2 languages = 8 total
+### 2.2 Flows — 1 logical × 2 languages = 2 total
 
-(F2 `brunch_attendance` and F5 `photo_consent` are **dropped** per the design session; do not submit.)
+(F1 `rsvp_full`, F2 `brunch_attendance`, F4 `logistics_intake`, F5 `photo_consent`, and F6 `feedback` are **dropped**; do not submit.)
 
 | # | Flow | Submitted | Published |
 |---|---|---|---|
-| 2.2.1 | `rsvp_full_es` (4 screens) | ☐ | ☐ |
-| 2.2.2 | `rsvp_full_en` (4 screens) | ☐ | ☐ |
-| 2.2.3 | `song_request_es` (1 screen) | ☐ | ☐ |
-| 2.2.4 | `song_request_en` (1 screen) | ☐ | ☐ |
-| 2.2.5 | `logistics_intake_es` (2 screens, operator-trigger only) | ☐ | ☐ |
-| 2.2.6 | `logistics_intake_en` (2 screens, operator-trigger only) | ☐ | ☐ |
-| 2.2.7 | `feedback_es` (2 screens) | ☐ | ☐ |
-| 2.2.8 | `feedback_en` (2 screens) | ☐ | ☐ |
+| 2.2.1 | `song_request_es` (1 screen) | ☐ | ☐ |
+| 2.2.2 | `song_request_en` (1 screen) | ☐ | ☐ |
 
 ---
 
@@ -246,8 +234,8 @@ These verify the bot end-to-end before the full broadcast.
 | # | Task | Owner | Done |
 |---|---|---|---|
 | 4.1 | **Quality rating check** — WABA quality rating at least Medium with no warnings. | ⚙️ | ☐ |
-| 4.2 | **Templates approved** — verify all 32 show "Approved" in Meta Business Suite. | ⚙️ | ☐ |
-| 4.3 | **Flows published** — verify all 8 show "Published". | ⚙️ | ☐ |
+| 4.2 | **Templates approved** — verify all 26 show "Approved" in Meta Business Suite. | ⚙️ | ☐ |
+| 4.3 | **Flows published** — verify both `song_request` variants show "Published". | ⚙️ | ☐ |
 | 4.4 | **Phone number connected** — production phone number shows "Connected" status. | ⚙️ | ☐ |
 | 4.5 | **Live evals (RUN_LIVE_EVALS=1)** — run all 25+ golden examples from `02-conversation-design.md` §7. Pass criteria: 100%. | 💻 | ☐ |
 | 4.6 | **Adversarial evals** — 10 cases: prompt injection, allowlist bypass, off-topic, very long messages, voice notes, stickers, NSFW. | 💻 | ☐ |
@@ -271,8 +259,7 @@ These verify the bot end-to-end before the full broadcast.
 | 5.3 | **D−7 to D−1** | Daily 10-min review: escalations queue, unknown-inbound queue, FAQ additions (per `admin-runbook.md` §2). | ⚙️ | ☐ |
 | 5.4 | **D−1 (2026-05-28)** | Final album content review. | ⚙️ | ☐ |
 | 5.5 | **D-day (2026-05-29 → 2026-05-31)** | Mornings: 5-min scan over coffee. During events: phone in pocket. Bot self-runs. | ⚙️ | — |
-| 5.6 | **D+1 (2026-06-01) ~12:00** | `feedback_request` fires automatically. | — | — |
-| 5.7 | **D+1 (2026-06-01) ~14:00** | Send `farewell_thanks` manually. | ⚙️ | ☐ |
+| 5.6 | **D+1 (2026-06-01) ~14:00** | Send `farewell_thanks` manually. | ⚙️ | ☐ |
 | 5.8 | **D+1 (2026-06-01) ~17:00–19:00** | 60-min album moderation pass. | ⚙️ | ☐ |
 | 5.9 | **D+1 (2026-06-01) 20:00** | `film_developed` fires automatically (album reveal). Verify. | ⚙️ | ☐ |
 

@@ -29,6 +29,7 @@ import {
   linkEscalationToConversation,
   type Urgency,
 } from "../services/escalation.js";
+import {moderateSongRequest} from "../services/songs.js";
 import {dayOfWedding, toMadridIso} from "../lib/time.js";
 
 // ── Tool definitions (passed to Anthropic SDK) ─────────────────────────────
@@ -159,21 +160,13 @@ export const TOOLS: Anthropic.Messages.Tool[] = [
     name: "trigger_flow",
     description:
       "Trigger a WhatsApp Flow for structured input. Available flows: " +
-      "rsvp_full, brunch_attendance, song_request, logistics_intake, " +
-      "photo_consent, feedback.",
+      "song_request.",
     input_schema: {
       type: "object",
       properties: {
         flow_name: {
           type: "string",
-          enum: [
-            "rsvp_full",
-            "brunch_attendance",
-            "song_request",
-            "logistics_intake",
-            "photo_consent",
-            "feedback",
-          ],
+          enum: ["song_request"],
         },
       },
       required: ["flow_name"],
@@ -198,7 +191,10 @@ export const TOOLS: Anthropic.Messages.Tool[] = [
   {
     name: "moderate_song_request",
     description:
-      "Check a song against the moderation_hints no-go list.",
+      "Check a song against operator preferences. Returns a verdict " +
+      "('accept' default; 'tease_then_accept' for mild_tease themes — " +
+      "record AND wink; 'decline_softly' only for explicit hard_avoid " +
+      "entries — rare). Guests must feel heard.",
     input_schema: {
       type: "object",
       properties: {
@@ -291,7 +287,7 @@ export async function executeTool(
   case "escalate_to_operator":
     return execEscalateToOperator(input, ctx);
   case "moderate_song_request":
-    return stub(name, "song moderation lands in Phase 3");
+    return execModerateSongRequest(input);
   case "resolve_spotify_track":
     return stub(name, "spotify resolver lands in Phase 3");
   default:
@@ -463,6 +459,18 @@ function execTriggerFlow(input: Record<string, unknown>): ToolResult {
     output: {ok: true, queued: true},
     sideEffect: {kind: "trigger_flow", flowName},
   };
+}
+
+async function execModerateSongRequest(
+  input: Record<string, unknown>
+): Promise<ToolResult> {
+  const title = typeof input.title === "string" ? input.title : "";
+  const artist = typeof input.artist === "string" ? input.artist : undefined;
+  if (!title.trim()) {
+    return {output: {error: "missing_title"}, errored: true};
+  }
+  const res = await moderateSongRequest(title, artist);
+  return {output: {verdict: res.verdict, hint: res.hint ?? null}};
 }
 
 function stub(name: string, note: string): ToolResult {

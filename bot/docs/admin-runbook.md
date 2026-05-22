@@ -346,13 +346,12 @@ Optional setup if you want at-a-glance visibility:
 
 ## 9. Day-after (June 1)
 
-- 12:00 — `feedback_request` template fires automatically.
 - 14:00 — Send `farewell_thanks` manually:
   1. `/admin/bot/broadcasts/new`
   2. Template: `farewell_thanks`
   3. Audience: all.
   4. Send.
-- Skim feedback over the next week.
+- Skim post-event replies over the next week.
 
 ---
 

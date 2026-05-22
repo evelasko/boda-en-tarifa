@@ -19,7 +19,7 @@
 # OPERATOR FILL-IN — items marked "TODO" need Enrique/Manuel to complete.
 
 version: 1
-last_updated: "TODO"
+last_updated: "2026-05-22"
 
 # =============================================================================
 # Beaches
@@ -28,103 +28,206 @@ beaches:
   - name: "Valdevaqueros"
     category: beaches
     area: "5-10 min en coche al norte de Tarifa"
-    description: "Playa muy ancha, dunas espectaculares al final. Famosa para kite y windsurf. En días de Levante fuerte se llena de viento y arena."
+    description: "Playa muy ancha, dunas espectaculares al final. Famosa para kite y
+      windsurf. En días de Levante fuerte se llena de viento y arena."
     contact: ""
-    personal_note: "TODO — Enrique/Manuel"
+    personal_note: "es la playa mas cool de todas, se conecta con punta paloma que
+      es un poco más familiar, pero en valdevaqueros conviven en armonía
+      kiteboarders y bañistas. Los chiringuitos Tangana y Bora son lo más, y
+      tienen muy buen vibe con muy buena música"
     tarifa_specific: true
-    tags: ["kite", "windsurf", "ancha", "ventosa"]
+    tags: [ "kite", "windsurf", "ancha", "ventosa" ]
 
   - name: "Bolonia"
     category: beaches
     area: "20 min en coche al norte"
-    description: "Cala con dunas enormes y las ruinas romanas de Baelo Claudia justo al lado. Una de las playas más bonitas de España. Llegar pronto en verano."
+    description: "Cala con dunas enormes y las ruinas romanas de Baelo Claudia justo
+      al lado. Una de las playas más bonitas de España. Llegar pronto en
+      verano."
     contact: ""
-    personal_note: "TODO — Enrique/Manuel"
+    personal_note: "es una playa muy tranquila y familiar, aunque el extremo
+      izquierdo es un poco más movido porque tiene los chiringuitos, sobre todo
+      el Volare que pone muy buena musica"
     tarifa_specific: false
-    tags: ["ruinas", "dunas", "imprescindible"]
+    tags: [ "ruinas", "dunas", "imprescindible" ]
 
   - name: "Los Lances"
     category: beaches
     area: "junto a la urbanización de Tarifa"
-    description: "La playa de la propia Tarifa. Buena para pasear, chiringuitos a tiro de piedra, accesible andando desde el centro y desde Tres Mares."
+    description: "La playa de la propia Tarifa. Buena para pasear, chiringuitos a
+      tiro de piedra, accesible andando desde el centro y desde Tres Mares."
     contact: ""
-    personal_note: "TODO — Enrique/Manuel"
+    personal_note: "La playa más larga de Tarifa, en la zona del pueblo te podrás
+      bañar sin problema no hay kiteboarders"
     tarifa_specific: true
-    tags: ["accesible", "chiringuitos", "urbana"]
+    tags: [ "accesible", "chiringuitos", "urbana" ]
 
   - name: "Punta Paloma"
     category: beaches
     area: "10 min en coche al norte de Tarifa"
-    description: "Cala más recogida que Valdevaqueros, fondos de arena fina. Famosa por la 'arcilla' natural — la gente se la pone en la piel a modo de spa improvisado."
+    description: "Cala más recogida que Valdevaqueros, fondos de arena fina. Famosa
+      por la 'arcilla' natural — la gente se la pone en la piel a modo de spa
+      improvisado."
     contact: ""
-    personal_note: "TODO — Enrique/Manuel"
+    personal_note: "Es una playa más tranquila que Valdevaqueros, con fondos de
+      arena fina y arcilla natural."
     tarifa_specific: true
-    tags: ["recogida", "arcilla", "fotogénica"]
+    tags: [ "recogida", "arcilla", "fotogénica" ]
 
 # =============================================================================
 # Restaurants — operator to fill substantively
 # =============================================================================
 restaurants:
-  # Suggested categories to cover when filling:
-  #   - best paella
-  #   - best fish / pescaíto frito
-  #   - best tapas
-  #   - best breakfast
-  #   - best cocktail spot
-  #   - best chiringuito
-  #   - splurge spot
-  #   - family-friendly
-  #   - vegetarian-friendly
-  - name: "TODO — operator pick"
-    category: restaurants
-    area: "TODO"
-    description: "TODO"
+  - name: "Raizes"
+    category: best restaurant
+    area: "Tarifa Pueblo"
+    description: "Cocina fusión para compartir, con carta estacional que rota y
+      opciones vegetarianas/veganas. Rango habitual ~30-40 EUR por persona."
     contact: ""
-    personal_note: ""
+    personal_note: "un poco caro pero merece mucho la pena, es toda una experiencia.
+      Cambian el menú cada tres meses y cada vez se superan. Los platos son muy
+      sofisticados y son un placer para el paladar. Además la atención es de las
+      mejores de Tarifa, aunque a veces los camareros se pasan explicando
+      demasiado los platos."
+    tarifa_specific: true
+  - name: "El Ancla"
+    category: best restaurant
+    area: "Tarifa Pueblo"
+    description: "Clásico de Tarifa especializado en pescado y marisco del Estrecho,
+      comprado según lonja del día. Muy conocido por croquetas de choco y platos
+      de atún; precio medio ~20-30 EUR."
+    contact: ""
+    personal_note: "de los más baratos con muy buena carta de productos y platos de
+      la región. Es muy campechano y te hacen sentir como en un pueblo de España
+      de verdad. El tataki de atún es lo más."
+    tarifa_specific: true
+
+  - name: "El Mirlo"
+    category: best restaurant
+    area: "Punta Paloma"
+    description: "Restaurante junto a dunas y mar con cocina mediterránea (mucho
+      pescado y arroces) y vistas abiertas al Estrecho; más plan de sobremesa
+      larga."
+    contact: ""
+    personal_note: "la gente flipa con las vistas y el atardecer, es de esos sitios
+      para ir sin prisa. Ojo que en reseñas hay opiniones mixtas de servicio
+      cuando está a tope, pero casi todos coinciden en que el sitio es
+      espectacular."
+    tarifa_specific: true
+
+  - name: "Pachamama Tarifa"
+    category: best restaurant
+    area: "Carretera Cádiz-Málaga (km 81)"
+    description: "Restaurante amplio con parrilla de carbón y pizzería de horno de
+      leña; carta internacional con carnes, burgers, pizzas y opciones veganas."
+    contact: ""
+    personal_note: "en reviews sale mucho que se come abundante y con buen ambiente,
+      ideal para grupo. Lo más repetido: burgers/carne y pizzas; la pega típica
+      en horas punta es algún retraso o despiste de sala."
+    tarifa_specific: true
+
+  - name: "An ca Curro"
+    category: best restaurant
+    area: "Casco antiguo de Tarifa"
+    description: "Tasquita tradicional andaluza, corta de carta pero muy de
+      producto: jamón, tapas de cerdo y platos caseros con ambiente de bar de
+      toda la vida."
+    contact: ""
+    personal_note: "en reseñas lo ponen como sitio auténtico y con mucho carácter.
+      Recomiendan mucho berenjenas, salmorejo y jamón; suele estar lleno, pero
+      el trato familiar y el tapeo compensan."
+    tarifa_specific: true
+
+  - name: "Los Melli"
+    category: best restaurant
+    area: "Casco antiguo de Tarifa"
+    description: "Bar de tapeo muy popular con cocina gaditana y foco en atún (atún
+      en manteca, albóndigas de atún, frituras). Suele ir fuerte de rotación."
+    contact: ""
+    personal_note: "casi todas las reviews repiten que es imprescindible para tapear
+      atún y que relación calidad-precio está muy bien. Ve pronto: se llena
+      rápido y normalmente toca esperar."
     tarifa_specific: true
 
 # =============================================================================
 # Kite & wind activities
 # =============================================================================
 kite_wind:
-  - name: "TODO — Enrique's recommended kite school"
+  - name: "Radikite Tarifa"
     category: kite_wind
-    area: "Valdevaqueros / Los Lances"
-    description: "TODO — Enrique to fill: school name, what level they teach, typical price."
-    contact: "TODO"
-    personal_note: "Mi humano Enrique se compinche con {instructor}, le pidió que le enseñara hace años. Si te animas, le aviso."
+    area: "Playa de Los Lances Norte"
+    description: "Escuela oficial de kitesurf con cursos desde iniciación hasta
+      avanzado (incluye freestyle/surfkite/hydrofoil). Precio orientativo:
+      semi-privadas desde ~36 EUR/h y privadas desde ~65 EUR/h."
+    contact: "https://radikitetarifa.com/en/ | +34 616 185 651 |
+      info@radikitetarifa.com"
+    personal_note: "si quieres algo muy cómodo para empezar, esta está literalmente
+      a pie de playa en Los Lances y suele tener buen sistema de rescate."
     tarifa_specific: true
-    tags: ["kite", "lessons", "personal-intro-available"]
+    tags: [ "kite", "lessons", "beginner-friendly", "los-lances" ]
 
-  - name: "TODO — wind/kite rental"
+  - name: "Kite Concept Tarifa (rental)"
     category: kite_wind
-    area: "TODO"
-    description: "TODO"
+    area: "N-340 km 81 (Tarifa)"
+    description: "Alquiler de material de kitesurf para riders autónomos (equipo
+      completo, kite suelta o tabla). También tienen alquiler de surf/SUP."
+    contact: "https://www.kiteconcepttarifa.com/en/rental.html | +34 610 993 531"
     tarifa_specific: true
+    tags: [ "kite", "rental", "equipment" ]
+
+  - name: "Wind & Water Experience"
+    category: kite_wind
+    area: "Los Lances / Valdevaqueros"
+    description: "Escuela activa desde 1997 con clases de windsurf, wingfoil y
+      también kitesurf según condiciones. Suelen mover spot según viento."
+    contact: "https://windwaterexperience.com/en/"
+    tarifa_specific: true
+    tags: [ "windsurf", "wingfoil", "kite", "lessons" ]
 
 # =============================================================================
 # Other water activities
 # =============================================================================
 water:
-  - name: "TODO — scuba diving operator"
+  - name: "Go Dive Tarifa"
     category: water
     area: "Tarifa port"
-    description: "TODO"
-    contact: "TODO"
-    personal_note: ""
+    description: "Centro de buceo con salidas diarias, bautizos y cursos para todos
+      los niveles, muy enfocado en zona del Estrecho e Isla de Tarifa."
+    contact: "https://www.godivecadiz.com/en/go-dive-tarifa/ | +34 682 765 311 |
+      info@godivecadiz.com"
+    personal_note: "si quieres bautizo o inmersiones guiadas con enfoque tranquilo,
+      es una opción sólida."
     tarifa_specific: true
+    tags: [ "scuba", "dives", "courses", "snorkel" ]
 
-  - name: "TODO — paddle / SUP rental"
+  - name: "Paddle Fun Tarifa"
     category: water
-    area: "TODO"
-    description: "TODO"
+    area: "Tarifa town / costa"
+    description: "Cursos y alquiler de SUP (tablas hinchables), ideal para días sin
+      viento. Precio orientativo: alquiler desde ~30 EUR/2h y curso desde ~50
+      EUR/2h."
+    contact: "https://en.paddlefuntarifa.com/ | +34 661 094 260 |
+      info@kitefuntarifa.com"
     tarifa_specific: true
+    tags: [ "sup", "paddle", "rental", "lessons" ]
 
-  - name: "TODO — surf"
+  - name: "Wind & Water Experience (surf)"
     category: water
     area: "Los Lances"
-    description: "TODO"
+    description: "Clases de surf en grupos pequeños y opción de adaptar
+      playa/horario a condiciones de mar y viento."
+    contact: "https://windwaterexperience.com/en/"
     tarifa_specific: true
+    tags: [ "surf", "lessons", "small-groups" ]
+
+  - name: "YellowSub Tarifa"
+    category: water
+    area: "Tarifa harbor"
+    description: "Centro de buceo en el puerto con dos barcos de salidas y material
+      de alquiler para inmersiones alrededor de Isla de Tarifa."
+    contact: "https://www.divingtarifa.com/"
+    tarifa_specific: true
+    tags: [ "scuba", "harbor", "boat-dives" ]
 
 # =============================================================================
 # Sightseeing
@@ -133,36 +236,45 @@ sightseeing:
   - name: "Castillo de Guzmán el Bueno"
     category: sightseeing
     area: "Tarifa old town"
-    description: "Castillo medieval del siglo X, vistas al estrecho. Entrada de pago. Visita rápida (~1h)."
+    description: "Castillo medieval del siglo X, vistas al estrecho. Entrada de
+      pago. Visita rápida (~1h)."
     contact: ""
-    personal_note: "TODO — Enrique/Manuel"
+    personal_note: "Un mirador muy bonito sobre el estrecho de Gibraltar. Se ve
+      perfectamente la costa de Marruecos."
     tarifa_specific: true
-    tags: ["historia", "rápido"]
+    tags: [ "historia", "rápido" ]
 
   - name: "Mirador del Estrecho"
     category: sightseeing
     area: "10 min en coche al este, hacia Algeciras"
-    description: "Mirador sobre el estrecho de Gibraltar. En días claros se ve perfectamente la costa de Marruecos."
+    description: "Mirador sobre el estrecho de Gibraltar. En días claros se ve
+      perfectamente la costa de Marruecos."
     contact: ""
-    personal_note: ""
+    personal_note: "Un mirador muy bonito sobre el estrecho de Gibraltar. Se ve
+      perfectamente la costa de Marruecos."
     tarifa_specific: true
-    tags: ["vistas", "fotogénico"]
+    tags: [ "vistas", "fotogénico" ]
 
   - name: "Baelo Claudia"
     category: sightseeing
     area: "Bolonia, 20 min en coche al norte"
-    description: "Ruinas romanas espectaculares, junto a la playa de Bolonia. Entrada gratuita para ciudadanos UE. Visita 1.5–2h."
+    description: "Ruinas romanas espectaculares, junto a la playa de Bolonia.
+      Entrada gratuita para ciudadanos UE. Visita 1.5–2h."
     contact: ""
-    personal_note: "TODO — Enrique/Manuel"
+    personal_note: "Ruinas romanas muy bonitas, junto a la playa de Bolonia. Es un
+      lugar muy bonito y tranquilo para pasear."
     tarifa_specific: false
-    tags: ["ruinas", "histórico"]
+    tags: [ "ruinas", "histórico" ]
 
   - name: "Casco antiguo de Tarifa"
     category: sightseeing
     area: "Tarifa centro"
-    description: "Callejear sin plan por el casco antiguo: Puerta de Jerez, plaza del Mesón, callejuelas blancas. Mejor al atardecer."
+    description: "Callejear sin plan por el casco antiguo: Puerta de Jerez, plaza
+      del Mesón, callejuelas blancas. Mejor al atardecer."
     contact: ""
-    personal_note: "TODO — Enrique/Manuel"
+    personal_note: "Un casco antiguo muy bonito, con calles empedradas y casas
+      blancas. Es un paseo muy bonito y tranquilo pero te puedes perder
+      fácilmente."
     tarifa_specific: true
 
 # =============================================================================
@@ -172,50 +284,88 @@ day_trips:
   - name: "Tánger (ferry desde Tarifa)"
     category: day_trips
     area: "Marruecos, ferry desde el puerto de Tarifa"
-    description: "Ferry rápido (35-45 min) FRS o Inter Shipping, salidas frecuentes. Pasaporte obligatorio. Visitar la kasbah, comer en el zoco. Día completo."
+    description: "Ferry rápido (35-45 min) FRS o Inter Shipping, salidas frecuentes.
+      Pasaporte obligatorio. Visitar la kasbah, comer en el zoco. Día completo."
     contact: "frs.es / intershipping.com"
     personal_note: ""
     tarifa_specific: false
-    tags: ["frontera", "pasaporte"]
+    tags: [ "frontera", "pasaporte" ]
 
   - name: "Vejer de la Frontera"
     category: day_trips
     area: "40 min en coche al norte"
-    description: "Pueblo blanco encaramado en un cerro. Casco histórico precioso, buena gastronomía. Tarde tranquila o cena con vistas."
-    contact: ""
-    personal_note: "TODO — Enrique/Manuel"
+    description: "Pueblo blanco encaramado en un cerro. Casco histórico precioso,
+      buena gastronomía. Tarde tranquila o cena con vistas."
+    personal_note: "Uno de los pueblos más bonitos de la provincia de Cádiz, con un
+      casco histórico precioso y una buena gastronomía. Está encima de una
+      montaña con unas vistas increíbles."
     tarifa_specific: false
-    tags: ["pueblo blanco"]
+    tags: [ "pueblo blanco" ]
 
   - name: "Cádiz capital"
     category: day_trips
     area: "1h 15min en coche al noroeste"
-    description: "Casco histórico, playa de la Caleta, mercado central. Día gastronómico fácil."
-    contact: ""
-    personal_note: ""
+    description: "Casco histórico, playa de la Caleta, mercado central. Día
+      gastronómico fácil."
+    personal_note: "La capital de la provincia de Cádiz, con un casco histórico
+      precioso y una buena gastronomía. Tiene un malecón muy parecido al de La
+      Habana."
     tarifa_specific: false
 
   - name: "Gibraltar"
     category: day_trips
     area: "45 min en coche al este"
-    description: "Cruzar la frontera con pasaporte o DNI. Subir al peñón en teleférico, los monos, la cueva de San Miguel. Medio día suficiente."
-    contact: ""
-    personal_note: ""
+    description: "Cruzar la frontera con pasaporte o DNI. Subir al peñón en
+      teleférico, los monos, la cueva de San Miguel. Medio día suficiente."
+    personal_note: "La frontera más bonita de España, con un peñón de granito muy
+      bonito y una buena gastronomía. Es como si estuvieras en inglaterra pero
+      en españa."
     tarifa_specific: false
-    tags: ["frontera", "monos"]
+    tags: [ "frontera", "monos" ]
 
 # =============================================================================
 # Whale watching
 # =============================================================================
 whale_watching:
-  - name: "TODO — operator (FIRMM o similar)"
+  - name: "FIRMM España"
     category: whale_watching
     area: "puerto de Tarifa"
-    description: "Avistamiento de cetáceos en el estrecho. Especies: delfines, orcas (verano), cachalotes, calderones. Salidas 2-3h."
-    contact: "TODO"
-    personal_note: "TODO — Enrique/Manuel"
+    description: "Avistamiento responsable con biólogos a bordo y charla previa.
+      Suelen operar salidas de 2h y, cuando hay opción de orcas, también de 3h."
+    contact: "https://www.firmm.org/es/excursiones | +34 956 627 008 | +34 619 459
+      441 | mail@firmm.org"
+    personal_note: "si quieres enfoque más didáctico y de conservación, esta suele
+      ser de las opciones más completas. Reserva con antelación y confirma el
+      mismo día porque dependen totalmente del mar."
     tarifa_specific: true
-    tags: ["familia-friendly", "verano"]
+    tags: [ "familia-friendly", "ecoturismo", "biologos", "orcas-verano" ]
+
+  - name: "Turmares Tarifa"
+    category: whale_watching
+    area: "puerto de Tarifa"
+    description: "Empresa histórica de avistamiento en el Estrecho con salidas
+      frecuentes y equipo de guías-biólogos. Alta probabilidad de ver cetáceos
+      durante excursiones de ~2h."
+    contact: "https://www.turmares.com/ | +34 956 680 741 | +34 696 448 349 |
+      turmares@turmares.com"
+    personal_note: "muy buena opción si buscas algo clásico y bien organizado.
+      Suelen gustar mucho por la claridad de las explicaciones y por variedad de
+      especies según temporada."
+    tarifa_specific: true
+    tags: [ "familia-friendly", "ecoturismo", "biologos", "todo-el-ano" ]
+
+  - name: "Top Tarifa Avistamientos"
+    category: whale_watching
+    area: "puerto de Tarifa"
+    description: "Formato de grupos reducidos (máx. 10 personas) con salidas de 2h
+      para delfines/ballenas y tours específicos de orcas en temporada."
+    contact: "https://toptarifa.es/es/top-tarifa-avistamientos/ | WhatsApp +34 686
+      430 162"
+    personal_note: "si prefieres barco pequeño y experiencia más íntima, esta encaja
+      muy bien. Sale más caro que el formato turístico clásico, pero ganas
+      cercanía y menos masificación."
+    tarifa_specific: true
+    tags: [ "small-group", "orcas-verano", "premium" ]
 
 # =============================================================================
 # Walking / hiking
@@ -224,41 +374,69 @@ walking:
   - name: "Faro de Camarinal"
     category: walking
     area: "salida desde Punta Paloma"
-    description: "Caminata 1h aprox. desde la playa de Punta Paloma hasta el faro. Vistas al estrecho. Mejor al atardecer."
+    description: "Caminata 1h aprox. desde la playa de Punta Paloma hasta el faro.
+      Vistas al estrecho. Mejor al atardecer."
     contact: ""
-    personal_note: "TODO — Enrique/Manuel"
-    tarifa_specific: true
-
-  - name: "TODO — más rutas"
-    category: walking
-    area: "TODO"
-    description: "TODO"
+    personal_note: "es una caminata muy bonita, con vistas al estrecho y al faro de
+      Camarinal. Es una caminata de 1 hora aprox. desde la playa de Punta Paloma
+      hasta el faro. Es una caminata muy bonita, con vistas al estrecho y al
+      faro de Camarinal. Es una caminata de 1 hora aprox. desde la playa de
+      Punta Paloma hasta el faro."
     tarifa_specific: true
 
 # =============================================================================
 # Nightlife
 # =============================================================================
 nightlife:
-  - name: "TODO — chiringuito recomendado para copas"
+  - name: "Waikiki"
     category: nightlife
     area: "Tarifa playa"
-    description: "TODO"
-    contact: ""
+    description: "Chiringuito muy chic cerca del centro de Tarifa con muy buen tardeo"
     personal_note: "TODO"
     tarifa_specific: true
-
-  - name: "TODO — bar de copas en el casco antiguo"
+  - name: "El Cateto"
     category: nightlife
     area: "Tarifa centro"
-    description: "TODO"
+    description: "El bar con las copas más baratas de Tarifa, y con un buen ambiente."
+    tarifa_specific: true
+  - name: "La Ruina"
+    category: nightlife
+    area: "Tarifa centro"
+    description: "Discoteca super bonita en una ruina antigua con un buen ambiente y
+      tremendo musicón, techno, house, electro."
+    tarifa_specific: true
+  - name: "Mombasa"
+    category: nightlife
+    area: "Tarifa centro"
+    description: "Discoteca espectacular en el centro de Tarifa con varias salas y
+      buen ambiente. Debes ir bien vestido para que te dejen pasar"
     tarifa_specific: true
 
 # =============================================================================
 # Family-friendly
 # =============================================================================
 family:
-  - name: "TODO — sitio kid-friendly"
+  - name: "Baelo Claudia + playa de Bolonia"
     category: family
-    area: "TODO"
-    description: "TODO"
+    area: "Bolonia (20 min en coche)"
+    description: "Plan muy fácil con peques: ruinas romanas visitables y justo al
+      lado playa amplia con duna. Se puede hacer en medio día sin prisas."
+    contact: "https://www.museosdeandalucia.es/web/conjuntoarqueologicobaeloclaudia\
+      /informacion-general | +34 956 106 793"
+    personal_note: "es de los planes más redondos en familia porque mezclas cultura
+      y playa en el mismo sitio. Además suele ser cómodo para carrito y entrada
+      gratuita."
+    tarifa_specific: false
+    tags: [ "familia-friendly", "playa", "historia", "medio-dia" ]
+
+  - name: "Avistamiento de cetáceos (barco grande)"
+    category: family
+    area: "Puerto de Tarifa"
+    description: "Excursión de 2h para ver delfines y, según temporada, otras
+      especies. En formato barco grande suele ser más estable para niños
+      pequeños."
+    contact: "https://www.firmm.org/es/excursiones | +34 956 627 008"
+    personal_note: "planazo para niños si no hay mucho oleaje. Mejor elegir barco
+      grande en vez de lancha rápida cuando van peques o abuelos."
     tarifa_specific: true
+    tags: [ "familia-friendly", "barco", "delfines", "2h" ]

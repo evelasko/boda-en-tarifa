@@ -135,7 +135,7 @@ npx ts-node functions/scripts/simulate-webhook.ts image \
 
 # Send a fake Flow submission
 npx ts-node functions/scripts/simulate-webhook.ts flow \
-  --phone +34612345678 --flow rsvp_full --payload @./test/fixtures/rsvp_es.json
+  --phone +34612345678 --flow song_request --payload @./test/fixtures/song_request_es.json
 ```
 
 The script POSTs to the local emulator endpoint with a valid HMAC signature using the dev `WHATSAPP_APP_SECRET`.

@@ -1,0 +1,52 @@
+# Wind tips
+#
+# Thora references these when wind is strong (Levante > 25 km/h or
+# Poniente > 30 km/h). Also surfaced by the `weather_morning_brief`
+# template (see bot/specs/05-message-templates.md).
+#
+# Target Firestore doc: config/wind_tips (single doc).
+# Synced by: bot/scripts/sync-kb.mjs.
+
+# ─────────────────────────────────────────────────
+# Levante (east wind, hot, dry, sandy)
+# ─────────────────────────────────────────────────
+levante_strong:
+  threshold_kmh: 25
+  tips_es:
+    - "Gorros o pañuelos si vais a playa — el moño no aguanta."
+    - "Gafas de sol obligatorias: la arena vuela."
+    - "Vestidos vaporosos en su salsa, pero los muy ligeros se levantan: peso o lleva clip."
+    - "El kite y windsurf están en su día grande — Valdevaqueros se llena."
+  tips_en:
+    - "Hat or scarf if you're going to the beach — buns don't survive."
+    - "Sunglasses mandatory: sand flies."
+    - "Flowy dresses look great but very light fabrics lift — weight them or use a clip."
+    - "Kite + windsurf will be at their best — Valdevaqueros gets busy."
+
+# ─────────────────────────────────────────────────
+# Poniente (west wind, cooler, can bring swells)
+# ─────────────────────────────────────────────────
+poniente_strong:
+  threshold_kmh: 30
+  tips_es:
+    - "Olas más grandes — ojo si nadáis con peques o si no sois nadadores fuertes."
+    - "Sensación más fresca: una rebeca ligera para la tarde no sobra."
+    - "Mejor día para playas del Atlántico (Bolonia, Los Lances) que para el Estrecho."
+  tips_en:
+    - "Bigger swells — be careful swimming with kids or as a non-strong swimmer."
+    - "Feels cooler: a light cardigan for the evening doesn't hurt."
+    - "Better day for Atlantic beaches (Bolonia, Los Lances) than the Strait side."
+
+# ─────────────────────────────────────────────────
+# Wind primer (always rendered into the KB, regardless of current strength)
+# ─────────────────────────────────────────────────
+primer_es: |
+  Tarifa vive del viento. Levante = este, caliente y arenoso. Poniente =
+  oeste, fresco y con olas. Las playas del norte (Valdevaqueros, Bolonia)
+  son las más expuestas; las del sur (Los Lances, Chica) están más
+  resguardadas con Levante.
+primer_en: |
+  Tarifa lives by the wind. Levante = east, hot and sandy. Poniente =
+  west, cool and wavy. Northern beaches (Valdevaqueros, Bolonia) are
+  the most exposed; southern beaches (Los Lances, Chica) are sheltered
+  during Levante.

@@ -33,7 +33,7 @@ The phone number to request a taxi in Tarifa is: 956 230 762.
 
 ### Ceremony
 
-Two buses will be waiting for the guests at the 100% Fun hotel parking (contiguous to Tres Mares), and they will depart at 5:30pm so guests should be there around 15 min earlier. It will take the guests to the chiringuito Carbones 13, which is located at the end of the urbanized area of Tarifa, by the beach.
+Two buses will be waiting for the guests at the 100% Fun hotel parking (contiguous to Tres Mares), and they will depart at 5:30pm so guests should be there around 15 min earlier. It will take the guests to the chiringuito Surfin' Tarifa, which is located at the end of the urbanized area of Tarifa, by the beach.
 
 Although the ceremony will be held over the sand, there will be 'rafia' carpets to reach the seats, however the grooms will come from the sea (this is actually a surprise that shoudl be revealed when guests arrive, so those wanting to greet the grooms can walk towards the shore, bear in mind Tarifa's beach is quite wide, meaning there is a little walk by the sand from the street to the shore and the ceremony seating will be installed closer to the street), Enrique will come kiteboarding and Manuel will come riding a waterski.
 

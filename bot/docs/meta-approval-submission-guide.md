@@ -1,6 +1,6 @@
 # Meta Approval Submission Guide — Templates & Flows
 
-> Operator-facing, end-to-end runbook for submitting the bot's **32 message templates** (16 logical × 2 languages) and **8 Flow versions** (4 logical × 2 languages) to Meta for approval, before Phase 3 implementation kicks off.
+> Operator-facing, end-to-end runbook for submitting the bot's **26 message templates** (13 logical × 2 languages) and **2 Flow versions** (1 logical × 2 languages) to Meta for approval, before Phase 3 implementation kicks off.
 >
 > **Owner**: Enrique (operator) · **Implementer assist**: provide Flow JSON files and verify rendering · **Target completion**: D−10 (so approvals are settled by D−7)
 >
@@ -11,9 +11,9 @@
 ## 0. TL;DR — what you're about to do
 
 1. **Prep assets** (image URLs, footer text, decisions table) — ~30 min
-2. **Publish Flows first** (F1, F3, F4, F6 × ES/EN) — ~90 min authoring + ≤30 min approval per Flow
-3. **Submit templates** (T1–T17 minus T5, both languages) — ~3h authoring + ≤24h approval per template
-4. **Link Flow buttons** to F1 (in T2) and F6 (in T11) once Flows are published
+2. **Publish Flows first** (F3 × ES/EN) — ~30–45 min authoring + ≤30 min approval per Flow
+3. **Submit templates** (T1, T3, T4, T6, T7, T8, T9, T10, T12, T13, T14, T17, T18 in both languages) — ~2.5h authoring + ≤24h approval per template
+4. **Link Flow button** to F3 (in T18) once Flows are published
 5. **Verify all show Approved** in WhatsApp Manager
 6. **Update `config/bot` Firestore doc** with the approved IDs / names
 7. **Smoke-test** each template by sending one to your own phone on the test number
@@ -26,7 +26,7 @@ If you are time-pressed and want to know the critical sequencing rule: **Flows m
 
 Meta's approval latency is non-deterministic. Templates usually clear in 1–24h; Flows usually clear in <30 min; rejections can happen on either. We submit at the end of Phase 2 so that during Phase 3 the implementer can wire up the live `metaName` strings and `metaFlowId` values into `bot/whatsapp/templates.ts` and `bot/whatsapp/flows.ts` without waiting on Meta.
 
-If a template is rejected, we have buffer to revise copy and resubmit. If we wait until the implementer is ready to wire them up, a rejection mid-Phase-3 could block the conversational pipeline tests on the rsvp / feedback Flow paths.
+If a template is rejected, we have buffer to revise copy and resubmit. If we wait until the implementer is ready to wire them up, a rejection mid-Phase-3 could block conversational pipeline tests on the song-request path.
 
 This guide is referenced from:
 
@@ -46,12 +46,12 @@ Confirm each line before opening WhatsApp Manager:
 - [x] **Meta App** created (`Thora al habla bot`) and linked to the WABA (setup §5).
 - [x] **System User token** (`WHATSAPP_ACCESS_TOKEN`) is set in Firebase secrets (setup §10). Not strictly needed for UI submission, but you'll need it for any API-based re-submission and for the implementer's `bot/whatsapp/*` modules.
 - [x] **Test recipient list** has at least Enrique's phone, Manuel's phone, and 1–2 friends (setup §12). Required to smoke-test approved templates before the prod onboarding broadcast.
-- [ ] **Header image** for T1 `welcome_onboarding` is uploaded and reachable at a stable HTTPS URL (default: `https://bodaentarifa.com/og/thora-welcome.jpg`). PNG or JPG, ≤5 MB, ideally ≥1080 px on the long edge. **Must already be live before submission — Meta downloads it during review.**
-- [ ] **Header image** for T6 `film_developed` is uploaded at `https://bodaentarifa.com/og/film-developed.jpg` (or final URL). Same constraints.
-- [ ] **Header image** for T8 `farewell_thanks` is uploaded at `https://bodaentarifa.com/og/farewell.jpg` (or final URL). Same constraints.
-- [ ] **Privacy policy URL** is live at `https://bodaentarifa.com/privacy-bot` (required by Meta for some Utility templates with personalized content; safer to have it up).
+- [x] **Header image** for T1 `welcome_onboarding` is uploaded and reachable at a stable HTTPS URL (default: `https://bodaentarifa.com/og/thora-welcome.jpg`). PNG or JPG, ≤5 MB, ideally ≥1080 px on the long edge. **Must already be live before submission — Meta downloads it during review.**
+- [x] **Header image** for T6 `film_developed` is uploaded at `https://bodaentarifa.com/og/film-developed.jpg` (or final URL). Same constraints.
+- [x] **Header image** for T8 `farewell_thanks` is uploaded at `https://bodaentarifa.com/og/farewell.jpg` (or final URL). Same constraints.
+- [x] **Privacy policy URL** is live at `https://bodaentarifa.com/privacy-bot` (required by Meta for some Utility templates with personalized content; safer to have it up).
 - [x] **Display name** ("Boda en Tarifa" / "Thora — Wedding Concierge" / whatever you chose) is showing **Approved** on the prod phone number.
-- [ ] You have the **Meta Flow Builder JSON files** in front of you — provided inline below in §6 and §7 for copy-paste.
+- [x] You have the **Meta Flow Builder JSON files** in front of you — provided inline below in §6 and §7 for copy-paste.
 
 If anything is missing, fix it first. Meta will reject media-header templates if the image URL 404s or returns the wrong content-type during their automated review.
 
@@ -61,7 +61,7 @@ If anything is missing, fix it first. Meta will reject media-header templates if
 
 ### 3.1 Header images
 
-Three templates use **media headers** (T1, T6, T8). Two more (`pitonisa_now`, `bus_pickup_last`) could optionally use a media header but the spec keeps them text-only — do **not** add headers there; it would force re-approval if changed.
+Three templates use **media headers** (T1, T6, T8). Do **not** add media headers to other templates; it would force re-approval if changed.
 
 For each media header, you need a **publicly accessible HTTPS URL** that:
 
@@ -74,9 +74,8 @@ Recommended pre-flight check from your terminal:
 
 ```bash
 for url in \
-  https://bodaentarifa.com/og/thora-welcome.jpg \
-  https://bodaentarifa.com/og/film-developed.jpg \
-  https://bodaentarifa.com/og/farewell.jpg; do
+  https://bodaentarifa.com/images/bot/thora-welcome.jpg \
+  https://bodaentarifa.com/images/bot/thora-farewell.jpg; do
   echo "$url"
   curl -sIL "$url" | grep -iE 'content-(type|length)|^http/'
   echo "---"
@@ -94,7 +93,7 @@ The cleanest path is to host the placeholder/final assets at their permanent URL
 
 ### 3.2 Footer text
 
-Per `05-message-templates.md` §3, every template footer is **`Thora al habla`** (same in ES and EN — it's Thora's signature, language-agnostic). Setup-guide.md §13 said "Boda en Tarifa" — **ignore that**, use `Thora al habla`. Lock the choice and use it consistently across all 32 submissions so the UX is uniform.
+Per `05-message-templates.md` §3, every template footer is **`Thora al habla`** (same in ES and EN — it's Thora's signature, language-agnostic). Setup-guide.md §13 said "Boda en Tarifa" — **ignore that**, use `Thora al habla`. Lock the choice and use it consistently across all 28 submissions so the UX is uniform.
 
 ### 3.3 Submission tracker
 
@@ -105,8 +104,8 @@ Logical | Lang | Meta name             | Submitted | Status   | Notes
 T1      | es   | welcome_onboarding_es | 2026-...  | Pending  |
 T1      | en   | welcome_onboarding_en | 2026-...  | Approved |
 ...
-F1      | es   | rsvp_full_es          | 2026-...  | Published|
-F1      | en   | rsvp_full_en          | 2026-...  | Published|
+F3      | es   | song_request_es       | 2026-...  | Published|
+F3      | en   | song_request_en       | 2026-...  | Published|
 ```
 
 You will refer back to this when populating `config/bot` in Firestore (§9).
@@ -115,16 +114,16 @@ You will refer back to this when populating `config/bot` in Firestore (§9).
 
 ## 4. Order of operations
 
-There is **one** dependency that constrains ordering: templates with Flow buttons (T2 `rsvp_reminder` and T11 `feedback_request`) reference `F1` and `F6` respectively. Those Flows **must be Published** before you can save those templates.
+There is **one** dependency that constrains ordering: template T18 `song_request_party_open` references `F3`. `F3` must be **Published** before you can save T18.
 
 Recommended order:
 
-1. **Day A — Flows** (~2h authoring, ~30 min approval each)
-   - Publish F1_es, F1_en, F3_es, F3_en, F4_es, F4_en, F6_es, F6_en. (8 versions)
+1. **Day A — Flows** (~45 min authoring, ~30 min approval each)
+   - Publish F3_es, F3_en. (2 versions)
 2. **Day A or B — Standalone templates** (no Flow dependency)
-   - Submit T1, T3, T4, T6, T7, T8, T9, T10, T12–T17 in both languages. (14 logical × 2 = 28 submissions)
-3. **Day B — Flow-dependent templates** (only after F1 and F6 show **Published**)
-   - Submit T2 (links F1) and T11 (links F6) in both languages. (4 submissions)
+   - Submit T1, T3, T4, T6, T7, T8, T9, T10, T12, T13, T14, T17 in both languages. (12 logical × 2 = 24 submissions)
+3. **Day B — Flow-dependent template** (only after F3 shows **Published**)
+   - Submit T18 (links F3) in both languages. (2 submissions)
 4. **Day B or C — Verify approvals + populate Firestore config** (§9)
 5. **Day C — Smoke test** (§10): send each approved template to your own phone via the test number; render visually on iOS + Android.
 
@@ -152,19 +151,16 @@ For each Flow or template, the rough lifecycle states you'll see:
 
 ## 6. Flow submission (do this first)
 
-You will publish **8 Flows** (4 logical × 2 languages). Each takes ~10 minutes to author + a Meta review of typically <30 minutes.
+You will publish **2 Flows** (1 logical × 2 languages). Each takes ~10 minutes to author + a Meta review of typically <30 minutes.
 
 ### 6.1 General procedure
 
 For each Flow:
 
 1. Flows page → **Create Flow** button (top right).
-2. **Name**: lowercase snake_case from the worksheet below (e.g., `rsvp_full_es`).
+2. **Name**: lowercase snake_case from the worksheet below (e.g., `song_request_es`).
 3. **Category**: pick the closest match — Meta uses this for triage, not gating.
-   - F1 `rsvp_full` → **SIGN_UP** (or **OTHER** if SIGN_UP feels too commercial-y)
    - F3 `song_request` → **OTHER**
-   - F4 `logistics_intake` → **OTHER**
-   - F6 `feedback` → **CUSTOMER_SUPPORT** (or **OTHER**)
 4. **Endpoint**: pick **No endpoint** (we use default data exchange via webhook; we do NOT host a Flow data endpoint per `06-whatsapp-flows.md` §2).
 5. Click **Create** — you land in the Flow Builder UI.
 6. In the Builder, switch to the **JSON** tab (top right of the editor canvas).
@@ -178,217 +174,9 @@ For each Flow:
 
 > ⚠️ **Once Published, a Flow is immutable for that version.** You can publish a new version (a new ID), but existing templates pointing at the old ID continue to work until you update them. For our use case (event in 9 days, no iteration after launch), publish-once-and-leave-it is the right model.
 
-### 6.2 F1 — `rsvp_full` (ES + EN)
+### 6.2 F1 — `rsvp_full` — **DROPPED**
 
-The Spanish JSON is the canonical one from `bot/specs/06-whatsapp-flows.md` §4. Paste it verbatim into the Builder for `rsvp_full_es`. For `rsvp_full_en`, paste the JSON below — same structure, English labels.
-
-**`rsvp_full_es`**: copy the JSON block in `bot/specs/06-whatsapp-flows.md` §4 (lines 75–331) verbatim.
-
-**`rsvp_full_en`** — paste exactly:
-
-```json
-{
-  "version": "6.0",
-  "screens": [
-    {
-      "id": "BASICS",
-      "title": "Your details",
-      "data": {},
-      "layout": {
-        "type": "SingleColumnLayout",
-        "children": [
-          { "type": "TextHeading", "text": "RSVP — Enrique & Manuel's wedding" },
-          { "type": "TextBody", "text": "Less than a minute. Let's go." },
-          {
-            "type": "Form",
-            "name": "form_basics",
-            "children": [
-              { "type": "TextInput", "label": "First name", "name": "first_name", "required": true, "input-type": "text", "max-length": 60 },
-              { "type": "TextInput", "label": "Last name",  "name": "last_name",  "required": false, "input-type": "text", "max-length": 80 },
-              {
-                "type": "RadioButtonsGroup",
-                "label": "Will you attend?",
-                "name": "attending",
-                "required": true,
-                "data-source": [
-                  { "id": "yes", "title": "Yes, I'll be there" },
-                  { "id": "no",  "title": "I can't make it" }
-                ]
-              },
-              {
-                "type": "Footer",
-                "label": "Next",
-                "on-click-action": {
-                  "name": "navigate",
-                  "next": { "type": "screen", "name": "EVENTS" },
-                  "payload": {
-                    "first_name": "${form.first_name}",
-                    "last_name":  "${form.last_name}",
-                    "attending":  "${form.attending}"
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "id": "EVENTS",
-      "title": "Which events?",
-      "data": {
-        "first_name": { "type": "string", "__example__": "Mary" },
-        "last_name":  { "type": "string", "__example__": "Smith" },
-        "attending":  { "type": "string", "__example__": "yes" }
-      },
-      "layout": {
-        "type": "SingleColumnLayout",
-        "children": [
-          { "type": "TextHeading", "text": "Which events will you attend?" },
-          { "type": "TextBody", "text": "Tick all that apply." },
-          {
-            "type": "Form",
-            "name": "form_events",
-            "children": [
-              {
-                "type": "CheckboxGroup",
-                "label": "Events",
-                "name": "events",
-                "required": true,
-                "data-source": [
-                  { "id": "pre_wedding", "title": "Pre-wedding drinks — Fri 29, 22:30 (Casa Explora)" },
-                  { "id": "ceremony",    "title": "Ceremony — Sat 30, 18:00" },
-                  { "id": "reception",   "title": "Reception & party — Sat 30, 20:00" },
-                  { "id": "brunch",      "title": "Farewell brunch — Sun 31, 11:30" }
-                ]
-              },
-              { "type": "TextInput", "label": "Plus-one?", "name": "plus_one_name", "required": false, "input-type": "text", "helper-text": "First and last name. Leave empty if none.", "max-length": 100 },
-              {
-                "type": "Footer",
-                "label": "Next",
-                "on-click-action": {
-                  "name": "navigate",
-                  "next": { "type": "screen", "name": "DIETARY" },
-                  "payload": {
-                    "first_name":    "${data.first_name}",
-                    "last_name":     "${data.last_name}",
-                    "attending":     "${data.attending}",
-                    "events":        "${form.events}",
-                    "plus_one_name": "${form.plus_one_name}"
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "id": "DIETARY",
-      "title": "Food",
-      "data": {
-        "first_name":    { "type": "string" },
-        "last_name":     { "type": "string" },
-        "attending":     { "type": "string" },
-        "events":        { "type": "array", "items": { "type": "string" } },
-        "plus_one_name": { "type": "string" }
-      },
-      "layout": {
-        "type": "SingleColumnLayout",
-        "children": [
-          { "type": "TextHeading", "text": "Dietary restrictions" },
-          {
-            "type": "Form",
-            "name": "form_dietary",
-            "children": [
-              {
-                "type": "CheckboxGroup",
-                "label": "Restrictions",
-                "name": "dietary",
-                "required": false,
-                "data-source": [
-                  { "id": "vegetarian",   "title": "Vegetarian" },
-                  { "id": "vegan",        "title": "Vegan" },
-                  { "id": "gluten_free",  "title": "Gluten-free" },
-                  { "id": "lactose_free", "title": "Lactose-free" },
-                  { "id": "no_pork",      "title": "No pork" },
-                  { "id": "no_alcohol",   "title": "No alcohol" },
-                  { "id": "other",        "title": "Other (specify below)" }
-                ]
-              },
-              { "type": "TextArea", "label": "Allergies or details", "name": "dietary_notes", "required": false, "helper-text": "Nuts, shellfish, etc. Free text.", "max-length": 400 },
-              {
-                "type": "Footer",
-                "label": "Review",
-                "on-click-action": {
-                  "name": "navigate",
-                  "next": { "type": "screen", "name": "CONFIRM" },
-                  "payload": {
-                    "first_name":    "${data.first_name}",
-                    "last_name":     "${data.last_name}",
-                    "attending":     "${data.attending}",
-                    "events":        "${data.events}",
-                    "plus_one_name": "${data.plus_one_name}",
-                    "dietary":       "${form.dietary}",
-                    "dietary_notes": "${form.dietary_notes}"
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "id": "CONFIRM",
-      "title": "Confirm",
-      "terminal": true,
-      "data": {
-        "first_name":    { "type": "string" },
-        "last_name":     { "type": "string" },
-        "attending":     { "type": "string" },
-        "events":        { "type": "array", "items": { "type": "string" } },
-        "plus_one_name": { "type": "string" },
-        "dietary":       { "type": "array", "items": { "type": "string" } },
-        "dietary_notes": { "type": "string" }
-      },
-      "layout": {
-        "type": "SingleColumnLayout",
-        "children": [
-          { "type": "TextHeading", "text": "Almost there" },
-          { "type": "TextBody", "text": "Review and submit." },
-          { "type": "TextSubheading", "text": "Summary" },
-          { "type": "TextBody", "text": "*${data.first_name} ${data.last_name}* — ${data.attending}" },
-          {
-            "type": "Form",
-            "name": "form_confirm",
-            "children": [
-              { "type": "TextArea", "label": "Message for Enrique and Manuel (optional)", "name": "message", "required": false, "max-length": 500 },
-              {
-                "type": "Footer",
-                "label": "Submit",
-                "on-click-action": {
-                  "name": "complete",
-                  "payload": {
-                    "first_name":    "${data.first_name}",
-                    "last_name":     "${data.last_name}",
-                    "attending":     "${data.attending}",
-                    "events":        "${data.events}",
-                    "plus_one_name": "${data.plus_one_name}",
-                    "dietary":       "${data.dietary}",
-                    "dietary_notes": "${data.dietary_notes}",
-                    "message":       "${form.message}"
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    }
-  ]
-}
-```
+Flow removed from active scope. Do not publish.
 
 ### 6.3 F3 — `song_request` (ES + EN)
 
@@ -447,192 +235,13 @@ The Spanish JSON is the canonical one from `bot/specs/06-whatsapp-flows.md` §4.
 }
 ```
 
-### 6.4 F4 — `logistics_intake` (ES + EN)
+### 6.4 F4 — `logistics_intake` — **DROPPED**
 
-**`logistics_intake_es`**: copy from `bot/specs/06-whatsapp-flows.md` §4 F4 (lines 508–616).
+Flow removed from active scope. Do not publish.
 
-**`logistics_intake_en`** — paste:
+### 6.5 F6 — `feedback` — **DROPPED**
 
-```json
-{
-  "version": "6.0",
-  "screens": [
-    {
-      "id": "ARRIVAL",
-      "title": "Your arrival",
-      "data": {},
-      "layout": {
-        "type": "SingleColumnLayout",
-        "children": [
-          { "type": "TextHeading", "text": "Logistics" },
-          { "type": "TextBody", "text": "So we can coordinate transport and lodging." },
-          {
-            "type": "Form",
-            "name": "form_arrival",
-            "children": [
-              { "type": "DatePicker", "label": "Arrival date", "name": "arrival_date", "required": true, "min-date": "2026-05-27", "max-date": "2026-05-31" },
-              {
-                "type": "Dropdown",
-                "label": "Airport",
-                "name": "arrival_airport",
-                "required": false,
-                "data-source": [
-                  { "id": "AGP",   "title": "Málaga (AGP)" },
-                  { "id": "GIB",   "title": "Gibraltar (GIB)" },
-                  { "id": "JTR",   "title": "Jerez (JTR)" },
-                  { "id": "OTHER", "title": "Other or driving" }
-                ]
-              },
-              {
-                "type": "RadioButtonsGroup",
-                "label": "Need coordinated transport?",
-                "name": "needs_transport",
-                "required": true,
-                "data-source": [
-                  { "id": "yes", "title": "Yes, please" },
-                  { "id": "no",  "title": "No, I'm sorted" }
-                ]
-              },
-              {
-                "type": "Footer",
-                "label": "Next",
-                "on-click-action": {
-                  "name": "navigate",
-                  "next": { "type": "screen", "name": "ACCESS" },
-                  "payload": {
-                    "arrival_date":    "${form.arrival_date}",
-                    "arrival_airport": "${form.arrival_airport}",
-                    "needs_transport": "${form.needs_transport}"
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "id": "ACCESS",
-      "title": "Accessibility",
-      "terminal": true,
-      "data": {
-        "arrival_date":    { "type": "string" },
-        "arrival_airport": { "type": "string" },
-        "needs_transport": { "type": "string" }
-      },
-      "layout": {
-        "type": "SingleColumnLayout",
-        "children": [
-          { "type": "TextHeading", "text": "Anything else?" },
-          {
-            "type": "Form",
-            "name": "form_access",
-            "children": [
-              { "type": "TextArea", "label": "Accessibility needs or details", "name": "accessibility_notes", "required": false, "max-length": 400 },
-              {
-                "type": "Footer",
-                "label": "Submit",
-                "on-click-action": {
-                  "name": "complete",
-                  "payload": {
-                    "arrival_date":        "${data.arrival_date}",
-                    "arrival_airport":     "${data.arrival_airport}",
-                    "needs_transport":     "${data.needs_transport}",
-                    "accessibility_notes": "${form.accessibility_notes}"
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    }
-  ]
-}
-```
-
-### 6.5 F6 — `feedback` (ES + EN)
-
-**`feedback_es`**: copy from `bot/specs/06-whatsapp-flows.md` §4 F6 (lines 638–719).
-
-**`feedback_en`** — paste:
-
-```json
-{
-  "version": "6.0",
-  "screens": [
-    {
-      "id": "RATING",
-      "title": "How was it?",
-      "data": {},
-      "layout": {
-        "type": "SingleColumnLayout",
-        "children": [
-          { "type": "TextHeading", "text": "Quick feedback" },
-          { "type": "TextBody", "text": "30 seconds. Anonymous if you'd like." },
-          {
-            "type": "Form",
-            "name": "form_rating",
-            "children": [
-              {
-                "type": "RadioButtonsGroup",
-                "label": "Your rating",
-                "name": "rating",
-                "required": true,
-                "data-source": [
-                  { "id": "5", "title": "🌟🌟🌟🌟🌟 Brilliant" },
-                  { "id": "4", "title": "🌟🌟🌟🌟 Very good" },
-                  { "id": "3", "title": "🌟🌟🌟 Okay" },
-                  { "id": "2", "title": "🌟🌟 Could be better" },
-                  { "id": "1", "title": "🌟 Bad" }
-                ]
-              },
-              {
-                "type": "Footer",
-                "label": "Next",
-                "on-click-action": {
-                  "name": "navigate",
-                  "next": { "type": "screen", "name": "TEXT" },
-                  "payload": { "rating": "${form.rating}" }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "id": "TEXT",
-      "title": "Anything to share?",
-      "terminal": true,
-      "data": { "rating": { "type": "string" } },
-      "layout": {
-        "type": "SingleColumnLayout",
-        "children": [
-          {
-            "type": "Form",
-            "name": "form_text",
-            "children": [
-              { "type": "TextArea", "label": "Comments (optional)", "name": "text", "required": false, "max-length": 1000 },
-              {
-                "type": "Footer",
-                "label": "Submit",
-                "on-click-action": {
-                  "name": "complete",
-                  "payload": {
-                    "rating": "${data.rating}",
-                    "text":   "${form.text}"
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    }
-  ]
-}
-```
+Flow removed from active scope. Do not publish.
 
 ### 6.6 Common Flow rejection causes
 
@@ -652,7 +261,7 @@ After fixing, re-validate and re-publish. Meta does not retain a rejection backl
 
 ## 7. Template submission
 
-After all 8 Flow versions are **Published** (or for templates that don't reference Flows, anytime), proceed.
+After both Flow versions (`song_request_es` / `_en`) are **Published** (or for templates that don't reference Flows, anytime), proceed.
 
 ### 7.1 General procedure
 
@@ -669,7 +278,7 @@ For each template:
 8. **Buttons**: per the worksheet in §7.3.
    - For **quick-reply** buttons: type the exact label (max 25 chars, emoji counts as 2 chars in Meta's UI counter — adjust if rejected).
    - For **URL** buttons: choose `Dynamic` if there is a `{{n}}` variable in the URL; otherwise `Static`. Provide a sample URL value for review.
-   - For **Flow** buttons: choose `Flow`, then select the published Flow from the dropdown (will only show after §6 completes). Provide the **Flow CTA label** and an optional flow_token sample (e.g., `rsvp_full|+34600000000|sample`).
+   - For **Flow** buttons: choose `Flow`, then select the published Flow from the dropdown (will only show after §6 completes). Provide the **Flow CTA label** and an optional flow_token sample (e.g., `song_request|+34600000000|sample`).
 9. **Submit for Review**.
 10. State will be `In Review` (~1–24 h). Refresh and check.
 
@@ -699,7 +308,7 @@ Suggested sample values:
 
 For full body copy, refer to `bot/specs/05-message-templates.md` §3 (verbatim). The worksheet below captures the **operational** decisions per submission.
 
-> Order in this section matches Flow-dependency: T1 and T3–T17 (except T5) first, then T2 and T11 last.
+> Order in this section matches Flow-dependency: submit all non-Flow templates first, then T18.
 
 #### T1 — `welcome_onboarding`
 
@@ -715,17 +324,6 @@ For full body copy, refer to `bot/specs/05-message-templates.md` §3 (verbatim).
 | Button 3 (quick reply) | `🐾 Qué tal, Thora` | `🐾 Hi Thora` |
 
 ⚠️ **Quick-reply button length**: WhatsApp's UI counter treats emoji as ≥2 chars. If `🐾 Qué tal, Thora` is rejected for length, drop the comma → `🐾 Qué tal Thora` (or `🐾 Hola Thora`).
-
-#### T2 — `rsvp_reminder` *(submit AFTER F1 is Published)*
-
-| Field | ES | EN |
-|---|---|---|
-| Header | None | None |
-| Body | from spec T2 ES | from spec T2 EN |
-| Body sample for `{{1}}` | `María` | `Sarah` |
-| Footer | `Thora al habla` | `Thora al habla` |
-| Button 1 (Flow) | Label `Confirmar` → Flow `rsvp_full_es` | Label `RSVP now` → Flow `rsvp_full_en` |
-| Button 2 (quick reply) | `Más tarde` | `Later` |
 
 #### T3 — `event_reminder_30min`
 
@@ -805,16 +403,6 @@ Per `05-message-templates.md` §3 T5. Skip entirely.
 | Footer | `Thora al habla` | `Thora al habla` |
 | Buttons | None | None |
 
-#### T11 — `feedback_request` *(submit AFTER F6 is Published)*
-
-| Field | ES | EN |
-|---|---|---|
-| Header | None | None |
-| Body | from spec T11 ES | from spec T11 EN |
-| Body sample for `{{1}}` | `María` | `Sarah` |
-| Footer | `Thora al habla` | `Thora al habla` |
-| Button (Flow) | `Dar feedback` → Flow `feedback_es` | `Give feedback` → Flow `feedback_en` |
-
 #### T12 — `bus_pickup_early`
 
 | Field | ES | EN |
@@ -845,26 +433,6 @@ Per `05-message-templates.md` §3 T5. Skip entirely.
 | Footer | `Thora al habla` | `Thora al habla` |
 | Buttons | None | None |
 
-#### T15 — `amenities_cocktail`
-
-| Field | ES | EN |
-|---|---|---|
-| Header | None | None |
-| Body | from spec T15 ES | from spec T15 EN |
-| Variables | none | none |
-| Footer | `Thora al habla` | `Thora al habla` |
-| Buttons | None | None |
-
-#### T16 — `pitonisa_now`
-
-| Field | ES | EN |
-|---|---|---|
-| Header | None | None |
-| Body | from spec T16 ES | from spec T16 EN |
-| Variables | none | none |
-| Footer | `Thora al habla` | `Thora al habla` |
-| Buttons | None | None |
-
 #### T17 — `arrival_day_nudge`
 
 | Field | ES | EN |
@@ -874,6 +442,16 @@ Per `05-message-templates.md` §3 T5. Skip entirely.
 | Body sample for `{{1}}` | `María` | `Sarah` |
 | Footer | `Thora al habla` | `Thora al habla` |
 | Buttons | None | None |
+
+#### T18 — `song_request_party_open` *(submit AFTER F3 is Published)*
+
+| Field | ES | EN |
+|---|---|---|
+| Header | None | None |
+| Body | from spec T18 ES | from spec T18 EN |
+| Variables | none | none |
+| Footer | `Thora al habla` | `Thora al habla` |
+| Button (Flow) | `Pedir canción` → Flow `song_request_es` | `Request song` → Flow `song_request_en` |
 
 ### 7.4 Common template rejection causes
 
@@ -928,7 +506,6 @@ Schema (per `bot/specs/04-data-model.md`):
   "templates": {
     "activeNames": [
       "welcome_onboarding_es", "welcome_onboarding_en",
-      "rsvp_reminder_es", "rsvp_reminder_en",
       "event_reminder_30min_es", "event_reminder_30min_en",
       "seating_unlock_es", "seating_unlock_en",
       "film_developed_es", "film_developed_en",
@@ -936,13 +513,11 @@ Schema (per `bot/specs/04-data-model.md`):
       "farewell_thanks_es", "farewell_thanks_en",
       "manual_announcement_es", "manual_announcement_en",
       "escalation_followup_es", "escalation_followup_en",
-      "feedback_request_es", "feedback_request_en",
       "bus_pickup_early_es", "bus_pickup_early_en",
       "bus_pickup_last_es", "bus_pickup_last_en",
       "pre_wedding_drinks_es", "pre_wedding_drinks_en",
-      "amenities_cocktail_es", "amenities_cocktail_en",
-      "pitonisa_now_es", "pitonisa_now_en",
-      "arrival_day_nudge_es", "arrival_day_nudge_en"
+      "arrival_day_nudge_es", "arrival_day_nudge_en",
+      "song_request_party_open_es", "song_request_party_open_en"
     ]
   }
 }
@@ -963,14 +538,8 @@ Map logical Flow names to Meta Flow IDs (numeric strings). You'll have collected
 {
   "flows": {
     "activeIds": {
-      "rsvp_full_es":         "<META_ID>",
-      "rsvp_full_en":         "<META_ID>",
       "song_request_es":      "<META_ID>",
-      "song_request_en":      "<META_ID>",
-      "logistics_intake_es":  "<META_ID>",
-      "logistics_intake_en":  "<META_ID>",
-      "feedback_es":          "<META_ID>",
-      "feedback_en":          "<META_ID>"
+      "song_request_en":      "<META_ID>"
     }
   }
 }
@@ -1027,7 +596,7 @@ For each smoke test, check on both iOS and Android:
 - Buttons render in the right order, labels not truncated.
 - Quick-reply buttons, when tapped, send back the label as an inbound message (you'll see it in your webhook logs once Phase 3 wires the conversation handler).
 - URL buttons, when tapped, open the expected page.
-- Flow buttons (T2, T11), when tapped, open the Flow screens. Walk through to terminal screen. Submission lands as an inbound `nfm_reply` (will be parsed in Phase 3).
+- Flow buttons (T18), when tapped, open the Flow screens. Walk through to terminal screen. Submission lands as an inbound `nfm_reply` (will be parsed in Phase 3).
 
 If anything renders wrong, that's a template content bug — re-author the duplicate and resubmit.
 
@@ -1037,8 +606,8 @@ If anything renders wrong, that's a template content bug — re-author the dupli
 
 Phase 3 implementation can begin once all of the following are true:
 
-- [ ] 8 Flow versions show **Published** in WhatsApp Manager.
-- [ ] 32 templates show **Approved** in WhatsApp Manager.
+- [ ] 2 Flow versions show **Published** in WhatsApp Manager.
+- [ ] 26 templates show **Approved** in WhatsApp Manager.
 - [ ] Each template smoke-tested on both iOS and Android — rendering verified.
 - [ ] `config/bot.templates.activeNames` populated in Firestore.
 - [ ] `config/bot.flows.activeIds` populated in Firestore.
@@ -1073,11 +642,11 @@ If something goes wrong, find the row and follow the action.
 
 ## 13. Quick reference — total surface
 
-- **32 templates to submit**: 16 logical (T1, T2, T3, T4, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17 — T5 dropped) × ES + EN.
-- **8 Flow versions to publish**: 4 logical (F1, F3, F4, F6 — F2 and F5 dropped) × ES + EN.
+- **26 templates to submit**: 13 logical (T1, T3, T4, T6, T7, T8, T9, T10, T12, T13, T14, T17, T18 — T2/T5/T11/T15/T16 dropped) × ES + EN.
+- **2 Flow versions to publish**: 1 logical (F3 — F1/F2/F4/F5/F6 dropped) × ES + EN.
 - **3 media-header assets** to host before submission: thora-welcome.jpg, film-developed.jpg, farewell.jpg.
 - **2 Firestore config keys** to populate post-approval: `config/bot.templates.activeNames`, `config/bot.flows.activeIds`.
-- **Critical sequencing rule**: Flows F1 and F6 must be **Published** before templates T2 and T11 can be submitted.
+- **Critical sequencing rule**: Flow F3 must be **Published** before template T18 can be submitted.
 - **Approval ETA**: Flows <30 min · Templates 1–24 h · plan 4 days end-to-end for resubmissions.
 
 When in doubt, the canonical references are:
