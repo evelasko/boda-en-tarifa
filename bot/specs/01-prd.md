@@ -217,7 +217,7 @@ Tracked in admin dashboard "Bot" page; values measured at end of weekend.
 
 - Existing Firebase project (`functions/`, `firebase/`).
 - Existing Firestore collections: `guests`, `rsvp_responses`, `seating`, `feed_posts`, `notices`, `time_gated_content`, `config/*`.
-- Existing scheduled functions: `sendEventReminder`, `sendContentUnlockNotification`, `triggerFilmDevelopment`, `generateMagicLink`, `onUserCreate`.
+- Existing scheduled functions (extended for WhatsApp): `sendEventReminder`, `sendContentUnlockNotification`, `triggerFilmDevelopment`. Guest-auth Cloud Functions (`generateMagicLink`, `onUserCreate`, `cleanupExpiredMagicLinks`) retired — see `08-integration-contract.md` §4.1.
 - Existing web admin (Next.js, `web/`). Will be extended with a "Bot" section.
 - Anthropic API account with access to Sonnet 4.6 + Haiku 4.5.
 - Meta Business Manager account + WABA + verified phone number.

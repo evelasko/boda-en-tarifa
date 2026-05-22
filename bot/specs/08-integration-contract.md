@@ -351,15 +351,25 @@ All in `functions/src/bot/scheduled/`. Cron expressions in Europe/Madrid.
 
 ## 4. Existing functions — extensions
 
-The bot reuses three existing scheduled functions instead of replacing them. The web project owns the originals; the bot owns the WhatsApp dispatch path.
+The bot reuses three existing **Gen2** scheduled functions instead of replacing them. The web project owns the originals; the bot owns the WhatsApp dispatch path.
 
 | Existing | Bot extension |
 |---|---|
 | `sendEventReminder` | Renamed to `botEventReminderTick`; adds WhatsApp template send. The original FCM push path is removed (no app to push to). |
 | `sendContentUnlockNotification` | Renamed to `botContentUnlockTick`; adds WhatsApp send. |
 | `triggerFilmDevelopment` | Adds the `film_developed` template send + flips `config/album.public`. |
-| `generateMagicLink` | Unchanged — remains used by the web RSVP flow. |
-| `onUserCreate` | Unchanged. New guests created via `botAddToAllowlist` get `botEnrolled: true`. |
+
+### 4.1 Retired guest-auth Cloud Functions (2026-05)
+
+The following were **removed** from `functions/src/index.ts` because guest access is **WhatsApp-only** (phone allowlist on `guests/{id}`, see `functions/src/bot/allowlist.ts`). They are not required for Thora or for event-optimization deploys (Gen2 `minInstances` / CPU on `whatsappWebhook`).
+
+| Removed | Former role | Replacement |
+|---|---|---|
+| `onUserCreate` | Firebase Auth `onCreate` → custom claims + `profileClaimed` | Not used by bot. Optional legacy app auth only. |
+| `generateMagicLink` | Callable minting magic-link tokens | Web admin: `POST /api/admin/guests/{uid}/magic-link` (Next.js Admin SDK). Bulk: `scripts/generate-magic-links.ts`. |
+| `cleanupExpiredMagicLinks` | Scheduled cleanup of unauthorized Auth users | Drop with guest Auth; no bot dependency. |
+
+**Guest allowlist for the bot:** `guests` document exists with E.164 `phone` and `botEnrolled !== false`. Operators add phones via **`botAddToAllowlist`** (callable, §3.2) or Firestore admin / import — not via Auth triggers.
 
 ## 5. Web admin extensions (Next.js)
 
