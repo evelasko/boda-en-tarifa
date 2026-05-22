@@ -56,7 +56,7 @@ File: `bot/specs/guest-dossier-schema.md`. Per-guest entries written as YAML / J
 
 | # | Task | Done |
 |---|---|---|
-| 1.2.1 | **Compile candidate list** from `guests.json` — filter to ~30 most-photographed. Save list to `bot/specs/guest-dossier-targets.md`. | ☐ |
+| 1.2.1 | **Compile candidate list** from `guests.json` — filter to ~30 most-photographed. Save list to `bot/specs/guest-dossier-targets.md`. | ☑ |
 | 1.2.2 | **Collect 1–3 reference photos** per guest. Frontal, well-lit, recent. No sunglasses, no extreme angles. | ☐ |
 | 1.2.3 | **Upload reference photos** to Cloudinary `bot/reference/{guestId}-{n}.jpg` (signed URLs). | ☐ |
 | 1.2.4 | **Fill the schema** per guest: `name`, `preferred_name`, `recognizable_for`, `relationship`, `hometown`, `safe_facts`, **`safe_jokes`** (pre-authorized roast material — ceiling is "mild roast", NOT risqué), `do_not_mention`, `recognition_confidence_floor` (default 0.75; bump to 0.85 for siblings or elderly relatives). | ☐ |
@@ -70,16 +70,16 @@ File: `bot/specs/tarifa-guide.yaml`. Each category has 1–6 items with `name`, 
 
 | # | Category | Items | Personal notes? | Done |
 |---|---|---|---|---|
-| 1.3.1 | **Beaches** (Valdevaqueros, Bolonia, Los Lances, Punta Paloma already scaffolded — add personal notes) | 4–6 | Yes per beach | ☐ |
-| 1.3.2 | **Restaurants** (paella, fish, tapas, breakfast, cocktail, chiringuito, splurge, vegetarian-friendly, family-friendly) | 6–10 | At least 1 per restaurant | ☐ |
-| 1.3.3 | **Kite & wind** — your school recommendation + instructor name (with their consent for personal-intro mode) | 2–3 | Mandatory for personal-intro | ☐ |
-| 1.3.4 | **Water** — scuba, paddle/SUP, surf | 3–5 | Optional | ☐ |
-| 1.3.5 | **Sightseeing** — castillo + mirador + Baelo Claudia + casco antiguo scaffolded — add personal notes | 4–6 | Yes | ☐ |
-| 1.3.6 | **Day trips** — Tánger, Vejer, Cádiz, Gibraltar scaffolded — add personal notes | 4–5 | Yes | ☐ |
-| 1.3.7 | **Whale watching** — pick operator (FIRMM is a common choice) | 1–2 | Yes | ☐ |
-| 1.3.8 | **Walking** — Faro de Camarinal scaffolded + add 1–2 more | 2–4 | Yes | ☐ |
-| 1.3.9 | **Nightlife** — chiringuitos / bars in town | 3–5 | Yes | ☐ |
-| 1.3.10 | **Family-friendly** — kid-friendly activities for guests with children | 2–4 | Optional | ☐ |
+| 1.3.1 | **Beaches** (Valdevaqueros, Bolonia, Los Lances, Punta Paloma already scaffolded — add personal notes) | 4–6 | Yes per beach | ☑ |
+| 1.3.2 | **Restaurants** (paella, fish, tapas, breakfast, cocktail, chiringuito, splurge, vegetarian-friendly, family-friendly) | 6–10 | At least 1 per restaurant | ☑ |
+| 1.3.3 | **Kite & wind** — your school recommendation + instructor name (with their consent for personal-intro mode) | 2–3 | Mandatory for personal-intro | ☑ |
+| 1.3.4 | **Water** — scuba, paddle/SUP, surf | 3–5 | Optional | ☑ |
+| 1.3.5 | **Sightseeing** — castillo + mirador + Baelo Claudia + casco antiguo scaffolded — add personal notes | 4–6 | Yes | ☑ |
+| 1.3.6 | **Day trips** — Tánger, Vejer, Cádiz, Gibraltar scaffolded — add personal notes | 4–5 | Yes | ☑ |
+| 1.3.7 | **Whale watching** — pick operator (FIRMM is a common choice) | 1–2 | Yes | ☑ |
+| 1.3.8 | **Walking** — Faro de Camarinal scaffolded + add 1–2 more | 2–4 | Yes | ☑ |
+| 1.3.9 | **Nightlife** — chiringuitos / bars in town | 3–5 | Yes | ☑ |
+| 1.3.10 | **Family-friendly** — kid-friendly activities for guests with children | 2–4 | Optional | ☑ |
 
 ### 1.4 Moderation hints for song requests
 
@@ -87,10 +87,10 @@ File: write directly to Firestore at `config/bot.moderation_hints` (or seed-scri
 
 | # | Task | Done |
 |---|---|---|
-| 1.4.1 | **Blocked artists** — list any artists you don't want at the wedding under any circumstance. | ☐ |
-| 1.4.2 | **Blocked songs** — specific songs to exclude (e.g., over-played wedding clichés, ex-related). | ☐ |
-| 1.4.3 | **Blocked themes** — free-form descriptions ("no religious processionals", "no songs about breakups"). | ☐ |
-| 1.4.4 | **Operator note** — short note Thora can reference when delegating ("Mis humanos están saturados de esa canción 🐾"). | ☐ |
+| 1.4.1 | **Blocked artists** — list any artists you don't want at the wedding under any circumstance. | ☑ |
+| 1.4.2 | **Blocked songs** — specific songs to exclude (e.g., over-played wedding clichés, ex-related). | ☑ |
+| 1.4.3 | **Blocked themes** — free-form descriptions ("no religious processionals", "no songs about breakups"). | ☑ |
+| 1.4.4 | **Operator note** — short note Thora can reference when delegating ("Mis humanos están saturados de esa canción 🐾"). | ☑ |
 
 ### 1.5 Event-data corrections in Firestore
 
@@ -139,9 +139,9 @@ File: `config/wind_tips` in Firestore. Used by `weather_morning_brief` template 
 
 | # | Template | Asset needed | Hosted at | Done |
 |---|---|---|---|---|
-| 1.9.1 | T1 `welcome_onboarding` | Photo of Thora (warm, slightly playful, wedding-context). | `https://bodaentarifa.com/og/thora-welcome.jpg` | ☐ |
+| 1.9.1 | T1 `welcome_onboarding` | Photo of Thora (warm, slightly playful, wedding-context). | `https://bodaentarifa.com/og/thora-welcome.jpg` | ☑ |
 | 1.9.2 | T6 `film_developed` | Retro-film aesthetic photo, ideally featuring Thora. | `https://bodaentarifa.com/og/film-developed.jpg` | ☐ |
-| 1.9.3 | T8 `farewell_thanks` | Sunset photo with Thora in frame (or group photo if you have one in time). | `https://bodaentarifa.com/og/farewell.jpg` | ☐ |
+| 1.9.3 | T8 `farewell_thanks` | Sunset photo with Thora in frame (or group photo if you have one in time). | `https://bodaentarifa.com/og/farewell.jpg` | ☑ |
 
 ### 1.10 FAQ seed entries
 
@@ -149,21 +149,21 @@ File: `faq/*` Firestore collection (created during Phase 2 — see `07-knowledge
 
 | # | Suggested FAQ topics to seed (write Q + A in ES + EN) | Done |
 |---|---|---|
-| 1.10.1 | Parking at each venue | ☐ |
-| 1.10.2 | Dress codes per event | ☐ |
-| 1.10.3 | Kids welcome? | ☐ |
-| 1.10.4 | Pets welcome? (Tarifa is dog-friendly — note Thora's presence) | ☐ |
-| 1.10.5 | Gifts / wedding list | ☐ |
-| 1.10.6 | Photo policy (consent already on web) | ☐ |
-| 1.10.7 | Late arrival to ceremony | ☐ |
-| 1.10.8 | Plus-one questions | ☐ |
-| 1.10.9 | Vegan / gluten-free options | ☐ |
-| 1.10.10 | Casa Explora dinner reservation note (mentioned in the design session as FAQ-only) | ☐ |
-| 1.10.11 | Hotel transfers between Tres Mares / Copacabana / Dulce Nombre | ☐ |
-| 1.10.12 | Wedding hashtag (if any) | ☐ |
-| 1.10.13 | Languages spoken at the wedding | ☐ |
-| 1.10.14 | What to do if you get sick / first aid | ☐ |
-| 1.10.15 | Sand / shoes for ceremony | ☐ |
+| 1.10.1 | Parking at each venue | ☑ |
+| 1.10.2 | Dress codes per event | ☑ |
+| 1.10.3 | Kids welcome? | ☑ |
+| 1.10.4 | Pets welcome? (Tarifa is dog-friendly — note Thora's presence) | ☑ |
+| 1.10.5 | Gifts / wedding list | ☑ |
+| 1.10.6 | Photo policy (consent already on web) | ☑ |
+| 1.10.7 | Late arrival to ceremony | ☑ |
+| 1.10.8 | Plus-one questions | ☑ |
+| 1.10.9 | Vegan / gluten-free options | ☑ |
+| 1.10.10 | Casa Explora dinner reservation note (mentioned in the design session as FAQ-only) | ☑ |
+| 1.10.11 | Hotel transfers between Tres Mares / Copacabana / Dulce Nombre | ☑ |
+| 1.10.12 | Wedding hashtag (if any) | ☑ |
+| 1.10.13 | Languages spoken at the wedding | ☑ |
+| 1.10.14 | What to do if you get sick / first aid | ☑ |
+| 1.10.15 | Sand / shoes for ceremony | ☑ |
 
 ---
 

@@ -12,9 +12,11 @@ Conventions:
 
 ## 1. Existing collections (extended)
 
-### `guests/{phoneNumber}`
+### `guests/{guestId}`
 
-Document ID is the E.164 phone number. The bot extends this existing collection with a few fields. Existing fields used by the bot are noted but not redefined.
+**Document ID is the Firebase Auth UID** (legacy from pre-bot web auth — the bot does NOT rekey this collection). Phone is a field, `phoneE164`. The bot reaches a guest via `where('phoneE164', '==', phone).limit(1)`. Bot-extension fields are added lazily on first interaction.
+
+The `{guestId}` doc ID also serves as the canonical key for `guest_dossier/{guestId}` and for the local folder name `bot/data/guest-dossiers/{guestId}/`.
 
 ```ts
 interface Guest {
@@ -23,7 +25,7 @@ interface Guest {
   firstName: string;
   lastName?: string;
   email?: string;
-  phone: string;               // E.164, mirror of doc ID
+  phoneE164: string;           // E.164; primary lookup key for the bot
   language?: 'es' | 'en';      // existing — extended use by bot
   invitedTo: string[];         // event IDs
   rsvpStatus: 'pending' | 'attending' | 'declined' | 'partial';
@@ -331,9 +333,29 @@ interface BotOutboundPending {
 }
 ```
 
+### `config/bot_kb_extras` (single doc)
+
+KB-contributing slices carved out of `config/bot` so operational toggle writes do not bump `bot_kb_version`. Source-of-truth lives at `bot/data/bot-kb-extras.yaml`; pushed to Firestore by `bot/scripts/sync-kb.mjs`.
+
+```ts
+interface ConfigBotKbExtras {
+  moderation_hints: {
+    hard_avoid?: {
+      artists?: string[];
+      songs?: { title: string; artist?: string }[];
+    };
+    mild_tease?: {
+      themes?: string[];
+    };
+    framing_note?: string;   // operator note rendered into Block B
+  };
+  // future KB-contributing slices land here
+}
+```
+
 ### `config/bot` (single doc, in existing `config` collection)
 
-Bot-specific operational config, hot-tunable from admin dashboard.
+Bot-specific operational config, hot-tunable from admin dashboard. **Does NOT include KB content** — moderation hints moved to `config/bot_kb_extras` (see above).
 
 ```ts
 interface ConfigBot {

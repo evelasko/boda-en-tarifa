@@ -1,0 +1,71 @@
+# Travel & logistics
+#
+# Bus pickup, airport notes, taxi number, parking notes. Rendered into
+# KB §3 "Travel & logistics" section.
+#
+# Target Firestore doc: config/travel (single doc).
+# Synced by: bot/scripts/sync-kb.mjs.
+
+# ─────────────────────────────────────────────────
+# Bus pickup (ceremony day — Sat May 30)
+# ─────────────────────────────────────────────────
+bus:
+  pickup_venue_id: "100_fun"
+  pickup_label_es: "Parking de 100% Fun"
+  pickup_label_en: "100% Fun parking lot"
+  departure_time_local: "17:30"
+  arrive_by_local: "17:15"
+  date_iso: "2026-05-30"
+  notes_es: >
+    El bus sale a las 17:30 desde el parking de 100% Fun rumbo a Carbones 13.
+    Llegad a las 17:15 — si no estás antes de la hora de salida, el bus se va
+    sin ti (la ceremonia tiene horario).
+  notes_en: >
+    The bus departs at 17:30 from the 100% Fun parking lot, heading to
+    Carbones 13. Be there by 17:15 — if you're not on board by departure,
+    the bus leaves without you (the ceremony is on a clock).
+
+# ─────────────────────────────────────────────────
+# Airports
+# ─────────────────────────────────────────────────
+airports:
+  - id: "GIB"
+    name: "Gibraltar"
+    drive_minutes_to_tarifa: 50
+    notes_es: "El más cercano. Vuelos limitados, sobre todo desde UK."
+    notes_en: "Closest. Limited flights, mostly from the UK."
+  - id: "AGP"
+    name: "Málaga"
+    drive_minutes_to_tarifa: 130
+    notes_es: "Más opciones de vuelo. ~2h por la autovía."
+    notes_en: "More flight options. ~2h by motorway."
+  - id: "JTR"
+    name: "Jerez"
+    drive_minutes_to_tarifa: 90
+    notes_es: "Opción intermedia. Buenos enlaces nacionales."
+    notes_en: "Middle option. Good domestic links."
+  - id: "SVQ"
+    name: "Sevilla"
+    drive_minutes_to_tarifa: 165
+    notes_es: "Más lejos pero excelentes conexiones internacionales."
+    notes_en: "Further but excellent international connections."
+
+# ─────────────────────────────────────────────────
+# Taxi
+# ─────────────────────────────────────────────────
+# Thora gives this number formatted to be click-to-call.
+# "Sin pulgares no marco" — guest must dial. Decided 2026-05-14.
+taxi:
+  phone_display: "956 230 762"
+  phone_tel: "+34956230762"
+  notes_es: "Radio Taxi Tarifa. Para una carrera por el pueblo o un traslado al aeropuerto."
+  notes_en: "Tarifa Radio Taxi. Town rides or airport transfers."
+
+# ─────────────────────────────────────────────────
+# Self-driving to the ceremony (fringe case)
+# ─────────────────────────────────────────────────
+# Most guests come on the bus. Operator to fill the parking situation
+# at Carbones 13 for the handful who self-drive.
+self_drive_ceremony:
+  notes_es: "TODO — pendiente: localización y disponibilidad de aparcamiento en Carbones 13 para quien venga en coche."
+  notes_en: "TODO — pending: parking location and availability at Carbones 13 for self-drivers."

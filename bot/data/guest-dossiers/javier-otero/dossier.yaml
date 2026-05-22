@@ -2,7 +2,7 @@
 #
 # Authored: 2026-05-15 (worked example with Enrique — first dossier ever)
 # Path: bot/data/guest-dossiers/javier-otero/dossier.yaml
-# Target Firestore doc on import: guest_dossier/+34699206438
+# Target Firestore doc: guest_dossier/javier-otero  (identity carried by folder name; matches guests/javier-otero doc ID)
 #
 # Schema reference: bot/specs/guest-dossier-schema.md §3
 # Disclosure ethics: §9 — content is internal to Thora; safe_jokes pre-authorized only.
@@ -10,7 +10,6 @@
 # ─────────────────────────────────────────────────
 # Identity
 # ─────────────────────────────────────────────────
-guestId: "+34699206438"
 name: "Javier Otero"
 preferred_name: "Javi"
 

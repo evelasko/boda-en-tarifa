@@ -1,0 +1,33 @@
+# Bot KB Extras
+#
+# KB-contributing slices of bot configuration. Carved out of `config/bot`
+# so that operational toggle writes (kill switch, rate limits, etc.) do
+# NOT bump `bot_kb_version` and bust the prompt cache.
+#
+# Schema: bot/specs/04-data-model.md §2 (`config/bot_kb_extras`).
+# Target Firestore doc: config/bot_kb_extras (single doc).
+# Synced by: bot/scripts/sync-kb.mjs.
+
+# ─────────────────────────────────────────────────
+# Song-request moderation hints
+# ─────────────────────────────────────────────────
+# Light-touch preferences. Default behavior is to ACCEPT every request —
+# guests must feel heard. These lists only color responses:
+#   - hard_avoid → tool returns verdict: 'decline_softly' (rare).
+#   - mild_tease → tool returns verdict: 'tease_then_accept' (record + wink).
+#
+# Tool: moderate_song_request (see bot/specs/07-knowledge-base.md §5.15).
+moderation_hints:
+  hard_avoid:
+    artists:
+      - "Las Ketchup"
+    songs:
+      - title: "Paquito el Chocolatero"
+  mild_tease:
+    themes:
+      - "pop rock español clásico tipo Dani Martín — saturados, pero acéptalo"
+  framing_note: >
+    Por defecto, acepta cualquier petición. Las listas son preferencias
+    suaves de los novios, NO bloqueos rígidos. Solo declina en seco lo
+    que esté en hard_avoid. Para mild_tease, recoge la petición igual y
+    suelta un guiño cariñoso.

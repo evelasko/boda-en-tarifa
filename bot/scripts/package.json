@@ -9,10 +9,12 @@
   },
   "scripts": {
     "spotify-auth": "node spotify-auth.mjs",
-    "upload-photos": "node upload-reference-photos.mjs"
+    "upload-photos": "node upload-reference-photos.mjs",
+    "sync-kb": "node sync-kb.mjs"
   },
   "dependencies": {
     "cloudinary": "^2.5.1",
+    "firebase-admin": "^13.10.0",
     "yaml": "^2.6.1"
   }
 }

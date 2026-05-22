@@ -2,7 +2,7 @@
 #
 # Authored: 2026-05-21 (generated from resumen.md)
 # Path: bot/data/guest-dossiers/jordi-perez/dossier.yaml
-# Target Firestore doc on import: guest_dossier/TODO_E164_JORDI_PEREZ
+# Target Firestore doc: guest_dossier/jordi-perez  (identity carried by folder name; matches guests/jordi-perez doc ID)
 #
 # Schema reference: bot/specs/guest-dossier-schema.md §3
 # Disclosure ethics: §9 - content is internal to Thora; safe_jokes pre-authorized only.
@@ -10,7 +10,6 @@
 # -----------------------------------------------
 # Identity
 # -----------------------------------------------
-guestId: "TODO_E164_JORDI_PEREZ"
 name: "Jordi Perez"
 preferred_name: "Jordi"
 

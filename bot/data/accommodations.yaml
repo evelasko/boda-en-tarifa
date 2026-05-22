@@ -1,0 +1,37 @@
+# Accommodations (partner hotels)
+#
+# Renders into KB §3 "Accommodations" section. Each entry becomes a
+# Firestore doc at `accommodations/{id}`.
+#
+# Target Firestore: accommodations/{id} — one doc per entry.
+# Synced by: bot/scripts/sync-kb.mjs.
+#
+# Partner hotels per design: Tres Mares, Copacabana, Dulce Nombre.
+
+accommodations:
+  - id: "tres_mares"
+    name: "Hotel Tres Mares"
+    role: "Sede de la boda (cóctel, cena, fiesta, brunch). Muchos invitados se alojan aquí."
+    role_en: "Wedding venue (cocktail, dinner, party, brunch). Many guests stay here."
+    approx_price_range_eur_per_night: "TODO"
+    booking_link: "TODO"
+    notes_es: "El hotel-boda. Si te alojas aquí, sales y entras a la pista en minutos."
+    notes_en: "The wedding hotel. If you stay here, you walk to the party in minutes."
+
+  - id: "copacabana"
+    name: "Hotel Copacabana"
+    role: "Hotel partner. Traslado entre hoteles disponible bajo demanda."
+    role_en: "Partner hotel. Inter-hotel transfers on request."
+    approx_price_range_eur_per_night: "TODO"
+    booking_link: "TODO"
+    notes_es: "TODO — operador, añade contexto si lo tienes."
+    notes_en: "TODO — operator, add context if available."
+
+  - id: "dulce_nombre"
+    name: "Hotel Dulce Nombre"
+    role: "Hotel partner. Traslado entre hoteles disponible bajo demanda."
+    role_en: "Partner hotel. Inter-hotel transfers on request."
+    approx_price_range_eur_per_night: "TODO"
+    booking_link: "TODO"
+    notes_es: "TODO — operador, añade contexto si lo tienes."
+    notes_en: "TODO — operator, add context if available."

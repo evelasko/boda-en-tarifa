@@ -28,6 +28,7 @@ help:
   @echo "  ops-magic-links ops-magic-links-dry ops-magic-links-emulator ops-magic-links-emulator-dry ops-guest-audit ops-guest-backup ops-linear-list ops-linear-get <id> ops-linear-id <id>"
   @echo "Bot scripts (one-off operator tools):"
   @echo "  bot-spotify-auth | bot-upload-photos <slug | --all> [--dry-run] | bot-upload-photos-dry <slug | --all>"
+  @echo "  sync-kb [--all|--only <names>|sources...] | sync-kb-dry | sync-kb-diff"
   @echo "Golden path flows:"
   @echo "  flow-dev-app flow-dev-web flow-test-functions flow-qa-smoke flow-release-web flow-release-functions"
   @echo "Menus:"
@@ -313,6 +314,33 @@ bot-upload-photos *args:
 #   just bot-upload-photos-dry --all
 bot-upload-photos-dry *args:
   node bot/scripts/upload-reference-photos.mjs {{args}} --dry-run
+
+# Sync KB sources from bot/data/ → Firestore (events, venues, faq,
+# dossiers, couple, dress-codes, wind-tips, travel, tarifa-guide,
+# bot-kb-extras, accommodations). Triggers `botKbBumpOn*` Firestore
+# triggers which bump bot_kb_version on each watched write.
+#
+# Credentials: GOOGLE_APPLICATION_CREDENTIALS env var or
+# FIREBASE_SERVICE_ACCOUNT_PATH in bot/.env (path to service-account JSON).
+#
+# Requires `just setup-bot-scripts` beforehand (installs firebase-admin + yaml).
+#
+# Examples:
+#   just sync-kb                            # sync all
+#   just sync-kb --only faq,dress-codes     # sync subset
+#   just sync-kb-dry                        # validate + preview, no writes
+#   just sync-kb-diff                       # show per-doc diff vs Firestore
+#   just sync-kb -- --prune --only faq      # opt-in to deletions
+sync-kb *args:
+  node bot/scripts/sync-kb.mjs {{args}}
+
+# Dry-run preview (validates + diffs in-memory; no Firestore writes).
+sync-kb-dry *args:
+  node bot/scripts/sync-kb.mjs {{args}} --dry-run
+
+# Per-doc diff against Firestore (implies --dry-run).
+sync-kb-diff *args:
+  node bot/scripts/sync-kb.mjs {{args}} --diff
 
 flow-dev-app:
   just env-check

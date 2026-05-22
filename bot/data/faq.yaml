@@ -1,0 +1,222 @@
+# Frequently asked questions
+#
+# Renders into KB §3.4 (FAQ entry format). Each entry becomes a Firestore
+# doc at `faq/{id}`. Schema: bot/specs/07-knowledge-base.md §6.
+#
+# Target Firestore: faq/{id} — one doc per entry.
+# Synced by: bot/scripts/sync-kb.mjs.
+#
+# Ordering: `order` controls display order (low → high). Active=false
+# hides the entry from the KB without deleting it.
+#
+# Authoring tips:
+#   - Keep answers tight (1-3 sentences). Thora will paraphrase in her voice.
+#   - Use both ES + EN.
+#   - Tag generously — tags are not surfaced to guests but help operator filter.
+#   - Sensitive topics (health, contact requests) belong in escalation paths,
+#     not in FAQ.
+
+faq:
+  - id: "parking_carbones"
+    question_es: "¿Hay aparcamiento en Carbones 13?"
+    question_en: "Is there parking at Carbones 13?"
+    answer_es: >
+      La mayoría de invitados llega en el bus desde el parking de 100% Fun
+      (17:30 sábado). Para quien venga en coche: TODO — operador pendiente
+      de confirmar dónde aparcar.
+    answer_en: >
+      Most guests arrive on the bus from the 100% Fun parking lot
+      (17:30 Saturday). For self-drivers: TODO — operator to confirm
+      parking location.
+    tags: [parking, logistics, ceremony]
+    active: true
+    order: 10
+
+  - id: "parking_tres_mares"
+    question_es: "¿Hay aparcamiento en Tres Mares?"
+    question_en: "Is there parking at Tres Mares?"
+    answer_es: "Sí, el hotel tiene aparcamiento propio."
+    answer_en: "Yes, the hotel has its own parking."
+    tags: [parking, logistics, reception]
+    active: true
+    order: 11
+
+  - id: "dress_code_general"
+    question_es: "¿Cuál es el dress code?"
+    question_en: "What's the dress code?"
+    answer_es: >
+      Depende del evento: ver bot/data/dress-codes.yaml por detalle. Cocktail
+      cómodo el viernes, beach formal para la ceremonia, casual de piscina
+      para el brunch del domingo.
+    answer_en: >
+      Depends on the event — see dress codes by event. Cocktail casual on
+      Friday, beach formal for the ceremony, pool casual for Sunday brunch.
+    tags: [dress, logistics]
+    active: true
+    order: 20
+
+  - id: "kids_welcome"
+    question_es: "¿Los niños están invitados?"
+    question_en: "Are kids welcome?"
+    # TODO operator: confirm policy.
+    answer_es: "TODO — operador, confirma política de niños (sí/no/edades)."
+    answer_en: "TODO — operator, confirm kids policy (yes/no/ages)."
+    tags: [kids, family]
+    active: true
+    order: 30
+
+  - id: "pets_welcome"
+    question_es: "¿Puedo llevar a mi perro?"
+    question_en: "Can I bring my dog?"
+    answer_es: >
+      Tarifa es dog-friendly y muchas playas y chiringuitos los aceptan,
+      pero los venues de la boda son privados — el único perro confirmado
+      soy yo, Thora 🐾 Para tu propio perro, mejor preguntar al hotel.
+    answer_en: >
+      Tarifa is dog-friendly and many beaches and chiringuitos accept
+      dogs, but the wedding venues are private — I'm the only confirmed
+      dog 🐾 Check with your hotel for your own pup.
+    tags: [pets, dog]
+    active: true
+    order: 35
+
+  - id: "gifts_list"
+    question_es: "¿Hay lista de bodas?"
+    question_en: "Is there a gift / wedding list?"
+    # TODO operator: confirm.
+    answer_es: "TODO — operador, indica si hay lista de bodas o cuenta para regalos."
+    answer_en: "TODO — operator, confirm if there's a gift list or bank details."
+    tags: [gifts, logistics]
+    active: true
+    order: 40
+
+  - id: "photos_policy"
+    question_es: "¿Puedo hacer fotos? ¿Subirlas a redes?"
+    question_en: "Can I take photos? Post them on social media?"
+    answer_es: >
+      Fotos sí, claro. Subirlas a redes en directo, mejor que no — preferimos
+      que vayan al álbum compartido (los novios lo revelan el domingo a las
+      20:00). Mándame las fotos por aquí o sube por la web.
+    answer_en: >
+      Photos yes, of course. Live-posting on social media — please don't.
+      We'd rather they go into the shared album (revealed Sunday at 20:00).
+      Send them to me here or upload via the website.
+    tags: [photos, album, social_media]
+    active: true
+    order: 50
+
+  - id: "late_arrival_ceremony"
+    question_es: "¿Qué pasa si llego tarde a la ceremonia?"
+    question_en: "What if I'm late to the ceremony?"
+    answer_es: >
+      La ceremonia empieza a las 18:00 y tiene horario. El bus sale a las
+      17:30. Si te lo pierdes y vienes por tu cuenta a Carbones 13, intenta
+      llegar antes de las 18:00 — una vez empieza, el acceso se cierra hasta
+      el final.
+    answer_en: >
+      The ceremony starts at 18:00 and runs on a clock. The bus leaves at
+      17:30. If you miss it and come on your own to Carbones 13, try to
+      be there before 18:00 — once it starts, entry is closed until the end.
+    tags: [ceremony, logistics, late]
+    active: true
+    order: 60
+
+  - id: "plus_ones"
+    question_es: "¿Puedo llevar acompañante?"
+    question_en: "Can I bring a plus-one?"
+    answer_es: >
+      Los plus-ones están confirmados por los novios en el RSVP — si tienes
+      duda sobre el tuyo, mejor que se lo preguntes directamente y te lo
+      paso 🐾
+    answer_en: >
+      Plus-ones are confirmed via RSVP — if you're unsure about yours,
+      best to ask the couple directly; I'll pass you on 🐾
+    tags: [plus_one, rsvp, escalation]
+    active: true
+    order: 70
+
+  - id: "dietary_options"
+    question_es: "¿Hay opciones vegetarianas / veganas / sin gluten?"
+    question_en: "Are there vegetarian / vegan / gluten-free options?"
+    answer_es: >
+      Sí, los novios coordinan opciones según lo que pusiste en el RSVP.
+      Si no llegaste a indicarlo, te paso con ellos para confirmar 🐾
+    answer_en: >
+      Yes, the couple coordinated options based on your RSVP. If you
+      didn't note it, I'll connect you with them to confirm 🐾
+    tags: [dietary, food, escalation]
+    active: true
+    order: 80
+
+  - id: "casa_explora_dinner_reservation"
+    question_es: "El pre-boda del viernes en Casa Explora, ¿hay reserva para cenar?"
+    question_en: "The Friday pre-wedding at Casa Explora — is dinner booked?"
+    # TODO operator: confirm note from design session.
+    answer_es: "TODO — operador, confirma si hay cena reservada o solo drinks."
+    answer_en: "TODO — operator, confirm if dinner is booked or drinks only."
+    tags: [pre_wedding, friday, food]
+    active: true
+    order: 90
+
+  - id: "hotel_transfers"
+    question_es: "¿Hay traslados entre los hoteles del bloque (Tres Mares, Copacabana, Dulce Nombre)?"
+    question_en: "Are there transfers between block hotels (Tres Mares, Copacabana, Dulce Nombre)?"
+    answer_es: >
+      Bajo demanda — pregunta en recepción de tu hotel. Para los eventos
+      de la boda el desplazamiento principal es el bus a la ceremonia.
+    answer_en: >
+      On request — ask your hotel reception. For wedding events the main
+      transport is the bus to the ceremony.
+    tags: [transport, hotels, logistics]
+    active: true
+    order: 100
+
+  - id: "wedding_hashtag"
+    question_es: "¿Hay hashtag de boda?"
+    question_en: "Is there a wedding hashtag?"
+    # Per pre-implementation-checklist.md §6.4 default: none.
+    answer_es: "No hay hashtag oficial. Si quieres etiquetar, manda al álbum compartido y ya 🐾"
+    answer_en: "No official hashtag. If you want to share, send to the shared album instead 🐾"
+    tags: [photos, social_media, branding]
+    active: true
+    order: 110
+
+  - id: "languages"
+    question_es: "¿En qué idiomas se desarrolla la boda?"
+    question_en: "What languages will the wedding be in?"
+    answer_es: >
+      Castellano principalmente, con momentos en inglés según el grupo.
+      La mayoría de invitados se maneja en ambos.
+    answer_en: >
+      Mostly Spanish, with English moments depending on the audience.
+      Most guests are comfortable in both.
+    tags: [languages, logistics]
+    active: true
+    order: 120
+
+  - id: "first_aid"
+    question_es: "¿Qué hago si me pongo malo o necesito primeros auxilios?"
+    question_en: "What do I do if I feel unwell or need first aid?"
+    answer_es: >
+      Avísame por aquí o díselo a cualquier persona del staff de Tres
+      Mares. Si es urgente, llama al 112. Te paso con mis humanos para
+      lo que necesites.
+    answer_en: >
+      Message me here or tell any Tres Mares staff. If urgent, call 112.
+      I'll connect you with my humans for anything you need.
+    tags: [health, emergency, escalation]
+    active: true
+    order: 130
+
+  - id: "shoes_ceremony_sand"
+    question_es: "¿Tacones para la ceremonia? La playa, ¿no?"
+    question_en: "Heels for the ceremony? Beach setting?"
+    answer_es: >
+      Hay madera y arena en zonas de la ceremonia y la pista. Los tacones
+      aguja sufren. Valora cuñas, sandalias planas elegantes, o tacón ancho.
+    answer_en: >
+      There's decking and sand around the ceremony and dance areas.
+      Stiletto heels struggle. Consider wedges, elegant flats, or block heels.
+    tags: [dress, shoes, ceremony]
+    active: true
+    order: 140

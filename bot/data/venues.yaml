@@ -1,0 +1,75 @@
+# Wedding venues
+#
+# Renders into KB §3.3 (Venue card format). Each entry becomes a Firestore
+# doc at `venues/{id}`. snake_case here → camelCase on Firestore write to
+# match the existing `BotVenue` schema (functions/src/bot/services/venues.ts).
+#
+# Target Firestore: venues/{id} — one doc per entry.
+# Synced by: bot/scripts/sync-kb.mjs.
+
+venues:
+  - id: "carbones_13"
+    name: "Carbones 13"
+    type: "private"
+    address: "TODO — dirección completa de Carbones 13, Tarifa"
+    lat: null      # TODO operator
+    lng: null      # TODO operator
+    maps_link: "TODO"
+    web_link: ""
+    parking: "TODO — situación de aparcamiento para quien venga en coche (la mayoría llega en bus)."
+    notes: >
+      Espacio frente al mar donde se celebra la ceremonia. Entrada por
+      TODO — el operador confirma el acceso peatonal desde el aparcamiento.
+
+  - id: "tres_mares"
+    name: "Hotel Tres Mares"
+    type: "private"
+    address: "TODO — dirección completa de Tres Mares, Tarifa"
+    lat: null
+    lng: null
+    maps_link: "TODO"
+    web_link: ""
+    parking: "Aparcamiento propio del hotel."
+    notes: >
+      Sede del cóctel, cena, fiesta y brunch del domingo. La piscina es
+      el espacio del brunch. Suelo de madera y arena en zonas de pista —
+      tacones aguja sufren; valora alternativas.
+
+  - id: "casa_explora"
+    name: "Casa Explora"
+    type: "private"
+    address: "TODO — dirección completa de Casa Explora, Tarifa"
+    lat: null
+    lng: null
+    maps_link: "TODO"
+    web_link: ""
+    parking: "TODO — confirmar."
+    notes: >
+      Lugar del pre-boda del viernes noche. Informal, drinks, sin código.
+
+  - id: "chiringuito_bora"
+    name: "Chiringuito Bora"
+    type: "beach"
+    address: "Playa de Valdevaqueros, Tarifa"
+    lat: null
+    lng: null
+    maps_link: "TODO"
+    web_link: ""
+    parking: "Aparcamiento de Valdevaqueros."
+    notes: >
+      Chiringuito de Valdevaqueros con muy buena música. Punto informal
+      de encuentro para quien llega antes; NO es un evento formal de la
+      boda, pero Thora puede mencionarlo como pista para tardes libres.
+
+  - id: "100_fun"
+    name: "100% Fun"
+    type: "private"
+    address: "Ctra. N-340 km 76, Tarifa"
+    lat: null
+    lng: null
+    maps_link: "TODO"
+    web_link: "https://100x100fun.com"
+    parking: "Parking grande propio del establecimiento — punto de salida del bus."
+    notes: >
+      Hotel/restaurante junto a la N-340. El sábado el aparcamiento es
+      punto de salida del bus a la ceremonia (17:30; estar allí 17:15).

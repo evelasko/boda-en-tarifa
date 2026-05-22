@@ -2,7 +2,7 @@
 #
 # Authored: 2026-05-21 (generated from resumen.md)
 # Path: bot/data/guest-dossiers/agnes-maroto/dossier.yaml
-# Target Firestore doc on import: guest_dossier/TODO_E164_AGNES_MAROTO
+# Target Firestore doc: guest_dossier/agnes-maroto  (identity carried by folder name; matches guests/agnes-maroto doc ID)
 #
 # Schema reference: bot/specs/guest-dossier-schema.md §3
 # Disclosure ethics: §9 - content is internal to Thora; safe_jokes pre-authorized only.
@@ -10,7 +10,6 @@
 # -----------------------------------------------
 # Identity
 # -----------------------------------------------
-guestId: "TODO_E164_AGNES_MAROTO"
 name: "Agnes Maroto"
 preferred_name: "Agnes"
 

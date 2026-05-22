@@ -24,8 +24,8 @@ import {
   isLanguage,
   type Language,
 } from "../lib/i18n.js";
-import {toMadridIso, dayOfWedding, weekday} from "../lib/time.js";
 import {decideInbound, recordUnknownInbound} from "../allowlist.js";
+import {renderTodaysSituation} from "../claude/today.js";
 import {recordInboundAndCheck} from "../conversation/ratelimit.js";
 import {loadHistory} from "../conversation/state.js";
 import {
@@ -186,12 +186,19 @@ export async function handleInboundText(
   }
 
   // 7. Conversational turn — KB + history + per-turn header.
-  const kb = await getKb();
-  const history = await loadHistory(phone);
+  //    `getKb()` returns the cached Block B (slow-changing facts).
+  //    `renderTodaysSituation()` produces the dynamic per-turn block
+  //    that lives OUTSIDE the cache (spec §3.5 + §4.2).
+  const [kb, history, todaysSituation] = await Promise.all([
+    getKb(),
+    loadHistory(phone),
+    renderTodaysSituation({now: new Date(), language}),
+  ]);
   const perTurnHeader = buildPerTurnHeader({
     guest,
     phone,
     language,
+    todaysSituation,
   });
 
   let pipeline: PipelineOutput;
@@ -289,10 +296,10 @@ function buildPerTurnHeader(args: {
   guest: Guest;
   phone: E164;
   language: Language;
+  todaysSituation: string;
 }): string {
-  const {guest, phone, language} = args;
+  const {guest, phone, language, todaysSituation} = args;
   const name = displayName(guest);
-  const now = new Date();
   const photoConsent = guest.photoConsent === undefined ?
     "unknown" : guest.photoConsent ? "granted" : "declined";
   const lines = [
@@ -303,10 +310,7 @@ function buildPerTurnHeader(args: {
     `RSVP status: ${guest.rsvpStatus ?? "pending"}`,
     `Photo consent: ${photoConsent}`,
     "",
-    "[Today's situation — dynamic KB]",
-    `Now: ${toMadridIso(now)}`,
-    `Weekday: ${weekday(now, language)}`,
-    `Day of wedding: ${dayOfWedding(now)}`,
+    todaysSituation,
   ];
   return lines.join("\n");
 }
