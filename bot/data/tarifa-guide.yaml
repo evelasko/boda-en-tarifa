@@ -89,7 +89,8 @@ restaurants:
   - name: "Raizes"
     category: best restaurant
     area: "Tarifa Pueblo"
-    description: "TODO"
+    description: "Cocina fusión para compartir, con carta estacional que rota y opciones
+      vegetarianas/veganas. Rango habitual ~30-40 EUR por persona."
     contact: ""
     personal_note: "un poco caro pero merece mucho la pena, es toda una experiencia.
       Cambian el menú cada tres meses y cada vez se superan. Los platos son muy
@@ -100,7 +101,9 @@ restaurants:
   - name: "El Ancla"
     category: best restaurant
     area: "Tarifa Pueblo"
-    description: "TODO"
+    description: "Clásico de Tarifa especializado en pescado y marisco del Estrecho,
+      comprado según lonja del día. Muy conocido por croquetas de choco y platos
+      de atún; precio medio ~20-30 EUR."
     contact: ""
     personal_note: "de los más baratos con muy buena carta de productos y platos de
       la región. Es muy campechano y te hacen sentir como en un pueblo de España
@@ -111,46 +114,77 @@ restaurants:
 # Kite & wind activities
 # =============================================================================
 kite_wind:
-  - name: "TODO — Enrique's recommended kite school"
+  - name: "Radikite Tarifa"
     category: kite_wind
-    area: "Valdevaqueros / Los Lances"
-    description: "TODO — Enrique to fill: school name, what level they teach,
-      typical price."
-    contact: "TODO"
-    personal_note: "Mi humano Enrique se compinche con {instructor}, le pidió que le
-      enseñara hace años. Si te animas, le aviso."
+    area: "Playa de Los Lances Norte"
+    description: "Escuela oficial de kitesurf con cursos desde iniciación hasta
+      avanzado (incluye freestyle/surfkite/hydrofoil). Precio orientativo: semi-privadas
+      desde ~36 EUR/h y privadas desde ~65 EUR/h."
+    contact: "https://radikitetarifa.com/en/ | +34 616 185 651 | info@radikitetarifa.com"
+    personal_note: "si quieres algo muy cómodo para empezar, esta está literalmente
+      a pie de playa en Los Lances y suele tener buen sistema de rescate."
     tarifa_specific: true
-    tags: [ "kite", "lessons", "personal-intro-available" ]
+    tags: [ "kite", "lessons", "beginner-friendly", "los-lances" ]
 
-  - name: "TODO — wind/kite rental"
+  - name: "Kite Concept Tarifa (rental)"
     category: kite_wind
-    area: "TODO"
-    description: "TODO"
+    area: "N-340 km 81 (Tarifa)"
+    description: "Alquiler de material de kitesurf para riders autónomos (equipo
+      completo, kite suelta o tabla). También tienen alquiler de surf/SUP."
+    contact: "https://www.kiteconcepttarifa.com/en/rental.html | +34 610 993 531"
     tarifa_specific: true
+    tags: [ "kite", "rental", "equipment" ]
+
+  - name: "Wind & Water Experience"
+    category: kite_wind
+    area: "Los Lances / Valdevaqueros"
+    description: "Escuela activa desde 1997 con clases de windsurf, wingfoil y
+      también kitesurf según condiciones. Suelen mover spot según viento."
+    contact: "https://windwaterexperience.com/en/"
+    tarifa_specific: true
+    tags: [ "windsurf", "wingfoil", "kite", "lessons" ]
 
 # =============================================================================
 # Other water activities
 # =============================================================================
 water:
-  - name: "TODO — scuba diving operator"
+  - name: "Go Dive Tarifa"
     category: water
     area: "Tarifa port"
-    description: "TODO"
-    contact: "TODO"
-    personal_note: ""
+    description: "Centro de buceo con salidas diarias, bautizos y cursos para todos
+      los niveles, muy enfocado en zona del Estrecho e Isla de Tarifa."
+    contact: "https://www.godivecadiz.com/en/go-dive-tarifa/ | +34 682 765 311 | info@godivecadiz.com"
+    personal_note: "si quieres bautizo o inmersiones guiadas con enfoque tranquilo,
+      es una opción sólida."
     tarifa_specific: true
+    tags: [ "scuba", "dives", "courses", "snorkel" ]
 
-  - name: "TODO — paddle / SUP rental"
+  - name: "Paddle Fun Tarifa"
     category: water
-    area: "TODO"
-    description: "TODO"
+    area: "Tarifa town / costa"
+    description: "Cursos y alquiler de SUP (tablas hinchables), ideal para días sin
+      viento. Precio orientativo: alquiler desde ~30 EUR/2h y curso desde ~50 EUR/2h."
+    contact: "https://en.paddlefuntarifa.com/ | +34 661 094 260 | info@kitefuntarifa.com"
     tarifa_specific: true
+    tags: [ "sup", "paddle", "rental", "lessons" ]
 
-  - name: "TODO — surf"
+  - name: "Wind & Water Experience (surf)"
     category: water
     area: "Los Lances"
-    description: "TODO"
+    description: "Clases de surf en grupos pequeños y opción de adaptar playa/horario
+      a condiciones de mar y viento."
+    contact: "https://windwaterexperience.com/en/"
     tarifa_specific: true
+    tags: [ "surf", "lessons", "small-groups" ]
+
+  - name: "YellowSub Tarifa"
+    category: water
+    area: "Tarifa harbor"
+    description: "Centro de buceo en el puerto con dos barcos de salidas y material
+      de alquiler para inmersiones alrededor de Isla de Tarifa."
+    contact: "https://www.divingtarifa.com/"
+    tarifa_specific: true
+    tags: [ "scuba", "harbor", "boat-dives" ]
 
 # =============================================================================
 # Sightseeing
@@ -162,7 +196,8 @@ sightseeing:
     description: "Castillo medieval del siglo X, vistas al estrecho. Entrada de
       pago. Visita rápida (~1h)."
     contact: ""
-    personal_note: "TODO — Enrique/Manuel"
+    personal_note: "Un mirador muy bonito sobre el estrecho de Gibraltar. Se ve
+      perfectamente la costa de Marruecos."
     tarifa_specific: true
     tags: [ "historia", "rápido" ]
 
@@ -172,7 +207,8 @@ sightseeing:
     description: "Mirador sobre el estrecho de Gibraltar. En días claros se ve
       perfectamente la costa de Marruecos."
     contact: ""
-    personal_note: ""
+    personal_note: "Un mirador muy bonito sobre el estrecho de Gibraltar. Se ve
+      perfectamente la costa de Marruecos."
     tarifa_specific: true
     tags: [ "vistas", "fotogénico" ]
 
@@ -182,7 +218,8 @@ sightseeing:
     description: "Ruinas romanas espectaculares, junto a la playa de Bolonia.
       Entrada gratuita para ciudadanos UE. Visita 1.5–2h."
     contact: ""
-    personal_note: "TODO — Enrique/Manuel"
+    personal_note: "Ruinas romanas muy bonitas, junto a la playa de Bolonia. Es un
+      lugar muy bonito y tranquilo para pasear."
     tarifa_specific: false
     tags: [ "ruinas", "histórico" ]
 
@@ -192,7 +229,9 @@ sightseeing:
     description: "Callejear sin plan por el casco antiguo: Puerta de Jerez, plaza
       del Mesón, callejuelas blancas. Mejor al atardecer."
     contact: ""
-    personal_note: "TODO — Enrique/Manuel"
+    personal_note: "Un casco antiguo muy bonito, con calles empedradas y casas
+      blancas. Es un paseo muy bonito y tranquilo pero te puedes perder
+      fácilmente."
     tarifa_specific: true
 
 # =============================================================================
@@ -214,8 +253,9 @@ day_trips:
     area: "40 min en coche al norte"
     description: "Pueblo blanco encaramado en un cerro. Casco histórico precioso,
       buena gastronomía. Tarde tranquila o cena con vistas."
-    contact: ""
-    personal_note: "TODO — Enrique/Manuel"
+    personal_note: "Uno de los pueblos más bonitos de la provincia de Cádiz, con un
+      casco histórico precioso y una buena gastronomía. Está encima de una
+      montaña con unas vistas increíbles."
     tarifa_specific: false
     tags: [ "pueblo blanco" ]
 
@@ -224,8 +264,9 @@ day_trips:
     area: "1h 15min en coche al noroeste"
     description: "Casco histórico, playa de la Caleta, mercado central. Día
       gastronómico fácil."
-    contact: ""
-    personal_note: ""
+    personal_note: "La capital de la provincia de Cádiz, con un casco histórico
+      precioso y una buena gastronomía. Tiene un malecón muy parecido al de La
+      Habana."
     tarifa_specific: false
 
   - name: "Gibraltar"
@@ -233,8 +274,9 @@ day_trips:
     area: "45 min en coche al este"
     description: "Cruzar la frontera con pasaporte o DNI. Subir al peñón en
       teleférico, los monos, la cueva de San Miguel. Medio día suficiente."
-    contact: ""
-    personal_note: ""
+    personal_note: "La frontera más bonita de España, con un peñón de granito muy
+      bonito y una buena gastronomía. Es como si estuvieras en inglaterra pero
+      en españa."
     tarifa_specific: false
     tags: [ "frontera", "monos" ]
 
@@ -262,13 +304,11 @@ walking:
     description: "Caminata 1h aprox. desde la playa de Punta Paloma hasta el faro.
       Vistas al estrecho. Mejor al atardecer."
     contact: ""
-    personal_note: "TODO — Enrique/Manuel"
-    tarifa_specific: true
-
-  - name: "TODO — más rutas"
-    category: walking
-    area: "TODO"
-    description: "TODO"
+    personal_note: "es una caminata muy bonita, con vistas al estrecho y al faro de
+      Camarinal. Es una caminata de 1 hora aprox. desde la playa de Punta Paloma
+      hasta el faro. Es una caminata muy bonita, con vistas al estrecho y al
+      faro de Camarinal. Es una caminata de 1 hora aprox. desde la playa de
+      Punta Paloma hasta el faro."
     tarifa_specific: true
 
 # =============================================================================
@@ -278,24 +318,25 @@ nightlife:
   - name: "Waikiki"
     category: nightlife
     area: "Tarifa playa"
-    description: "TODO"
-    contact: ""
+    description: "Chiringuito muy chic cerca del centro de Tarifa con muy buen tardeo"
     personal_note: "TODO"
     tarifa_specific: true
   - name: "El Cateto"
     category: nightlife
     area: "Tarifa centro"
-    description: "TODO"
+    description: "El bar con las copas más baratas de Tarifa, y con un buen ambiente."
     tarifa_specific: true
   - name: "La Ruina"
     category: nightlife
     area: "Tarifa centro"
-    description: "TODO"
+    description: "Discoteca super bonita en una ruina antigua con un buen ambiente y
+      tremendo musicón, techno, house, electro."
     tarifa_specific: true
   - name: "Mombasa"
     category: nightlife
     area: "Tarifa centro"
-    description: "TODO"
+    description: "Discoteca espectacular en el centro de Tarifa con varias salas y
+      buen ambiente. Debes ir bien vestido para que te dejen pasar"
     tarifa_specific: true
 
 # =============================================================================
