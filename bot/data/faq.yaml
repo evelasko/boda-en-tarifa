@@ -120,12 +120,12 @@ faq:
     question_en: "What if I'm late to the ceremony?"
     answer_es: >
       La ceremonia empieza a las 18:00 y tiene horario. El bus sale a las 17:30.
-      Si te lo pierdes y vienes por tu cuenta a Carbones 13, intenta llegar
+      Si te lo pierdes y vienes por tu cuenta a Surfin' Tarifa, intenta llegar
       antes de las 18:00 — una vez empieza, el acceso se cierra hasta el final.
     answer_en: >
       The ceremony starts at 18:00 and runs on a clock. The bus leaves at 17:30.
-      If you miss it and come on your own to Carbones 13, try to be there before
-      18:00 — once it starts, entry is closed until the end.
+      If you miss it and come on your own to Surfin' Tarifa, try to be there
+      before 18:00 — once it starts, entry is closed until the end.
     tags: [ ceremony, logistics, late ]
     active: true
     order: 60

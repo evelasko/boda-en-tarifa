@@ -202,7 +202,7 @@ Thora's KB-grounded answers are only as good as what's in the KB. A TODO that sh
 
 | File | Field | What you need |
 |---|---|---|
-| `bot/data/venues.yaml` | `carbones_13.address`, `lat`, `lng`, `maps_link` | Full address, GPS coords, Google Maps link. Thora sends a location pin from these. |
+| `bot/data/venues.yaml` | `surfin-tarifa.address`, `lat`, `lng`, `maps_link` | Full address, GPS coords, Google Maps link. Thora sends a location pin from these. |
 | `bot/data/venues.yaml` | `tres_mares.address`, `lat`, `lng`, `maps_link` | Same. |
 | `bot/data/venues.yaml` | `casa_explora.address`, `lat`, `lng`, `maps_link` | Same. |
 | `bot/data/venues.yaml` | `chiringuito_bora.lat`, `lng`, `maps_link` | Same. |
@@ -213,7 +213,7 @@ Thora's KB-grounded answers are only as good as what's in the KB. A TODO that sh
 | `bot/data/faq.yaml` | `kids_welcome.answer_*` | Confirm kid policy. |
 | `bot/data/faq.yaml` | `gifts_list.answer_*` | Gift list / bank details / nothing — whichever it is. |
 | `bot/data/faq.yaml` | `casa_explora_dinner_reservation.answer_*` | Drinks only or dinner reserved? |
-| `bot/data/travel.yaml` | `self_drive_ceremony.notes_*` | Parking for the handful who self-drive to Carbones 13. |
+| `bot/data/travel.yaml` | `self_drive_ceremony.notes_*` | Parking for the handful who self-drive to Surfin' Tarifa. |
 | `bot/data/couple-dossier.yaml` | `honeymoon_internal.destination` | **Internal only** — Thora knows so she doesn't accidentally hint. Never shares. Write a real value (even "Vietnam — INTERNAL") so Thora has the context. |
 
 ### Nice-to-have TODOs (can ship and update later)

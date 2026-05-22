@@ -37,17 +37,17 @@ events:
     name_en: "Ceremony"
     start_at: "2026-05-30T18:00:00+02:00"
     end_at: "2026-05-30T19:00:00+02:00"
-    venue_id: "carbones_13"
+    venue_id: "surfin-tarifa"
     dress_code_id: "ceremony"
     transport_notes: >
       Autobús desde el parking de 100% Fun a las 17:30 (estar allí 17:15). Si te
       lo pierdes, llegas tarde — la ceremonia tiene horario.
     whom: "all"
     description_es: >
-      Ceremonia frente al mar en Carbones 13. Tras la ceremonia, el bus lleva a
-      todos al lugar del cóctel en Tres Mares.
+      Ceremonia frente al mar en Surfin' Tarifa. Tras la ceremonia, el bus lleva
+      a todos al lugar del cóctel en Tres Mares.
     description_en: >
-      Oceanfront ceremony at Carbones 13. After the ceremony the bus takes
+      Oceanfront ceremony at Surfin' Tarifa. After the ceremony the bus takes
       everyone to the cocktail venue at Tres Mares.
 
   - id: reception

@@ -61,7 +61,7 @@ All new files go in `bot/data/`. **Convention**: snake_case in YAML / JSON; sync
 | File | Format | Target Firestore | Notes |
 |---|---|---|---|
 | `bot/data/events.yaml` | YAML (list of events) | `events/{id}` (overwrite) | One-time export from current Firestore as seed, then YAML is canonical. |
-| `bot/data/venues.yaml` | YAML (list of venues) | `venues/{id}` (overwrite) | Same one-time export. Must include `carbones_13`, `casa_explora`, `chiringuito_bora`, `100_fun` per pre-implementation-checklist §1.5. |
+| `bot/data/venues.yaml` | YAML (list of venues) | `venues/{id}` (overwrite) | Same one-time export. Must include `surfin-tarifa`, `casa_explora`, `chiringuito_bora`, `100_fun` per pre-implementation-checklist §1.5. |
 | `bot/data/accommodations.yaml` | YAML (list) | `accommodations/{id}` | Partner hotels w/ approximate prices. |
 | `bot/data/faq.yaml` | YAML (list, ES+EN) | `faq/{id}` | Replaces `bot/data/qa.json` (delete that stub). Seed entries per `pre-implementation-checklist.md` §1.10. |
 | `bot/data/couple-dossier.yaml` | YAML | `config/couple` | Mirror of facts in `bot/specs/couple-dossier.md` §1 + disclosure rules from §2. |
@@ -89,12 +89,12 @@ events:
     name_en: "Ceremony"
     start_at: "2026-05-30T18:00:00+02:00"
     end_at: "2026-05-30T19:00:00+02:00"
-    venue_id: carbones_13
+    venue_id: surfin-tarifa
     dress_code_id: ceremony_dress
     transport_notes: "Autobús desde 100% Fun, 17:30 Sat (estar allí 17:15)."
     whom: all
-    description_es: "Ceremonia en Carbones 13, frente al mar."
-    description_en: "Ceremony at Carbones 13, oceanfront."
+    description_es: "Ceremonia en Surfin' Tarifa, frente al mar."
+    description_en: "Ceremony at Surfin' Tarifa, oceanfront."
   - id: pre_wedding
     # ...
 ```
@@ -106,8 +106,8 @@ events:
 
 faq:
   - id: parking_carbones
-    question_es: "¿Hay aparcamiento en Carbones 13?"
-    question_en: "Is there parking at Carbones 13?"
+    question_es: "¿Hay aparcamiento en Surfin' Tarifa?"
+    question_en: "Is there parking at Surfin' Tarifa?"
     answer_es: "Sí, hay aparcamiento gratuito a 200 m..."
     answer_en: "Yes, free parking 200 m away..."
     tags: [parking, logistics, ceremony]

@@ -17,13 +17,13 @@ bus:
   arrive_by_local: "17:15"
   date_iso: "2026-05-30"
   notes_es: >
-    El bus sale a las 17:30 desde el parking de 100% Fun rumbo a Carbones 13.
+    El bus sale a las 17:30 desde el parking de 100% Fun rumbo a Surfin' Tarifa.
     Llegad a las 17:15 — si no estás antes de la hora de salida, el bus se va
     sin ti (la ceremonia tiene horario).
   notes_en: >
-    The bus departs at 17:30 from the 100% Fun parking lot, heading to
-    Carbones 13. Be there by 17:15 — if you're not on board by departure,
-    the bus leaves without you (the ceremony is on a clock).
+    The bus departs at 17:30 from the 100% Fun parking lot, heading to Surfin'
+    Tarifa. Be there by 17:15 — if you're not on board by departure, the bus
+    leaves without you (the ceremony is on a clock).
 
 # ─────────────────────────────────────────────────
 # Airports
@@ -58,14 +58,16 @@ airports:
 taxi:
   phone_display: "956 230 762"
   phone_tel: "+34956230762"
-  notes_es: "Radio Taxi Tarifa. Para una carrera por el pueblo o un traslado al aeropuerto."
+  notes_es: "Radio Taxi Tarifa. Para una carrera por el pueblo o un traslado al
+    aeropuerto."
   notes_en: "Tarifa Radio Taxi. Town rides or airport transfers."
 
 # ─────────────────────────────────────────────────
 # Self-driving to the ceremony (fringe case)
 # ─────────────────────────────────────────────────
 # Most guests come on the bus. Operator to fill the parking situation
-# at Carbones 13 for the handful who self-drive.
+# at Surfin' Tarifa for the handful who self-drive.
 self_drive_ceremony:
-  notes_es: "TODO — pendiente: localización y disponibilidad de aparcamiento en Carbones 13 para quien venga en coche."
-  notes_en: "TODO — pending: parking location and availability at Carbones 13 for self-drivers."
+  notes_es: "Hay un aparcamiento publico justo frente al sitio donde se celebra la
+    ceremonia."
+  notes_en: "There is a public parking lot just in front of the ceremony venue."

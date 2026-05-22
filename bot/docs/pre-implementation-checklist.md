@@ -103,7 +103,7 @@ These fix discrepancies between current `events/*` Firestore content and the des
 | 1.5.3 | **Confirm ceremony time** — currently 18:00 Sat. Verify bus departure 17:30. Update if wrong. | ⚙️ | ☐ |
 | 1.5.4 | **Confirm reception (cocktail+dinner+party) timing** — cocktail ~20:00, dinner ~21:30, party ~midnight, end 05:00. Adjust as needed. | ⚙️ | ☐ |
 | 1.5.5 | **Confirm brunch timing** — currently 11:30 Sun. Verify. | ⚙️ | ☐ |
-| 1.5.6 | **Add `venues/carbones_13`** — name, full address, lat/lng, Maps link, parking note ("self-drivers: TBD"), tarifa entrance description. | ⚙️ | ☐ |
+| 1.5.6 | **Add `venues/surfin-tarifa`** — name, full address, lat/lng, Maps link, parking note ("self-drivers: TBD"), tarifa entrance description. | ⚙️ | ☐ |
 | 1.5.7 | **Add `venues/casa_explora`** — same fields. | ⚙️ | ☐ |
 | 1.5.8 | **Update `venues/tres_mares`** — confirm the cocktail / dinner / party / brunch sub-areas; heel-plug availability noted. | ⚙️ | ☐ |
 | 1.5.9 | **Add `venues/chiringuito_bora`** — Welcoming venue (informal); lat/lng so Thora can send pin if asked. | ⚙️ | ☐ |
@@ -116,11 +116,11 @@ File: `config/dress_codes` in Firestore.
 | # | Event | Dress code | Done |
 |---|---|---|---|
 | 1.6.1 | Pre-wedding (Casa Explora) | No code, casual. | ☐ |
-| 1.6.2 | Ceremony (Carbones 13) | TBD — operator to fill. Beach formal? Cocktail? | ☐ |
+| 1.6.2 | Ceremony (Surfin' Tarifa) | TBD — operator to fill. Beach formal? Cocktail? | ☐ |
 | 1.6.3 | Reception (Tres Mares) | TBD — likely same as ceremony or slightly more polished. | ☐ |
 | 1.6.4 | Brunch (Tres Mares pool) | Casual / poolside. | ☐ |
 
-### 1.7 Self-driving parking info (Carbones 13)
+### 1.7 Self-driving parking info (Surfin' Tarifa)
 
 | # | Task | Done |
 |---|---|---|
