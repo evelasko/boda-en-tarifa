@@ -1,0 +1,68 @@
+# Guest Dossier - Laura Martin
+#
+# Authored: 2026-05-21 (generated from resumen.md)
+# Path: bot/data/guest-dossiers/laura-martin/dossier.yaml
+# Target Firestore doc on import: guest_dossier/TODO_E164_LAURA_MARTIN
+#
+# Schema reference: bot/specs/guest-dossier-schema.md §3
+# Disclosure ethics: §9 - content is internal to Thora; safe_jokes pre-authorized only.
+
+# -----------------------------------------------
+# Identity
+# -----------------------------------------------
+guestId: "TODO_E164_LAURA_MARTIN"
+name: "Laura Martin"
+preferred_name: "Lauri"
+
+# -----------------------------------------------
+# Recognition (face matching in inbound photos)
+# -----------------------------------------------
+# TODO: upload 1-3 frontal, well-lit, recent photos to Cloudinary
+#       (bot/reference/laura-martin-{1..3}.jpg, signed access)
+#       and paste the URLs into reference_photos.
+reference_photos: []
+recognizable_for: "muy sociable; energia de hablar con todo el mundo"
+recognition_confidence_floor: 0.85
+
+# -----------------------------------------------
+# Relationship to the couple
+# -----------------------------------------------
+relationship: "amiga de Manuel desde el instituto en Fuenlabrada"
+hometown: "Fuenlabrada"
+language: es
+
+# -----------------------------------------------
+# Open facts Thora may reference naturally
+# -----------------------------------------------
+safe_facts:
+  - "le llaman Lauri"
+  - "amiga de Manuel desde la epoca del instituto en Fuenlabrada"
+  - "muy sociable; en una fiesta habla con todo el mundo"
+  - "le gustan mucho los festivales"
+  - "tiene fama carinosa de ser algo patosa"
+  - "si hay algo que pueda caerse o volcarse, suele pasar cerca de ella"
+
+# -----------------------------------------------
+# Pre-authorized roast / inside-joke material
+# -----------------------------------------------
+safe_jokes:
+  - "bromas suaves sobre que siempre se le cae algo"
+  - "si no tira su propio vaso, tira el tuyo"
+  - "energia de caos accidental entranable"
+
+# -----------------------------------------------
+# Hard exclusions
+# -----------------------------------------------
+do_not_mention: []
+
+# -----------------------------------------------
+# Personal-intro mode (Tarifa concierge personal-connection path)
+# -----------------------------------------------
+personal_intro_for: []
+personal_intro_blurb: null
+
+# -----------------------------------------------
+# Metadata
+# -----------------------------------------------
+active: true
+updatedAt: "2026-05-21T00:00:00Z"

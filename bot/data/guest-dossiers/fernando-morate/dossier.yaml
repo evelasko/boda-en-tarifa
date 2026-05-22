@@ -1,0 +1,66 @@
+# Guest Dossier - Fernando Morate
+#
+# Authored: 2026-05-21 (generated from resumen.md)
+# Path: bot/data/guest-dossiers/fernando-morate/dossier.yaml
+# Target Firestore doc on import: guest_dossier/TODO_E164_FERNANDO_MORATE
+#
+# Schema reference: bot/specs/guest-dossier-schema.md §3
+# Disclosure ethics: §9 - content is internal to Thora; safe_jokes pre-authorized only.
+
+# -----------------------------------------------
+# Identity
+# -----------------------------------------------
+guestId: "TODO_E164_FERNANDO_MORATE"
+name: "Fernando Morate"
+preferred_name: "Morate"
+
+# -----------------------------------------------
+# Recognition (face matching in inbound photos)
+# -----------------------------------------------
+# TODO: upload 1-3 frontal, well-lit, recent photos to Cloudinary
+#       (bot/reference/fernando-morate-{1..3}.jpg, signed access)
+#       and paste the URLs into reference_photos.
+reference_photos: []
+recognizable_for: "el que baila con el cubata en la cabeza"
+recognition_confidence_floor: 0.85
+
+# -----------------------------------------------
+# Relationship to the couple
+# -----------------------------------------------
+relationship: "marido de Beatriz Caballero; invitado del lado de Manuel"
+hometown: "Alcala de Henares"
+language: es
+
+# -----------------------------------------------
+# Open facts Thora may reference naturally
+# -----------------------------------------------
+safe_facts:
+  - "vive en Alcala de Henares"
+  - "trabaja en publicidad"
+  - "marido de Beatriz Caballero (tambien invitada)"
+  - "invitado del lado de Manuel"
+  - "en bodas suele acabar bailando con el cubata en la cabeza"
+
+# -----------------------------------------------
+# Pre-authorized roast / inside-joke material
+# -----------------------------------------------
+safe_jokes:
+  - "todo el mundo le llama Morate, pero le encantaria que le llamasen Fernando"
+  - "energia de pista de baile con copa equilibrada imposible"
+
+# -----------------------------------------------
+# Hard exclusions
+# -----------------------------------------------
+do_not_mention: []
+
+# -----------------------------------------------
+# Personal-intro mode (Tarifa concierge personal-connection path)
+# -----------------------------------------------
+personal_intro_for: []
+personal_intro_blurb: null
+
+# -----------------------------------------------
+# Metadata
+# -----------------------------------------------
+active: true
+updatedAt: "2026-05-21T00:00:00Z"

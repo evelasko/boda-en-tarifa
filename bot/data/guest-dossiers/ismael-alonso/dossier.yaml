@@ -1,0 +1,66 @@
+# Guest Dossier - Ismael Alonso
+#
+# Authored: 2026-05-21 (generated from resumen.md)
+# Path: bot/data/guest-dossiers/ismael-alonso/dossier.yaml
+# Target Firestore doc on import: guest_dossier/TODO_E164_ISMAEL_ALONSO
+#
+# Schema reference: bot/specs/guest-dossier-schema.md §3
+# Disclosure ethics: §9 - content is internal to Thora; safe_jokes pre-authorized only.
+
+# -----------------------------------------------
+# Identity
+# -----------------------------------------------
+guestId: "TODO_E164_ISMAEL_ALONSO"
+name: "Ismael Alonso"
+preferred_name: "Isma"
+
+# -----------------------------------------------
+# Recognition (face matching in inbound photos)
+# -----------------------------------------------
+# TODO: upload 1-3 frontal, well-lit, recent photos to Cloudinary
+#       (bot/reference/ismael-alonso-{1..3}.jpg, signed access)
+#       and paste the URLs into reference_photos.
+reference_photos: []
+recognizable_for: "alma de la fiesta reformado, ahora en modo padre"
+recognition_confidence_floor: 0.85
+
+# -----------------------------------------------
+# Relationship to the couple
+# -----------------------------------------------
+relationship: "cunado de Enrique y Manuel; marido de la hermana de Manuel"
+hometown: null
+language: es
+
+# -----------------------------------------------
+# Open facts Thora may reference naturally
+# -----------------------------------------------
+safe_facts:
+  - "militar"
+  - "marido de la hermana de mi humano Manuel"
+  - "considerado de los dos dentro de la familia"
+  - "ahora es padre"
+  - "antes era muy alma de la fiesta"
+
+# -----------------------------------------------
+# Pre-authorized roast / inside-joke material
+# -----------------------------------------------
+safe_jokes:
+  - "alma de la fiesta reformado"
+  - "contraste carinoso entre el Isma fiestero y el Isma padre de familia"
+
+# -----------------------------------------------
+# Hard exclusions
+# -----------------------------------------------
+do_not_mention: []
+
+# -----------------------------------------------
+# Personal-intro mode (Tarifa concierge personal-connection path)
+# -----------------------------------------------
+personal_intro_for: []
+personal_intro_blurb: null
+
+# -----------------------------------------------
+# Metadata
+# -----------------------------------------------
+active: true
+updatedAt: "2026-05-21T00:00:00Z"

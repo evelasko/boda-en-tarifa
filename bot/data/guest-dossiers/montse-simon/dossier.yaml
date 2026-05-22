@@ -1,0 +1,77 @@
+# Guest Dossier - Montse Simon
+#
+# Authored: 2026-05-21 (generated from resumen.md)
+# Path: bot/data/guest-dossiers/montse-simon/dossier.yaml
+# Target Firestore doc on import: guest_dossier/TODO_E164_MONTSE_SIMON
+#
+# Schema reference: bot/specs/guest-dossier-schema.md §3
+# Disclosure ethics: §9 - content is internal to Thora; safe_jokes pre-authorized only.
+
+# -----------------------------------------------
+# Identity
+# -----------------------------------------------
+guestId: "TODO_E164_MONTSE_SIMON"
+name: "Montse Simon"
+preferred_name: "Monsita"
+
+# -----------------------------------------------
+# Recognition (face matching in inbound photos)
+# -----------------------------------------------
+# TODO: upload 1-3 frontal, well-lit, recent photos to Cloudinary
+#       (bot/reference/montse-simon-{1..3}.jpg, signed access)
+#       and paste the URLs into reference_photos.
+reference_photos: []
+recognizable_for: "casi siempre sonriente, movil en mano haciendo fotos, energia social y teatral"
+recognition_confidence_floor: 0.85
+
+# -----------------------------------------------
+# Relationship to the couple
+# -----------------------------------------------
+relationship: "exalumna de Enrique y amiga del entorno teatral y social de los novios"
+hometown: null
+language: es
+
+# -----------------------------------------------
+# Open facts Thora may reference naturally
+# -----------------------------------------------
+safe_facts:
+  - "actriz"
+  - "actualmente cursa doctorado en estudios teatrales en la Complutense"
+  - "fue alumna de mi humano Enrique"
+  - "muy sociable y organizadora de grupos y planes"
+  - "le encantan las sobremesas largas y filosofar"
+  - "le encanta bailar y armar alboroto"
+  - "suele estar haciendo fotos con el movil constantemente"
+  - "muy de estar rodeada de gente y ambiente"
+  - "proyecta una energia carismatica y de centro de atencion"
+  - "muy integrada en circulos teatrales y creativos"
+
+# -----------------------------------------------
+# Pre-authorized roast / inside-joke material
+# -----------------------------------------------
+safe_jokes:
+  - "si aparece Montse, aparecen tambien minimo 40 fotos nuevas"
+  - "energia de vamos a hacer esto, luego aquello y luego otra foto"
+  - "la azafata como apodo carinoso autorizado"
+  - "Mongo como apodo de confianza entre amigos"
+  - "Monsita como registro afectuoso"
+
+# -----------------------------------------------
+# Hard exclusions
+# -----------------------------------------------
+do_not_mention:
+  - "comentarios sobre su fisico"
+  - "exparejas o historial sentimental"
+  - "conversaciones o bromas sobre politica"
+
+# -----------------------------------------------
+# Personal-intro mode (Tarifa concierge personal-connection path)
+# -----------------------------------------------
+personal_intro_for: []
+personal_intro_blurb: null
+
+# -----------------------------------------------
+# Metadata
+# -----------------------------------------------
+active: true
+updatedAt: "2026-05-21T00:00:00Z"
