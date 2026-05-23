@@ -139,6 +139,15 @@ describe("runTurn — Phase C1 parallel tool execution", () => {
       "get_current_weather",
     ]);
     expect(out.text).toBe("done");
+
+    // Regression: when executeTool returns no `errored` flag (success
+    // path), recordedCalls must coerce to a concrete `false` — Firestore
+    // rejects `undefined` nested values, which on 2026-05-23 broke
+    // every tool-call reply's outbound audit write in production.
+    for (const call of out.toolCalls) {
+      expect(call.errored).toBe(false);
+      expect(call.errored).not.toBeUndefined();
+    }
   });
 });
 

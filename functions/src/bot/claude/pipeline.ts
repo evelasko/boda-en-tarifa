@@ -177,7 +177,12 @@ export async function runTurn(input: PipelineInput): Promise<PipelineOutput> {
         name: block.name,
         input: args,
         output: result.output,
-        errored: result.errored,
+        // `result.errored` is optional — coerce to a concrete boolean
+        // so the audit log has a consistent shape and Firestore never
+        // sees `undefined` here (a global ignoreUndefinedProperties is
+        // also set in `functions/src/index.ts`; this is belt-and-
+        // suspenders so the field is queryable downstream).
+        errored: result.errored ?? false,
       });
       if (result.sideEffect) sideEffects.push(result.sideEffect);
       toolResults.push({
