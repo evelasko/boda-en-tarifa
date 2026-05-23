@@ -24,9 +24,9 @@ import {
   isLanguage,
   type Language,
 } from "../lib/i18n.js";
-import {decideInbound, recordUnknownInbound} from "../allowlist.js";
+import {recordUnknownInbound} from "../allowlist.js";
 import {renderTodaysSituation} from "../claude/today.js";
-import {recordInboundAndCheck} from "../conversation/ratelimit.js";
+import {evaluateInboundGate} from "../conversation/inbound-gate.js";
 import {loadHistory} from "../conversation/state.js";
 import {
   displayName,
@@ -36,6 +36,7 @@ import {
 } from "../services/guests.js";
 import {
   appendMessage,
+  type AppendMessageArgs,
   upsertConversationRoot,
 } from "../services/audit.js";
 import {markReadWithTyping, sendText} from "../whatsapp/send.js";
@@ -62,6 +63,28 @@ export interface ConversationInput {
   requestId: string;
   inboundMetaMessageId: string;
   profileName?: string;
+}
+
+/**
+ * Args for `runConversationalTurn` — the post-inbound-audit pipeline.
+ *
+ * The caller has already: passed the inbound gate, fired the typing
+ * indicator, resolved language, touched the guest, and written the
+ * inbound audit row. `runConversationalTurn` handles command
+ * short-circuits, the Claude pipeline, the outbound send, and the
+ * outbound audit row.
+ *
+ * `currentText` is the typed body for text handlers and the Whisper
+ * transcription for the voice handler.
+ */
+export interface RunConversationalTurnArgs {
+  guest: Guest;
+  phone: E164;
+  language: Language;
+  currentText: string;
+  requestId: string;
+  inboundMetaMessageId: string;
+  deps: ConversationDeps;
 }
 
 export type ConversationOutcome =
@@ -92,41 +115,38 @@ export async function handleInboundText(
   const {phone, text, requestId} = input;
   const baseLog = {requestId, phone: maskPhone(phone)};
 
-  // 1. Allowlist. Unknown phones get the polite refusal. Previously
-  //    opted-out guests ARE allowed back in — per `02-conversation-
-  //    design.md` §4 ("Cualquier mensaje me reactiva"), any new
-  //    inbound reactivates Thora; `touchGuestOnInbound` re-flips
-  //    `botEnrolled` below. The decision carries the resolved Guest
-  //    on the allowed branch so we don't re-read in §3.
-  const decision = await decideInbound(phone);
-  if (decision.kind === "unknown") {
+  // 1+2. Allowlist + rate limit via the shared inbound gate. Previously
+  //      opted-out guests ARE allowed back in — per `02-conversation-
+  //      design.md` §4 ("Cualquier mensaje me reactiva"), any new
+  //      inbound reactivates Thora; `touchGuestOnInbound` re-flips
+  //      `botEnrolled` below. The decision carries the resolved Guest
+  //      on the allowed branch so we don't re-read.
+  const gate = await evaluateInboundGate(phone);
+  if (gate.kind === "refused_unknown") {
     return handleNotAllowed({input, deps, baseLog});
   }
-  const guest: Guest = decision.guest;
-
-  // 2. Rate limit (count this inbound first, then act on the result).
-  const rate = await recordInboundAndCheck(phone);
-  if (rate.over) {
-    if (rate.shouldNotify) {
-      const lang = guest.language ?? "es";
+  if (gate.kind === "rate_limited") {
+    if (gate.rate.shouldNotify) {
+      const lang = gate.guest.language ?? "es";
       const noticeText = lang === "en" ?
         DEFAULT_RATE_LIMIT_NOTICE.en :
         DEFAULT_RATE_LIMIT_NOTICE.es;
       await safeSend({deps, phone, text: noticeText, requestId});
       logger.info("bot.conversation.rate_limited.notified", {
         ...baseLog,
-        count: rate.count,
-        bucket: rate.bucket,
+        count: gate.rate.count,
+        bucket: gate.rate.bucket,
       });
       return {outcome: "rate_limited", replyText: noticeText};
     }
     logger.info("bot.conversation.rate_limited.silent", {
       ...baseLog,
-      count: rate.count,
-      bucket: rate.bucket,
+      count: gate.rate.count,
+      bucket: gate.rate.bucket,
     });
     return {outcome: "rate_limited"};
   }
+  const guest: Guest = gate.guest;
 
   // 2b. Typing indicator + read receipt (Phase C4). Fire-and-forget —
   //     failures here are cosmetic so we log at INFO. Triggers WhatsApp's
@@ -177,12 +197,45 @@ export async function handleInboundText(
     text,
   });
 
-  // 6. Command short-circuit.
-  const command = classifyCommand(text);
+  return runConversationalTurn({
+    guest,
+    phone,
+    language,
+    currentText: text,
+    requestId,
+    inboundMetaMessageId: input.inboundMetaMessageId,
+    deps,
+  });
+}
+
+/**
+ * Post-inbound-audit conversational pipeline: command short-circuit,
+ * KB + Claude turn, outbound send + outbound audit row.
+ *
+ * Both `handleInboundText` and the Whisper-backed voice handler call
+ * this. Callers are responsible for the gate, typing indicator,
+ * language resolution, guest touch + conversation root, and the
+ * inbound audit row (which differs by type: `text` vs `audio`).
+ */
+export async function runConversationalTurn(
+  args: RunConversationalTurnArgs
+): Promise<ConversationResult> {
+  const {guest, phone, language, currentText, requestId, deps} = args;
+  const baseLog = {requestId, phone: maskPhone(phone)};
+  const turnInput: ConversationInput = {
+    phone,
+    text: currentText,
+    requestId,
+    inboundMetaMessageId: args.inboundMetaMessageId,
+  };
+
+  // 6. Command short-circuit. Voice notes that transcribe to "stop"
+  //    or "help" honor the same magic words as typed messages.
+  const command = classifyCommand(currentText);
   if (command === "stop") {
     const reply = await handleStop(guest.id, language);
     await sendAndLogOutbound({
-      input,
+      input: turnInput,
       deps,
       guestId: guest.id,
       replyText: reply.text,
@@ -193,7 +246,7 @@ export async function handleInboundText(
   if (command === "help") {
     const reply = handleHelp(language);
     await sendAndLogOutbound({
-      input,
+      input: turnInput,
       deps,
       guestId: guest.id,
       replyText: reply.text,
@@ -226,11 +279,11 @@ export async function handleInboundText(
       language,
       perTurnHeader,
       history,
-      currentText: text,
+      currentText,
       kbBlock: kb.text,
       requestId,
       guestId: guest.id,
-      inboundMessageId: input.inboundMetaMessageId,
+      inboundMessageId: args.inboundMetaMessageId,
     });
   } catch (err) {
     captureWithContext(err, {requestId, phone, kind: "conversation.claude"});
@@ -243,7 +296,7 @@ export async function handleInboundText(
       DEFAULT_FALLBACK_ERROR.en :
       DEFAULT_FALLBACK_ERROR.es;
     await sendAndLogOutbound({
-      input,
+      input: turnInput,
       deps,
       guestId: guest.id,
       replyText: fallbackText,
@@ -257,7 +310,7 @@ export async function handleInboundText(
     (se) => se.kind === "escalation_recorded"
   );
   await sendAndLogOutbound({
-    input,
+    input: turnInput,
     deps,
     guestId: guest.id,
     replyText: pipeline.text,
@@ -265,9 +318,6 @@ export async function handleInboundText(
     pipeline,
   });
 
-  // Side effects observability. Escalations are now real side effects
-  // (written by the tool executor); location pins and flow triggers
-  // remain pending — their dispatchers land in later Phase 3 tasks.
   if (pipeline.sideEffects.length > 0) {
     logger.info("bot.conversation.side_effects", {
       ...baseLog,
@@ -284,7 +334,7 @@ export async function handleInboundText(
 
 // ── Internal helpers ───────────────────────────────────────────────────────
 
-async function resolveLanguage(args: {
+export async function resolveLanguage(args: {
   storedLanguage: Language | undefined;
   text: string;
   anthropicApiKey: string;
@@ -349,25 +399,30 @@ async function sendAndLogOutbound(args: {
     requestId: args.input.requestId,
   });
 
-  // Outbound audit write is fire-and-forget (Phase C3). The guest has
-  // already received the reply via `safeSend`; the audit row is for the
-  // admin log only. The inbound was awaited earlier in the handler, so
-  // the "inbound logged before outbound" invariant still holds when the
-  // background write lands.
-  void appendMessage({
-    phone: args.input.phone,
-    guestId: args.guestId,
-    direction: "outbound",
-    type: "text",
-    requestId: args.input.requestId,
-    metaMessageId: sendResult.metaMessageId,
-    text: args.replyText,
-    outcome: args.outcome,
-    errorMessage: args.errorMessage,
-    toolCalls: args.pipeline?.toolCalls,
-    claudeModel: args.pipeline ? "sonnet-4-6" : undefined,
-    claudeUsage: args.pipeline?.usage,
-  }).catch((err) => {
+  // Outbound audit write. Originally fire-and-forget (Phase C3) for the
+  // ~100ms latency win, reverted 2026-05-23 because the race window
+  // between this write and the next inbound's `loadHistory` was letting
+  // assistant turns silently drop out of the context sent to Claude —
+  // which made Thora repeat herself across turns. The send already
+  // happened above, so the user-perceived latency is unaffected; only
+  // the Cloud Function's billed wall-clock grows by one Firestore
+  // transaction. See `bot/docs/fix-message-doubling-plan.md` §3b.
+  try {
+    await appendMessage({
+      phone: args.input.phone,
+      guestId: args.guestId,
+      direction: "outbound",
+      type: "text",
+      requestId: args.input.requestId,
+      metaMessageId: sendResult.metaMessageId,
+      text: args.replyText,
+      outcome: args.outcome,
+      errorMessage: args.errorMessage,
+      toolCalls: args.pipeline?.toolCalls,
+      claudeModel: args.pipeline ? auditModelTag(args.pipeline.model) : undefined,
+      claudeUsage: args.pipeline?.usage,
+    });
+  } catch (err) {
     captureWithContext(err, {
       requestId: args.input.requestId,
       phone: args.input.phone,
@@ -377,17 +432,19 @@ async function sendAndLogOutbound(args: {
       requestId: args.input.requestId,
       err: err instanceof Error ? err.message : String(err),
     });
-  });
+  }
 }
 
-interface SafeSendArgs {
+export interface SafeSendArgs {
   deps: ConversationDeps;
   phone: E164;
   text: string;
   requestId: string;
 }
 
-async function safeSend(args: SafeSendArgs): Promise<{metaMessageId?: string}> {
+export async function safeSend(
+  args: SafeSendArgs
+): Promise<{metaMessageId?: string}> {
   try {
     const r = await sendText({
       to: args.phone,
@@ -409,6 +466,14 @@ async function safeSend(args: SafeSendArgs): Promise<{metaMessageId?: string}> {
     });
     return {};
   }
+}
+
+function auditModelTag(
+  model: string
+): AppendMessageArgs["claudeModel"] {
+  if (model.startsWith("claude-opus-4")) return "opus-4-7";
+  if (model.startsWith("claude-haiku-4")) return "haiku-4-5";
+  return "sonnet-4-6";
 }
 
 async function handleNotAllowed(args: {
