@@ -11,6 +11,7 @@ import {
   Power,
   Database,
   Clock,
+  PhoneIncoming,
 } from 'lucide-react';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firestore';
@@ -31,6 +32,7 @@ const subNav = [
   { href: '/admin/bot/conversations', label: 'Conversaciones', icon: MessageSquare },
   { href: '/admin/bot/escalations', label: 'Escalaciones', icon: AlertTriangle },
   { href: '/admin/bot/broadcasts', label: 'Difusiones', icon: Send },
+  { href: '/admin/bot/unknown-inbound', label: 'Desconocidos', icon: PhoneIncoming },
   { href: '/admin/bot/settings', label: 'Ajustes', icon: Settings },
 ];
 

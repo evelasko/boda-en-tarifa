@@ -132,3 +132,26 @@ export async function callBotReplyToEscalation(
   const res = await fn(input);
   return res.data;
 }
+
+// ── botAddToAllowlist (FU4) ────────────────────────────────────────────────
+
+export interface AddToAllowlistInput {
+  phone: string;
+  firstName?: string;
+  language?: 'es' | 'en';
+}
+
+export interface AddToAllowlistResult {
+  guestId: string;
+}
+
+export async function callBotAddToAllowlist(
+  input: AddToAllowlistInput
+): Promise<AddToAllowlistResult> {
+  const fn = httpsCallable<AddToAllowlistInput, AddToAllowlistResult>(
+    fns(),
+    'botAddToAllowlist'
+  );
+  const res = await fn(input);
+  return res.data;
+}

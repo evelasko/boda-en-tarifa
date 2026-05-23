@@ -43,6 +43,16 @@ export interface BotEvent {
    * Launch-readiness plan A2.
    */
   reminders?: number[];
+
+  /**
+   * If set, only guests whose `rsvp_responses.responses.nightsStaying`
+   * array includes this night receive reminders for the event. Spares
+   * day-trippers from getting Friday-night pings when they're not in
+   * town yet, and Saturday-only attendees from Sunday brunch reminders.
+   * Allowed values: "friday" | "saturday" | "sunday" (see
+   * `web/src/types/rsvp.ts` `NightOption`).
+   */
+  requiresNight?: "friday" | "saturday" | "sunday";
 }
 
 const COLLECTION = "events";

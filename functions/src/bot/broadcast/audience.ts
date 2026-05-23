@@ -30,6 +30,9 @@ export type RsvpStatusFilter =
 
 export type LanguageFilter = "es" | "en" | "both";
 
+/** Mirrors `web/src/types/rsvp.ts` `NightOption`. */
+export type NightOption = "friday" | "saturday" | "sunday";
+
 export interface AudienceSpec {
   language?: LanguageFilter; // default "both"
   rsvpStatus?: RsvpStatusFilter; // default "any"
@@ -38,6 +41,15 @@ export interface AudienceSpec {
   phones?: E164[];
   /** Optional guest-id allowlist (intersect with the rest). */
   guestIds?: string[];
+  /**
+   * Restrict to guests whose RSVP `responses.nightsStaying` array
+   * contains this night. Used by event-reminder dispatching so guests
+   * who aren't in town on event day are not pinged. Guests without an
+   * `rsvp_responses` doc are excluded (defensive — if they haven't
+   * RSVPed for the night, don't ping them about it).
+   * Ignored when `phones` is set (explicit-list mode overrides filters).
+   */
+  requiresNight?: NightOption;
 }
 
 export interface AudienceMember {
@@ -57,6 +69,7 @@ export interface ResolveResult {
     hardOptOut: number;
     missingPhone: number;
     notMatched: number;
+    nightMismatch: number;
   };
 }
 
@@ -69,9 +82,17 @@ export async function resolveAudience(
     hardOptOut: 0,
     missingPhone: 0,
     notMatched: 0,
+    nightMismatch: 0,
   };
 
   const hardOptOuts = await loadHardOptOuts();
+  // Pre-compute the set of guest ids whose RSVP says they're in town for
+  // the required night, in one Firestore query instead of N per-guest
+  // reads. `null` means no nights filter is active.
+  const nightStayers =
+    spec.requiresNight && (!spec.phones || spec.phones.length === 0) ?
+      await loadGuestsStayingNight(spec.requiresNight) :
+      null;
 
   let candidates: GuestRow[];
   if (spec.phones && spec.phones.length > 0) {
@@ -99,9 +120,9 @@ export async function resolveAudience(
       excluded.hardOptOut += 1;
       continue;
     }
-    // Phone-list spec doesn't apply language/RSVP filters — but everything
-    // else does, so re-check here to keep filter semantics consistent across
-    // call paths.
+    // Phone-list spec doesn't apply language/RSVP/nights filters — but
+    // everything else does, so re-check here to keep filter semantics
+    // consistent across call paths.
     if (!spec.phones || spec.phones.length === 0) {
       if (!matchesLanguage(g.language, spec.language)) {
         excluded.notMatched += 1;
@@ -109,6 +130,10 @@ export async function resolveAudience(
       }
       if (!matchesRsvp(g.rsvpStatus, spec.rsvpStatus)) {
         excluded.notMatched += 1;
+        continue;
+      }
+      if (nightStayers && !nightStayers.has(g.id)) {
+        excluded.nightMismatch += 1;
         continue;
       }
     }
@@ -199,6 +224,30 @@ async function loadByPhones(phones: E164[]): Promise<GuestRow[]> {
     }
   }
   return rows;
+}
+
+/**
+ * One Firestore query: every `rsvp_responses` doc whose
+ * `responses.nightsStaying` array contains the given night. Returns the
+ * set of doc ids — which match `guests.id` (data model D7: rsvp_responses
+ * is keyed by Firebase Auth UID, same as the guest doc id).
+ */
+async function loadGuestsStayingNight(
+  night: NightOption
+): Promise<Set<string>> {
+  const out = new Set<string>();
+  try {
+    const snap = await getFirestore()
+      .collection("rsvp_responses")
+      .where("responses.nightsStaying", "array-contains", night)
+      .get();
+    for (const d of snap.docs) out.add(d.id);
+  } catch {
+    // If the field doesn't exist or the index isn't built yet, treat as
+    // "no one staying" — safer than over-pinging. Operator will notice
+    // the empty audience in dry-run and can debug.
+  }
+  return out;
 }
 
 async function loadHardOptOuts(): Promise<Set<string>> {

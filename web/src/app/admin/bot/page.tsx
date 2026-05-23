@@ -7,6 +7,7 @@ import {
   Send,
   Settings,
   ArrowRight,
+  PhoneIncoming,
 } from 'lucide-react';
 
 const cards = [
@@ -30,6 +31,13 @@ const cards = [
     description:
       'Lanzar un envío por plantilla con vista previa de audiencia y dry-run antes de enviar.',
     icon: Send,
+  },
+  {
+    href: '/admin/bot/unknown-inbound',
+    title: 'Números desconocidos',
+    description:
+      'Cola de números fuera de la lista de invitados. Si reconoces el número, añádelo de un clic.',
+    icon: PhoneIncoming,
   },
   {
     href: '/admin/bot/settings',

@@ -148,11 +148,12 @@ async function fireReminder(
   await createBroadcast({
     broadcastId,
     templateName: "event_reminder_generic",
-    // Audience: every guest enrolled in the bot. `whom`-based filtering is
-    // not yet wired (RSVP-per-event mapping doesn't exist in the data
-    // model) — for the launch window this is acceptable; opt-outs are
-    // honored regardless.
-    audience: {},
+    // Audience: bot-enrolled guests, optionally filtered to those whose
+    // `rsvp_responses.responses.nightsStaying` includes the event's
+    // `requiresNight`. Opt-outs and missing-phone exclusions always apply.
+    audience: evt.requiresNight ?
+      {requiresNight: evt.requiresNight} :
+      {},
     vars: dispatchVars,
     // Pace at 60/min — Meta's default ceiling and a comfortable cadence
     // for a wedding-sized audience.

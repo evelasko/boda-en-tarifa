@@ -14,11 +14,13 @@
  * are not on the launch critical path and can be added in their own PRs.
  *
  * Naming: the plan uses `event_reminder_generic` / `seating_unlocked`; the
- * spec doc submitted to Meta calls them `event_reminder_30min` /
- * `seating_unlock`. The `metaName` mapping below carries the names the
- * operator submits to Meta Business Manager — those names are the source of
- * truth for Meta's side and MUST match what is approved. Logical names used
- * inside this codebase follow the launch plan.
+ * Meta-approved template names (per operator, 2026-05-23) are
+ * `event_reminder_30min` / `seating_unlock` — language is NOT in the name.
+ * Meta supports the same `name` with multiple `language.code` variants
+ * under it; the `language.code` field on the payload selects ES vs EN at
+ * send time. The `metaName` mapping below therefore ignores its `lang`
+ * argument; the per-language selection happens via `META_LANG[lang]` in
+ * the payload's `language.code` field.
  */
 
 import {z} from "zod";
@@ -208,20 +210,18 @@ export const TEMPLATES: {
 } = {
   welcome_onboarding: {
     name: "welcome_onboarding",
-    metaName: (lang) => `welcome_onboarding_${lang}`,
+    metaName: () => "welcome_onboarding",
     vars: FirstNameVars,
     buildPayload: (lang, vars) =>
-      bodyOnlyPayload(`welcome_onboarding_${lang}`, lang, [vars.firstName]),
+      bodyOnlyPayload("welcome_onboarding", lang, [vars.firstName]),
     preview: (lang, vars) => WELCOME_BODY[lang](vars),
   },
   event_reminder_generic: {
     name: "event_reminder_generic",
-    // Meta-side name kept as `event_reminder_30min_<lang>` to match the
-    // template already authored against `05-message-templates.md` §T3.
-    metaName: (lang) => `event_reminder_30min_${lang}`,
+    metaName: () => "event_reminder_30min",
     vars: EventReminderVars,
     buildPayload: (lang, vars) =>
-      bodyOnlyPayload(`event_reminder_30min_${lang}`, lang, [
+      bodyOnlyPayload("event_reminder_30min", lang, [
         vars.eventName,
         vars.venue,
         vars.time,
@@ -230,14 +230,17 @@ export const TEMPLATES: {
   },
   seating_unlocked: {
     name: "seating_unlocked",
-    metaName: (lang) => `seating_unlock_${lang}`,
+    metaName: () => "seating_unlock",
     vars: SeatingVars,
     buildPayload: (lang, vars) => {
-      const base = bodyOnlyPayload(`seating_unlock_${lang}`, lang, [
+      const base = bodyOnlyPayload("seating_unlock", lang, [
         vars.firstName,
         vars.tableLabel,
       ]);
-      // URL button takes the signed token as `{{1}}` per §T4.
+      // URL button takes the signed token as `{{1}}` per §T4. Operator
+      // submitted the template with this button — keep it until the
+      // operator either removes it on the Meta side or wires a real
+      // per-guest seating page on the web.
       base.components.push({
         type: "button",
         sub_type: "url",
@@ -250,18 +253,18 @@ export const TEMPLATES: {
   },
   film_developed: {
     name: "film_developed",
-    metaName: (lang) => `film_developed_${lang}`,
+    metaName: () => "film_developed",
     vars: FirstNameVars,
     buildPayload: (lang, vars) =>
-      bodyOnlyPayload(`film_developed_${lang}`, lang, [vars.firstName]),
+      bodyOnlyPayload("film_developed", lang, [vars.firstName]),
     preview: (lang, vars) => FILM_BODY[lang](vars),
   },
   farewell_thanks: {
     name: "farewell_thanks",
-    metaName: (lang) => `farewell_thanks_${lang}`,
+    metaName: () => "farewell_thanks",
     vars: FirstNameVars,
     buildPayload: (lang, vars) =>
-      bodyOnlyPayload(`farewell_thanks_${lang}`, lang, [vars.firstName]),
+      bodyOnlyPayload("farewell_thanks", lang, [vars.firstName]),
     preview: (lang, vars) => FAREWELL_BODY[lang](vars),
   },
 };

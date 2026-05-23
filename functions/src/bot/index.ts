@@ -29,3 +29,4 @@ export {botSetConfig} from "./callables/set-config.js";
 export {botReplyToEscalation} from "./callables/reply-to-escalation.js";
 export {botSendBroadcast} from "./callables/send-broadcast.js";
 export {botCancelBroadcast} from "./callables/cancel-broadcast.js";
+export {botAddToAllowlist} from "./callables/add-to-allowlist.js";

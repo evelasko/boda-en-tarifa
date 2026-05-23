@@ -41,4 +41,5 @@ export {
   botReplyToEscalation,
   botSendBroadcast,
   botCancelBroadcast,
+  botAddToAllowlist,
 } from "./bot/index.js";
