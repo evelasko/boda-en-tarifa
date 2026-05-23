@@ -48,6 +48,7 @@ import {
   consentFromGuestField,
   createFeedPost,
 } from "../services/photos.js";
+import {captureWithContext} from "../../lib/sentry.js";
 
 export interface MediaHandlerDeps {
   whatsappPhoneNumberId: string;
@@ -205,6 +206,11 @@ async function processImage(args: {
       requestId: input.requestId,
     });
   } catch (err) {
+    captureWithContext(err, {
+      requestId: input.requestId,
+      phone: input.phone,
+      kind: "media.download",
+    });
     logger.error("bot.media.download_error", {
       ...baseLog,
       err: err instanceof Error ? err.message : String(err),
@@ -224,6 +230,11 @@ async function processImage(args: {
       requestId: input.requestId,
     });
   } catch (err) {
+    captureWithContext(err, {
+      requestId: input.requestId,
+      phone: input.phone,
+      kind: "media.upload",
+    });
     logger.error("bot.media.upload_error", {
       ...baseLog,
       err: err instanceof Error ? err.message : String(err),
@@ -244,6 +255,11 @@ async function processImage(args: {
       caption: input.caption,
     });
   } catch (err) {
+    captureWithContext(err, {
+      requestId: input.requestId,
+      phone: input.phone,
+      kind: "media.feed_post",
+    });
     logger.error("bot.media.feed_post_error", {
       ...baseLog,
       publicId: uploaded.public_id,
@@ -395,6 +411,11 @@ async function safeSend(args: {
     });
     return {metaMessageId: r.metaMessageId};
   } catch (err) {
+    captureWithContext(err, {
+      requestId: args.requestId,
+      phone: args.phone,
+      kind: "media.send",
+    });
     logger.error("bot.media.send_failed", {
       requestId: args.requestId,
       err: err instanceof Error ? err.message : String(err),

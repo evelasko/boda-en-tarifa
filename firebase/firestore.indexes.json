@@ -100,6 +100,24 @@
         { "fieldPath": "resolved", "order": "ASCENDING" },
         { "fieldPath": "receivedAt", "order": "DESCENDING" }
       ]
+    },
+    {
+      "__comment": "Bot: broadcast recipients per-broadcast progress (status + createdAt) — launch-readiness A1",
+      "collectionGroup": "recipients",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "__comment": "Bot: broadcast list ordered by recency (admin /broadcasts page)",
+      "collectionGroup": "bot_broadcasts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

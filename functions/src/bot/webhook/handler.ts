@@ -2,11 +2,13 @@ import {onRequest, type Request} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 import type {Response} from "express";
 import {randomUUID} from "node:crypto";
+import {getFirestore} from "firebase-admin/firestore";
 import {
   ANTHROPIC_API_KEY,
   BOT_REGION,
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_UPLOAD_PRESET,
+  SENTRY_DSN,
   WEBHOOK_SECRETS,
   WHATSAPP_ACCESS_TOKEN,
   WHATSAPP_APP_SECRET,
@@ -22,6 +24,8 @@ import {
   extractMediaPayload,
   handleInboundMedia,
 } from "../handlers/media.js";
+import {handleStatusEvent} from "./status.js";
+import {captureWithContext, ensureSentry} from "../../lib/sentry.js";
 
 /**
  * WhatsApp Cloud API webhook entry point.
@@ -37,13 +41,20 @@ import {
  * Spec: `bot/specs/08-integration-contract.md` §1,
  *       `bot/specs/03-architecture.md` §5.1.
  */
+// Compute config bumped per launch-readiness plan A6 (Imp-12). The
+// active window (2026-05-23 → 2026-06-05) is short enough that the cost
+// of always-on warm instances (~€50-60 total per the plan) is a fair
+// trade for eliminating cold starts. After the event the operator drops
+// minInstances back to 0 (F4).
 export const whatsappWebhook = onRequest(
   {
     region: BOT_REGION,
     secrets: WEBHOOK_SECRETS,
-    memory: "1GiB",
+    memory: "4GiB",
+    cpu: 2,
+    concurrency: 40,
     timeoutSeconds: 60,
-    minInstances: 0,
+    minInstances: 5,
     maxInstances: 50,
     invoker: "public",
   },
@@ -116,6 +127,10 @@ async function handlePost(
   res: Response,
   requestId: string
 ): Promise<void> {
+  // Init Sentry once per cold start (Phase C5). Idempotent — subsequent
+  // calls inside the same Node process are no-ops.
+  ensureSentry(SENTRY_DSN.value());
+
   const rawBody = req.rawBody?.toString("utf8") ?? "";
   const signature = req.get("x-hub-signature-256") ?? undefined;
 
@@ -143,22 +158,64 @@ async function handlePost(
   // against unexpectedly slow downstream calls (Meta send, Firestore).
   res.status(200).send("OK");
 
+  // Kill-switch (launch-readiness B5). When the operator flips
+  // `config/bot.enabled = false` from the settings page, classify and
+  // log the inbound but skip the conversational handler so Thora goes
+  // silent. Status callbacks still process (so delivery state stays
+  // accurate for in-flight broadcasts). Result is cached for 10s so a
+  // burst of inbounds doesn't hit Firestore on every message.
+  const botEnabled = await isBotEnabled();
+
   try {
     const events = classifyEvents(body);
     logger.info("bot.webhook.received", {
       requestId,
       eventCount: events.length,
       kinds: events.map((e) => e.kind),
+      botEnabled,
     });
 
     for (const event of events) {
+      if (!botEnabled && event.kind !== "status") {
+        logger.info("bot.webhook.kill_switch_engaged", {
+          requestId,
+          kind: event.kind,
+        });
+        continue;
+      }
       await dispatchEvent(event, requestId);
     }
   } catch (err) {
+    captureWithContext(err, {requestId, kind: "webhook.processing"});
     logger.error("bot.webhook.processing_error", {
       requestId,
       err: err instanceof Error ? err.message : String(err),
     });
+  }
+}
+
+// ── Kill-switch cache ──────────────────────────────────────────────────────
+
+const ENABLED_CACHE_TTL_MS = 10_000;
+let enabledCache: {value: boolean; expiresAt: number} | null = null;
+
+async function isBotEnabled(): Promise<boolean> {
+  const now = Date.now();
+  if (enabledCache && enabledCache.expiresAt > now) {
+    return enabledCache.value;
+  }
+  try {
+    const snap = await getFirestore().doc("config/bot").get();
+    const value = snap.exists ?
+      ((snap.data() as {enabled?: boolean}).enabled !== false) :
+      true; // default true when the config doc is absent
+    enabledCache = {value, expiresAt: now + ENABLED_CACHE_TTL_MS};
+    return value;
+  } catch (err) {
+    logger.warn("bot.webhook.enabled_read_failed", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return true; // fail-open: never silence the bot on a config read error
   }
 }
 
@@ -181,6 +238,22 @@ async function dispatchEvent(
       metaMessageId: event.messageId,
       status: event.status,
       recipient: maskPhone(`+${event.recipientId}`),
+    });
+    // Fan out to the send-log + broadcast recipient subcollection. Never
+    // throws — `handleStatusEvent` catches and logs internally.
+    await handleStatusEvent(
+      {
+        metaMessageId: event.messageId,
+        status: event.status,
+        recipientId: event.recipientId,
+      },
+      requestId
+    ).catch((err) => {
+      logger.warn("bot.webhook.status.handler_failed", {
+        requestId,
+        metaMessageId: event.messageId,
+        err: err instanceof Error ? err.message : String(err),
+      });
     });
     return;
   }
@@ -255,6 +328,11 @@ async function dispatchEvent(
       await markProcessed(event.messageId);
     }
   } catch (err) {
+    captureWithContext(err, {
+      requestId,
+      phone: fromE164,
+      kind: "webhook.text",
+    });
     logger.error("bot.webhook.handler_failed", {
       ...baseLog,
       err: err instanceof Error ? err.message : String(err),
@@ -316,6 +394,11 @@ async function dispatchMedia(
       await markProcessed(event.messageId);
     }
   } catch (err) {
+    captureWithContext(err, {
+      requestId,
+      phone: fromE164,
+      kind: "webhook.media",
+    });
     logger.error("bot.webhook.media_handler_failed", {
       ...baseLog,
       mediaType: event.mediaType,

@@ -134,23 +134,35 @@ export async function runTurn(input: PipelineInput): Promise<PipelineOutput> {
     // Anthropic SDK convention).
     messages.push({role: "assistant", content: resp.content});
 
-    const toolResults: Anthropic.Messages.ToolResultBlockParam[] = [];
-    for (const block of resp.content) {
-      if (block.type !== "tool_use") continue;
-      const args = (block.input as Record<string, unknown>) ?? {};
-      const result: ToolResult = await executeTool(block.name, args, toolCtx)
-        .catch((err) => {
-          logger.error("bot.claude.pipeline.tool_threw", {
-            requestId: input.requestId,
-            name: block.name,
-            err: err instanceof Error ? err.message : String(err),
+    // Execute tool_use blocks concurrently (Phase C1). Each tool call is
+    // independent within a turn; running them in parallel saves 100-400ms
+    // on common multi-tool emissions. Block order is preserved when
+    // re-assembling `recordedCalls`, `sideEffects`, and `toolResults` so
+    // audit logs match the request flow.
+    const toolUseBlocks = resp.content.filter(
+      (b): b is Anthropic.Messages.ToolUseBlock => b.type === "tool_use"
+    );
+    const executed = await Promise.all(
+      toolUseBlocks.map(async (block) => {
+        const args = (block.input as Record<string, unknown>) ?? {};
+        const result: ToolResult = await executeTool(block.name, args, toolCtx)
+          .catch((err) => {
+            logger.error("bot.claude.pipeline.tool_threw", {
+              requestId: input.requestId,
+              name: block.name,
+              err: err instanceof Error ? err.message : String(err),
+            });
+            return {
+              output: {error: "tool_exception"},
+              errored: true,
+            } as ToolResult;
           });
-          return {
-            output: {error: "tool_exception"},
-            errored: true,
-          } as ToolResult;
-        });
+        return {block, args, result};
+      })
+    );
 
+    const toolResults: Anthropic.Messages.ToolResultBlockParam[] = [];
+    for (const {block, args, result} of executed) {
       recordedCalls.push({
         name: block.name,
         input: args,
@@ -158,7 +170,6 @@ export async function runTurn(input: PipelineInput): Promise<PipelineOutput> {
         errored: result.errored,
       });
       if (result.sideEffect) sideEffects.push(result.sideEffect);
-
       toolResults.push({
         type: "tool_result",
         tool_use_id: block.id,

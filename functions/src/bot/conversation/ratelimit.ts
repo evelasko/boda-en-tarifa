@@ -17,11 +17,7 @@
  * subsequent `over: true` in the same bucket as "skip silently".
  */
 
-import {
-  getFirestore,
-  FieldValue,
-  Timestamp,
-} from "firebase-admin/firestore";
+import {getFirestore, Timestamp} from "firebase-admin/firestore";
 import type {E164} from "../lib/phone.js";
 import {
   DEFAULT_RATE_LIMIT_PER_5MIN,
@@ -45,22 +41,36 @@ export async function recordInboundAndCheck(
 ): Promise<RateDecision> {
   const bucket = rateBucket();
   const docId = `${phone.replace("+", "")}_${bucket}`;
-  const ref = getFirestore().collection(COLLECTION).doc(docId);
+  const db = getFirestore();
+  const ref = db.collection(COLLECTION).doc(docId);
 
-  // Two-step: increment first, then read back. `FieldValue.increment`
-  // doesn't return the new value in the same call, so we read after.
-  await ref.set(
-    {
-      phone,
-      bucket,
-      count: FieldValue.increment(1),
-      ttlExpiresAt: Timestamp.fromMillis(Date.now() + RATE_BUCKET_TTL_MS),
+  // Single round-trip via transaction (Phase C2). The previous
+  // `set(merge) → get` pair cost two RPCs; transactional read+write
+  // returns the new count in one and guarantees monotonic counting under
+  // concurrent inbounds.
+  //
+  // `maxAttempts: 20` raises the SDK default of 5. A single phone burst-
+  // sending into the same 5-minute bucket can produce a handful of
+  // racers, and the default budget gives up too early on contended docs.
+  const count = await db.runTransaction(
+    async (tx) => {
+      const snap = await tx.get(ref);
+      const current = ((snap.data()?.count as number | undefined) ?? 0) + 1;
+      tx.set(
+        ref,
+        {
+          phone,
+          bucket,
+          count: current,
+          ttlExpiresAt: Timestamp.fromMillis(Date.now() + RATE_BUCKET_TTL_MS),
+        },
+        {merge: true}
+      );
+      return current;
     },
-    {merge: true}
+    {maxAttempts: 20}
   );
 
-  const snap = await ref.get();
-  const count = (snap.get("count") as number | undefined) ?? 1;
   const over = count > limit;
   // Notify exactly once per bucket — when count first crosses `limit + 1`.
   const shouldNotify = count === limit + 1;

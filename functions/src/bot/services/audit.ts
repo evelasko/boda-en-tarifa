@@ -63,6 +63,15 @@ export interface AppendMessageArgs {
   outcome?: "replied" | "escalated" | "refused" | "rate_limited" | "error";
   errorCode?: string;
   errorMessage?: string;
+  /**
+   * Origin of an outbound message — `"bot"` (default) for Claude-generated
+   * replies, `"operator"` for human-typed escalation responses. Surfaced
+   * in the admin thread view so operators can tell at a glance which
+   * messages came from them.
+   */
+  senderType?: "bot" | "operator";
+  /** Admin email when `senderType === "operator"`. */
+  operatorEmail?: string;
 }
 
 /**
@@ -116,6 +125,8 @@ export async function appendMessage(args: AppendMessageArgs): Promise<void> {
     outcome: args.outcome ?? null,
     errorCode: args.errorCode ?? null,
     errorMessage: args.errorMessage ?? null,
+    senderType: args.senderType ?? "bot",
+    operatorEmail: args.operatorEmail ?? null,
     requestId: args.requestId,
     createdAt: FieldValue.serverTimestamp(),
   };

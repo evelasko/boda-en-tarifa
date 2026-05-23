@@ -1,4 +1,4 @@
-import {defineSecret} from "firebase-functions/params";
+import {defineSecret, defineString} from "firebase-functions/params";
 
 /**
  * Centralized declarations of bot-related secrets and config constants.
@@ -22,8 +22,12 @@ export const WHATSAPP_BUSINESS_ACCOUNT_ID = defineSecret(
 );
 export const ANTHROPIC_API_KEY = defineSecret("ANTHROPIC_API_KEY");
 
+// ── Sentry (Phase C5 — error tracking + handler-level capture) ────────────
+export const SENTRY_DSN = defineSecret("SENTRY_DSN");
+
 // ── Cloudinary (unsigned upload preset per `08-integration-contract.md` §6)
-export const CLOUDINARY_CLOUD_NAME = defineSecret("CLOUDINARY_CLOUD_NAME");
+/** Public config — set in `functions/.env`, not Secret Manager. */
+export const CLOUDINARY_CLOUD_NAME = defineString("CLOUDINARY_CLOUD_NAME");
 export const CLOUDINARY_UPLOAD_PRESET = defineSecret(
   "CLOUDINARY_UPLOAD_PRESET"
 );
@@ -41,8 +45,8 @@ export const WEBHOOK_SECRETS = [
   WHATSAPP_VERIFY_TOKEN,
   WHATSAPP_PHONE_NUMBER_ID,
   ANTHROPIC_API_KEY,
-  CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_UPLOAD_PRESET,
+  SENTRY_DSN,
 ];
 
 // ── Constants ──────────────────────────────────────────────────────────────

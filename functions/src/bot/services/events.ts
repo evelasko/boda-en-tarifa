@@ -34,6 +34,15 @@ export interface BotEvent {
   whom?: string;
   descriptionEs?: string;
   descriptionEn?: string;
+  /**
+   * Lead times (minutes before `startAt`) at which the event-reminder
+   * scheduler should fire `event_reminder_generic`. Default `[60, 15]`
+   * when absent. Set to `[]` to suppress generic reminders entirely (for
+   * events covered by dedicated templates — e.g. ceremony uses
+   * bus_pickup_early/last; pre_wedding uses pre_wedding_drinks).
+   * Launch-readiness plan A2.
+   */
+  reminders?: number[];
 }
 
 const COLLECTION = "events";

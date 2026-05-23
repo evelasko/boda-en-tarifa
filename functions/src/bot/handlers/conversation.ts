@@ -38,7 +38,8 @@ import {
   appendMessage,
   upsertConversationRoot,
 } from "../services/audit.js";
-import {sendText} from "../whatsapp/send.js";
+import {markReadWithTyping, sendText} from "../whatsapp/send.js";
+import {captureWithContext} from "../../lib/sentry.js";
 import {classifyCommand, handleHelp, handleStop} from "./command.js";
 import {detectLanguage} from "../claude/language.js";
 import {getKb} from "../claude/kb.js";
@@ -126,6 +127,22 @@ export async function handleInboundText(
     });
     return {outcome: "rate_limited"};
   }
+
+  // 2b. Typing indicator + read receipt (Phase C4). Fire-and-forget —
+  //     failures here are cosmetic so we log at INFO. Triggers WhatsApp's
+  //     "Thora is composing…" bubble within ~100ms of inbound, masking
+  //     the Claude round-trip that follows.
+  void markReadWithTyping({
+    metaMessageId: input.inboundMetaMessageId,
+    phoneNumberId: deps.whatsappPhoneNumberId,
+    accessToken: deps.whatsappAccessToken,
+    requestId,
+  }).catch((err) => {
+    logger.info("bot.conversation.typing_indicator_failed", {
+      ...baseLog,
+      err: err instanceof Error ? err.message : String(err),
+    });
+  });
 
   // 3. Language resolution. Stored value wins; first-turn we detect
   //    via Haiku and persist. Mid-conversation switch (debounced) is
@@ -216,6 +233,7 @@ export async function handleInboundText(
       inboundMessageId: input.inboundMetaMessageId,
     });
   } catch (err) {
+    captureWithContext(err, {requestId, phone, kind: "conversation.claude"});
     logger.error("bot.conversation.claude_failed", {
       ...baseLog,
       err: err instanceof Error ? err.message : String(err),
@@ -330,7 +348,13 @@ async function sendAndLogOutbound(args: {
     text: args.replyText,
     requestId: args.input.requestId,
   });
-  await appendMessage({
+
+  // Outbound audit write is fire-and-forget (Phase C3). The guest has
+  // already received the reply via `safeSend`; the audit row is for the
+  // admin log only. The inbound was awaited earlier in the handler, so
+  // the "inbound logged before outbound" invariant still holds when the
+  // background write lands.
+  void appendMessage({
     phone: args.input.phone,
     guestId: args.guestId,
     direction: "outbound",
@@ -343,6 +367,16 @@ async function sendAndLogOutbound(args: {
     toolCalls: args.pipeline?.toolCalls,
     claudeModel: args.pipeline ? "sonnet-4-6" : undefined,
     claudeUsage: args.pipeline?.usage,
+  }).catch((err) => {
+    captureWithContext(err, {
+      requestId: args.input.requestId,
+      phone: args.input.phone,
+      kind: "conversation.outbound_audit",
+    });
+    logger.error("bot.conversation.outbound_audit_failed", {
+      requestId: args.input.requestId,
+      err: err instanceof Error ? err.message : String(err),
+    });
   });
 }
 
@@ -364,6 +398,11 @@ async function safeSend(args: SafeSendArgs): Promise<{metaMessageId?: string}> {
     });
     return {metaMessageId: r.metaMessageId};
   } catch (err) {
+    captureWithContext(err, {
+      requestId: args.requestId,
+      phone: args.phone,
+      kind: "conversation.send",
+    });
     logger.error("bot.conversation.send_failed", {
       requestId: args.requestId,
       err: err instanceof Error ? err.message : String(err),

@@ -116,13 +116,23 @@ export interface SystemPromptArgs {
  * Build the three-block system prompt for `messages.create`. Each block
  * gets its own ephemeral cache marker (Anthropic supports up to 4
  * breakpoints per request).
+ *
+ * Launch-readiness plan A7: TTL is extended from the default 5 min to
+ * 1 hour. Cache write cost rises ~1.25× per write but hit rate dominates
+ * — net cost decreases. The Op-1 `anthropic-priority-tier` header is NOT
+ * applied here (Priority Tier was denied; if/when it lands the header
+ * goes on the per-call `messages.create` options, not here).
  */
 export function buildSystem(
   args: SystemPromptArgs
 ): Anthropic.Messages.TextBlockParam[] {
+  const cc: Anthropic.Messages.CacheControlEphemeral = {
+    type: "ephemeral",
+    ttl: "1h",
+  };
   return [
-    {type: "text", text: BLOCK_A, cache_control: {type: "ephemeral"}},
-    {type: "text", text: args.kbBlock, cache_control: {type: "ephemeral"}},
-    {type: "text", text: BLOCK_C, cache_control: {type: "ephemeral"}},
+    {type: "text", text: BLOCK_A, cache_control: cc},
+    {type: "text", text: args.kbBlock, cache_control: cc},
+    {type: "text", text: BLOCK_C, cache_control: cc},
   ];
 }

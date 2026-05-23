@@ -282,6 +282,12 @@ function objectKeysToCamel(obj) {
   return out;
 }
 
+/** YAML record → Firestore fields; doc id is written separately, not in payload. */
+function recordToPayload(record) {
+  const { id: _docId, ...rest } = record;
+  return objectKeysToCamel(rest);
+}
+
 // ─────────────────────────────────────────────────
 // Validators (lightweight — no zod dep; tight enough for the small set)
 // ─────────────────────────────────────────────────
@@ -395,11 +401,7 @@ function describeSources(opts) {
         const list = validateEventsFile(doc);
         return list.map((e) => ({
           id: e.id,
-          payload: {
-            ...objectKeysToCamel(e),
-            // strip the id from the payload — it's the doc id
-            id: undefined,
-          },
+          payload: recordToPayload(e),
         }));
       },
     },
@@ -412,10 +414,7 @@ function describeSources(opts) {
         const list = validateVenuesFile(doc);
         return list.map((v) => ({
           id: v.id,
-          payload: {
-            ...objectKeysToCamel(v),
-            id: undefined,
-          },
+          payload: recordToPayload(v),
         }));
       },
     },
@@ -428,10 +427,7 @@ function describeSources(opts) {
         const list = validateAccommodationsFile(doc);
         return list.map((a) => ({
           id: a.id,
-          payload: {
-            ...objectKeysToCamel(a),
-            id: undefined,
-          },
+          payload: recordToPayload(a),
         }));
       },
     },

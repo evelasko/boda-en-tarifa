@@ -15,6 +15,7 @@ module.exports = {
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: ["tsconfig.json", "tsconfig.dev.json"],
+    tsconfigRootDir: __dirname,
     sourceType: "module",
   },
   ignorePatterns: [
@@ -26,6 +27,16 @@ module.exports = {
     "@typescript-eslint",
     "import",
   ],
+  overrides: [
+    {
+      files: ["test/**/*.cjs", "**/test/**/*.cjs"],
+      env: {jest: true},
+      rules: {
+        "@typescript-eslint/no-var-requires": "off",
+        "no-constant-condition": "off",
+      },
+    },
+  ],
   rules: {
     "quotes": ["error", "double"],
     "import/no-unresolved": 0,
@@ -35,5 +46,6 @@ module.exports = {
     // reach for when they want to explain *why*, not what.
     "require-jsdoc": "off",
     "valid-jsdoc": "off",
+    "max-len": "off",
   },
 };

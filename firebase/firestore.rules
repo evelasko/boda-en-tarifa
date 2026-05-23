@@ -15,14 +15,21 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.token.admin == true;
     }
 
-    // Operator = admin custom claim OR a doc in /admins/{uid}.
-    // The bot spec (bot/specs/04-data-model.md §4) standardizes on the
-    // doc-based form; we accept both so existing custom-claim admins
-    // keep working until/unless they're migrated.
+    // Operator = admin custom claim, OR a doc in /admins/{uid}, OR the
+    // user's email appears in `config/admins.emails`. The email path
+    // matches the existing web admin's `verifyAdmin()` helper
+    // (`web/src/lib/admin-auth.ts`); the bot admin UI relies on this to
+    // do live (`onSnapshot`) Firestore reads from the operator's
+    // browser without an extra server round-trip.
     function isOperator() {
       return isAuthenticated() && (
         request.auth.token.admin == true ||
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        (
+          request.auth.token.email != null &&
+          request.auth.token.email in
+            get(/databases/$(database)/documents/config/admins).data.emails
+        )
       );
     }
 
@@ -114,6 +121,13 @@ service cloud.firestore {
       allow read: if isOperator();
       allow create, update: if isOperator();
       allow delete: if false;
+
+      // Per-recipient state for broadcast dispatch (launch-readiness A1).
+      // Server-only writes via Admin SDK; operators read for live progress.
+      match /recipients/{guestId} {
+        allow read: if isOperator();
+        allow write: if false;
+      }
     }
 
     match /bot_escalations/{id} {
@@ -149,6 +163,29 @@ service cloud.firestore {
 
     match /bot_outbound_pending/{id} {
       allow read, write: if false;
+    }
+
+    // Scheduled-trigger idempotency markers (launch-readiness A2/A3/A4).
+    // Server-only; operator reads in the settings/observability page.
+    match /bot_event_reminder_log/{id} {
+      allow read: if isOperator();
+      allow write: if false;
+    }
+    match /bot_content_unlock_log/{id} {
+      allow read: if isOperator();
+      allow write: if false;
+    }
+    match /bot_film_developed_log/{id} {
+      allow read: if isOperator();
+      allow write: if false;
+    }
+
+    // Content-unlock entries the operator authors to schedule reveal sends
+    // (e.g. seating unlock 19:30 Sat). Server reads via Admin SDK; operator
+    // edits via admin UI (Phase B follow-up) or Firestore console.
+    match /bot_content_unlocks/{id} {
+      allow read: if isOperator();
+      allow write: if isOperator();
     }
 
     // config/bot — operator-tunable bot config doc inside the existing

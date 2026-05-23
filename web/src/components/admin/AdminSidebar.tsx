@@ -15,6 +15,7 @@ import {
   Clock,
   Utensils,
   LayoutGrid,
+  Bot,
   X,
 } from 'lucide-react';
 
@@ -30,6 +31,7 @@ const navItems = [
   { href: '/admin/seating/layout', label: 'Configurar mesas', icon: LayoutGrid, nested: true },
   { href: '/admin/moderation', label: 'Moderación', icon: Shield },
   { href: '/admin/notifications', label: 'Notificaciones', icon: Bell },
+  { href: '/admin/bot', label: 'Thora (bot)', icon: Bot },
   { href: '/admin/config', label: 'Configuración', icon: Settings },
 ];
 
