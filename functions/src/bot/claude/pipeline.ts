@@ -215,22 +215,66 @@ export class PipelineIterationCapError extends Error {
 function buildInitialMessages(
   input: PipelineInput
 ): Anthropic.Messages.MessageParam[] {
-  const messages: Anthropic.Messages.MessageParam[] = [];
-
-  // The current inbound is persisted to the audit log BEFORE this turn
-  // runs (see `handlers/conversation.ts:190` and `handlers/voice.ts:266`),
-  // so `input.history` typically contains it as its last entry. Drop it
-  // here so we don't duplicate the current user message — the composite
-  // user content below is the canonical carrier for the current turn.
-  // See `bot/docs/fix-message-doubling-plan.md` (2026-05-23) for the
-  // production incident this guards against.
-  const trimmedHistory = input.history.slice();
-  const last = trimmedHistory[trimmedHistory.length - 1];
-  if (last && last.role === "user" && last.text === input.currentText) {
-    trimmedHistory.pop();
+  // History sanitization for the Claude pipeline. Two rules, both
+  // defensive against the audit log having gaps (which it does after
+  // any failed audit write or any failed outbound send — see the
+  // 2026-05-23 incident in `bot/docs/fix-message-doubling-plan.md`).
+  //
+  // Rule 1 — drop trailing user turns. The natural shape ends with an
+  // assistant turn (Thora's last reply) so the composite below picks
+  // up cleanly. Any trailing user turn in history is one of:
+  //   a) the current inbound itself (handlers persist it before this
+  //      runs, so loadHistory returns it as the last entry); or
+  //   b) a prior user message that never got an assistant reply
+  //      (audit failure, send timeout, or Claude error).
+  // Either way it's stale relative to the current turn — the user
+  // either re-asked (case a/b) or moved on (case b). Including it
+  // makes Claude try to address two questions at once. Drop the run.
+  //
+  // Rule 2 — collapse interior consecutive user turns to the last of
+  // each run. Same root cause as Rule 1 but for runs that did
+  // eventually get an assistant turn afterwards: only the most recent
+  // user message in the run was informative; the earlier ones were
+  // stale follow-ups.
+  const originalLen = input.history.length;
+  const trimmed = input.history.slice();
+  let droppedTrailing = 0;
+  while (
+    trimmed.length > 0 &&
+    trimmed[trimmed.length - 1].role === "user"
+  ) {
+    trimmed.pop();
+    droppedTrailing++;
   }
 
-  for (const turn of trimmedHistory) {
+  const collapsed: HistoryTurn[] = [];
+  let collapsedRuns = 0;
+  for (const turn of trimmed) {
+    const prev = collapsed[collapsed.length - 1];
+    if (prev && prev.role === "user" && turn.role === "user") {
+      collapsed.pop();
+      collapsedRuns++;
+    }
+    collapsed.push(turn);
+  }
+
+  // Shape log (no message text — PII). Lets ops correlate by
+  // requestId when a reply looks off, without a redeploy. `pattern`
+  // is a short string like "uaua" reflecting the final history.
+  const pattern = collapsed
+    .map((t) => (t.role === "user" ? "u" : "a"))
+    .join("");
+  logger.info("bot.claude.pipeline.history_shape", {
+    requestId: input.requestId,
+    originalLen,
+    finalLen: collapsed.length,
+    droppedTrailing,
+    collapsedRuns,
+    pattern,
+  });
+
+  const messages: Anthropic.Messages.MessageParam[] = [];
+  for (const turn of collapsed) {
     messages.push({role: turn.role, content: turn.text});
   }
 

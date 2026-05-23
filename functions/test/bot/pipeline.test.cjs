@@ -276,3 +276,173 @@ describe("buildInitialMessages — trim duplicate current turn", () => {
     expect(msgs[2].content.startsWith("[Per-guest header]")).toBe(true);
   });
 });
+
+describe("buildInitialMessages — sanitize corrupted history", () => {
+  beforeEach(() => {
+    nextResponses = [];
+    messagesCreateCalls.length = 0;
+  });
+
+  function pushEndTurn() {
+    nextResponses.push({
+      stop_reason: "end_turn",
+      content: [textBlock("ok")],
+      usage: {
+        input_tokens: 1,
+        output_tokens: 1,
+        cache_read_input_tokens: 0,
+        cache_creation_input_tokens: 0,
+      },
+    });
+  }
+
+  test("drops a run of trailing user turns when audit gaps stack (2026-05-23 scenario)", async () => {
+    // Reproduces the production state: Thora's audit writes for the
+    // prior turns failed, so Henry's recent inbounds sit in history
+    // with no assistant turn between them. The current inbound's text
+    // is different from all of them (he moved on to a new question).
+    pushEndTurn();
+    await runTurn({
+      apiKey: "test-key",
+      phone: "+34600000000",
+      language: "es",
+      perTurnHeader: "[Per-guest header]\nGuest: Test",
+      history: [
+        {role: "user", text: "hola"},
+        {role: "assistant", text: "¡hola Henry!"},
+        {role: "user", text: "¿quién es javier otero?"},
+        {role: "user", text: "tengo ansiedad, ¿qué hago?"},
+        {role: "user", text: "¿no tienes nada que sugerirme?"},
+      ],
+      currentText: "¿dónde está el 100% fun?",
+      kbBlock: "kb",
+      requestId: "req-corrupt-1",
+      guestId: "g-1",
+      inboundMessageId: "wamid.test",
+    });
+
+    const msgs = messagesCreateCalls[0].messages;
+    // Expect: [u "hola", a "¡hola Henry!", composite] — all three
+    // trailing user turns are gone, the prior clean turn remains.
+    expect(msgs).toHaveLength(3);
+    expect(msgs[0]).toEqual({role: "user", content: "hola"});
+    expect(msgs[1]).toEqual({role: "assistant", content: "¡hola Henry!"});
+    expect(msgs[2].role).toBe("user");
+    expect(msgs[2].content).toContain("USER: ¿dónde está el 100% fun?");
+    // None of the stale user texts should leak in via earlier history.
+    expect(msgs[0].content).not.toContain("javier otero");
+    expect(msgs[0].content).not.toContain("ansiedad");
+  });
+
+  test("drops a trailing user turn even when its text differs from currentText", async () => {
+    pushEndTurn();
+    await runTurn({
+      apiKey: "test-key",
+      phone: "+34600000000",
+      language: "es",
+      perTurnHeader: "[Per-guest header]\nGuest: Test",
+      history: [
+        {role: "user", text: "hola"},
+        {role: "assistant", text: "hi"},
+        {role: "user", text: "stale unanswered question"},
+      ],
+      currentText: "new question",
+      kbBlock: "kb",
+      requestId: "req-corrupt-2",
+      guestId: "g-1",
+      inboundMessageId: "wamid.test",
+    });
+
+    const msgs = messagesCreateCalls[0].messages;
+    expect(msgs).toHaveLength(3);
+    expect(msgs[0]).toEqual({role: "user", content: "hola"});
+    expect(msgs[1]).toEqual({role: "assistant", content: "hi"});
+    expect(msgs[2].content).toContain("USER: new question");
+    expect(msgs[2].content).not.toContain("stale unanswered question");
+  });
+
+  test("collapses interior consecutive user turns to the most recent in each run", async () => {
+    pushEndTurn();
+    await runTurn({
+      apiKey: "test-key",
+      phone: "+34600000000",
+      language: "es",
+      perTurnHeader: "[Per-guest header]\nGuest: Test",
+      history: [
+        {role: "user", text: "u1"},
+        {role: "assistant", text: "a1"},
+        {role: "user", text: "u2-stale"},
+        {role: "user", text: "u3-kept"},
+        {role: "assistant", text: "a2"},
+      ],
+      currentText: "current",
+      kbBlock: "kb",
+      requestId: "req-corrupt-3",
+      guestId: "g-1",
+      inboundMessageId: "wamid.test",
+    });
+
+    const msgs = messagesCreateCalls[0].messages;
+    // Expect: [u "u1", a "a1", u "u3-kept", a "a2", composite] —
+    // u2-stale was collapsed away in favor of the more recent u3-kept.
+    expect(msgs).toHaveLength(5);
+    expect(msgs[0]).toEqual({role: "user", content: "u1"});
+    expect(msgs[1]).toEqual({role: "assistant", content: "a1"});
+    expect(msgs[2]).toEqual({role: "user", content: "u3-kept"});
+    expect(msgs[3]).toEqual({role: "assistant", content: "a2"});
+    expect(msgs[4].role).toBe("user");
+    expect(msgs[4].content).toContain("USER: current");
+  });
+
+  test("clean alternating history is preserved unchanged", async () => {
+    pushEndTurn();
+    await runTurn({
+      apiKey: "test-key",
+      phone: "+34600000000",
+      language: "es",
+      perTurnHeader: "[Per-guest header]\nGuest: Test",
+      history: [
+        {role: "user", text: "u1"},
+        {role: "assistant", text: "a1"},
+        {role: "user", text: "u2"},
+        {role: "assistant", text: "a2"},
+      ],
+      currentText: "u3",
+      kbBlock: "kb",
+      requestId: "req-corrupt-4",
+      guestId: "g-1",
+      inboundMessageId: "wamid.test",
+    });
+
+    const msgs = messagesCreateCalls[0].messages;
+    expect(msgs).toHaveLength(5);
+    expect(msgs[0]).toEqual({role: "user", content: "u1"});
+    expect(msgs[1]).toEqual({role: "assistant", content: "a1"});
+    expect(msgs[2]).toEqual({role: "user", content: "u2"});
+    expect(msgs[3]).toEqual({role: "assistant", content: "a2"});
+    expect(msgs[4].content).toContain("USER: u3");
+  });
+
+  test("history with only an assistant turn (e.g. proactive Thora message) is kept", async () => {
+    pushEndTurn();
+    await runTurn({
+      apiKey: "test-key",
+      phone: "+34600000000",
+      language: "es",
+      perTurnHeader: "[Per-guest header]\nGuest: Test",
+      history: [
+        {role: "assistant", text: "¡Hola! Soy Thora 🐾"},
+      ],
+      currentText: "hola",
+      kbBlock: "kb",
+      requestId: "req-corrupt-5",
+      guestId: "g-1",
+      inboundMessageId: "wamid.test",
+    });
+
+    const msgs = messagesCreateCalls[0].messages;
+    expect(msgs).toHaveLength(2);
+    expect(msgs[0]).toEqual({role: "assistant", content: "¡Hola! Soy Thora 🐾"});
+    expect(msgs[1].content).toContain("USER: hola");
+  });
+});
