@@ -47,6 +47,12 @@ export interface PipelineInput {
   inboundMessageId: string;
   maxIterations?: number;
   maxTokens?: number;
+  /**
+   * Anthropic model id. Defaults to `CLAUDE_SONNET_MODEL`. Inbound photo
+   * turns pass `CLAUDE_OPUS_MODEL` (launch-readiness E3) for the
+   * higher-quality vision pass.
+   */
+  model?: string;
 }
 
 export interface PipelineToolCall {
@@ -68,6 +74,8 @@ export interface PipelineOutput {
   };
   stopReason: Anthropic.Messages.Message["stop_reason"];
   iterations: number;
+  /** Model id actually used for this turn (echoes `PipelineInput.model`). */
+  model: string;
 }
 
 let cachedClient: Anthropic | null = null;
@@ -80,6 +88,7 @@ function client(apiKey: string): Anthropic {
 export async function runTurn(input: PipelineInput): Promise<PipelineOutput> {
   const maxIter = input.maxIterations ?? DEFAULT_MAX_TOOL_ITERATIONS;
   const maxTokens = input.maxTokens ?? DEFAULT_CLAUDE_MAX_TOKENS;
+  const model = input.model ?? CLAUDE_SONNET_MODEL;
 
   const system = buildSystem({kbBlock: input.kbBlock});
   const messages = buildInitialMessages(input);
@@ -108,7 +117,7 @@ export async function runTurn(input: PipelineInput): Promise<PipelineOutput> {
   for (let i = 0; i < maxIter; i++) {
     iterations++;
     const resp = await client(input.apiKey).messages.create({
-      model: CLAUDE_SONNET_MODEL,
+      model,
       max_tokens: maxTokens,
       system,
       tools: TOOLS,
@@ -126,6 +135,7 @@ export async function runTurn(input: PipelineInput): Promise<PipelineOutput> {
         usage,
         stopReason: lastStopReason,
         iterations,
+        model,
       };
     }
 
@@ -202,7 +212,20 @@ function buildInitialMessages(
 ): Anthropic.Messages.MessageParam[] {
   const messages: Anthropic.Messages.MessageParam[] = [];
 
-  for (const turn of input.history) {
+  // The current inbound is persisted to the audit log BEFORE this turn
+  // runs (see `handlers/conversation.ts:190` and `handlers/voice.ts:266`),
+  // so `input.history` typically contains it as its last entry. Drop it
+  // here so we don't duplicate the current user message — the composite
+  // user content below is the canonical carrier for the current turn.
+  // See `bot/docs/fix-message-doubling-plan.md` (2026-05-23) for the
+  // production incident this guards against.
+  const trimmedHistory = input.history.slice();
+  const last = trimmedHistory[trimmedHistory.length - 1];
+  if (last && last.role === "user" && last.text === input.currentText) {
+    trimmedHistory.pop();
+  }
+
+  for (const turn of trimmedHistory) {
     messages.push({role: turn.role, content: turn.text});
   }
 
