@@ -39,7 +39,7 @@ import {
   type AppendMessageArgs,
   upsertConversationRoot,
 } from "../services/audit.js";
-import {markReadWithTyping, sendText} from "../whatsapp/send.js";
+import {markReadWithTyping, sendLocation, sendText} from "../whatsapp/send.js";
 import {captureWithContext} from "../../lib/sentry.js";
 import {classifyCommand, handleHelp, handleStop} from "./command.js";
 import {detectLanguage} from "../claude/language.js";
@@ -323,6 +323,12 @@ export async function runConversationalTurn(
       ...baseLog,
       sideEffects: pipeline.sideEffects.map((se) => se.kind),
     });
+    await dispatchSideEffects({
+      input: turnInput,
+      deps,
+      guestId: guest.id,
+      sideEffects: pipeline.sideEffects,
+    });
   }
 
   return {
@@ -330,6 +336,65 @@ export async function runConversationalTurn(
     replyText: pipeline.text,
     toolCallCount: pipeline.toolCalls.length,
   };
+}
+
+/**
+ * Process pipeline side effects after the main text reply has been sent.
+ * Currently dispatches `send_location_pin` (native WhatsApp location
+ * message). `trigger_flow` and `escalation_recorded` are handled inline
+ * by their tool executors and need no post-send action.
+ *
+ * Failures are non-fatal: a missing pin shouldn't block the textual
+ * reply that already landed.
+ */
+async function dispatchSideEffects(args: {
+  input: ConversationInput;
+  deps: ConversationDeps;
+  guestId: string;
+  sideEffects: PipelineOutput["sideEffects"];
+}): Promise<void> {
+  for (const se of args.sideEffects) {
+    if (se.kind !== "send_location_pin") continue;
+    try {
+      const result = await sendLocation({
+        to: args.input.phone,
+        latitude: se.latitude,
+        longitude: se.longitude,
+        name: se.name,
+        address: se.address,
+        requestId: args.input.requestId,
+        phoneNumberId: args.deps.whatsappPhoneNumberId,
+        accessToken: args.deps.whatsappAccessToken,
+      });
+      await appendMessage({
+        phone: args.input.phone,
+        guestId: args.guestId,
+        direction: "outbound",
+        type: "location",
+        requestId: args.input.requestId,
+        metaMessageId: result.metaMessageId,
+        text: se.name ?? se.venueId,
+        outcome: "replied",
+      }).catch((err) => {
+        logger.error("bot.conversation.location_audit_failed", {
+          requestId: args.input.requestId,
+          venueId: se.venueId,
+          err: err instanceof Error ? err.message : String(err),
+        });
+      });
+    } catch (err) {
+      captureWithContext(err, {
+        requestId: args.input.requestId,
+        phone: args.input.phone,
+        kind: "conversation.send_location_pin",
+      });
+      logger.error("bot.conversation.send_location_failed", {
+        requestId: args.input.requestId,
+        venueId: se.venueId,
+        err: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
 }
 
 // ── Internal helpers ───────────────────────────────────────────────────────

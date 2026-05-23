@@ -240,6 +240,7 @@ async function dispatchEvent(
       metaMessageId: event.messageId,
       status: event.status,
       recipient: maskPhone(`+${event.recipientId}`),
+      errors: event.errors,
     });
     // Fan out to the send-log + broadcast recipient subcollection. Never
     // throws — `handleStatusEvent` catches and logs internally.
@@ -248,6 +249,7 @@ async function dispatchEvent(
         metaMessageId: event.messageId,
         status: event.status,
         recipientId: event.recipientId,
+        errors: event.errors,
       },
       requestId
     ).catch((err) => {

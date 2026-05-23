@@ -242,7 +242,14 @@ export interface ToolResult {
    *  pipeline after Claude's final text is composed. Pipeline reads
    *  this to enqueue downstream sends. */
   sideEffect?:
-    | {kind: "send_location_pin"; venueId: string}
+    | {
+        kind: "send_location_pin";
+        venueId: string;
+        latitude: number;
+        longitude: number;
+        name?: string;
+        address?: string;
+      }
     | {kind: "trigger_flow"; flowName: string}
     | {
         kind: "escalation_recorded";
@@ -443,12 +450,31 @@ function execGetNow(): ToolResult {
   };
 }
 
-function execSendLocationPin(input: Record<string, unknown>): ToolResult {
+async function execSendLocationPin(
+  input: Record<string, unknown>
+): Promise<ToolResult> {
   const venueId = typeof input.venue_id === "string" ? input.venue_id : "";
   if (!venueId) return {output: {error: "missing_venue_id"}, errored: true};
+  const venue = await getVenue(venueId);
+  if (!venue) {
+    return {output: {error: "venue_not_found", venue_id: venueId}, errored: true};
+  }
+  if (typeof venue.lat !== "number" || typeof venue.lng !== "number") {
+    return {
+      output: {error: "venue_missing_coordinates", venue_id: venueId},
+      errored: true,
+    };
+  }
   return {
-    output: {ok: true, queued: true},
-    sideEffect: {kind: "send_location_pin", venueId},
+    output: {ok: true, queued: true, name: venue.name, address: venue.address},
+    sideEffect: {
+      kind: "send_location_pin",
+      venueId,
+      latitude: venue.lat,
+      longitude: venue.lng,
+      name: venue.name,
+      address: venue.address,
+    },
   };
 }
 

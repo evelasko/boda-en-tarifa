@@ -26,7 +26,7 @@ export interface StatusEvent {
   metaMessageId: string;
   status: MetaStatus;
   recipientId: string; // Meta wa_id (no `+`)
-  errors?: Array<{code?: number; title?: string}>;
+  errors?: Array<{code?: number; title?: string; message?: string}>;
 }
 
 export async function handleStatusEvent(
@@ -40,8 +40,18 @@ export async function handleStatusEvent(
     return;
   }
 
-  const errorMessage = event.errors?.[0] ?
-    `${event.errors[0].code ?? ""} ${event.errors[0].title ?? ""}`.trim() :
+  const firstError = event.errors?.[0];
+  const errorMessage = firstError ?
+    [
+      firstError.code != null ? String(firstError.code) : "",
+      firstError.title ?? "",
+      firstError.message && firstError.message !== firstError.title ?
+        `— ${firstError.message}` :
+        "",
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .trim() || undefined :
     undefined;
 
   const updated = await applyDeliveryStatus({

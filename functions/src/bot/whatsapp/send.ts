@@ -99,6 +99,88 @@ export async function sendText(args: SendTextArgs): Promise<SendResult> {
   }
 }
 
+// ── Location messages ──────────────────────────────────────────────────────
+
+export interface SendLocationArgs {
+  to: E164;
+  latitude: number;
+  longitude: number;
+  /** Shown above the pin in the WhatsApp UI; ≤1000 chars. */
+  name?: string;
+  /** Shown below the name; ≤1000 chars. */
+  address?: string;
+  requestId: string;
+  phoneNumberId: string;
+  accessToken: string;
+}
+
+/**
+ * Send a native WhatsApp location pin. Renders in-app as a tappable map
+ * preview that opens the user's default maps app — better UX than a
+ * Google Maps URL in plain text.
+ *
+ * Meta payload: `type: "location"` with `latitude` + `longitude`
+ * required and `name` + `address` optional.
+ */
+export async function sendLocation(
+  args: SendLocationArgs
+): Promise<SendResult> {
+  const {
+    to, latitude, longitude, name, address,
+    requestId, phoneNumberId, accessToken,
+  } = args;
+
+  if (!phoneNumberId) throw new Error("send: missing phoneNumberId");
+  if (!accessToken) throw new Error("send: missing accessToken");
+
+  const client = createGraphClient(accessToken);
+  const location: Record<string, unknown> = {
+    latitude,
+    longitude,
+  };
+  if (name) location.name = name;
+  if (address) location.address = address;
+  const payload = {
+    messaging_product: "whatsapp",
+    recipient_type: "individual",
+    to: toMetaWaId(to),
+    type: "location",
+    location,
+  };
+
+  try {
+    const resp = await client.post<MetaSendResponse>(
+      `/${phoneNumberId}/messages`,
+      payload
+    );
+
+    if (resp.status >= 400 || resp.data.error) {
+      const err = resp.data.error ?? {message: `HTTP ${resp.status}`};
+      logger.warn("bot.send.location.failed", {
+        requestId,
+        status: resp.status,
+        metaCode: err.code,
+        metaMessage: err.message,
+      });
+      throw new Error(
+        `meta_send_failed: ${err.code ?? resp.status}: ${err.message}`
+      );
+    }
+
+    const metaMessageId = resp.data.messages?.[0]?.id;
+    if (!metaMessageId) {
+      throw new Error("meta_send_failed: no message id in response");
+    }
+
+    logger.info("bot.send.location.ok", {requestId, metaMessageId});
+    return {metaMessageId};
+  } catch (err) {
+    const described = describeAxiosError(err);
+    logger.error("bot.send.location.error", {requestId, err: described});
+    throw err;
+  }
+}
+
 // ── Templates ──────────────────────────────────────────────────────────────
 
 export interface SendTemplateArgs {

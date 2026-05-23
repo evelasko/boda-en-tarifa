@@ -42,11 +42,18 @@ const MediaMessageSchema = MessageBaseSchema.extend({
   type: z.enum(["image", "video", "audio", "document", "sticker"]),
 });
 
+const StatusErrorSchema = z.object({
+  code: z.number().optional(),
+  title: z.string().optional(),
+  message: z.string().optional(),
+}).passthrough();
+
 const StatusSchema = z.object({
   id: z.string(),
   status: z.string(),
   timestamp: z.string(),
   recipient_id: z.string(),
+  errors: z.array(StatusErrorSchema).optional(),
 }).passthrough();
 
 const ChangeValueSchema = z.object({
@@ -120,6 +127,7 @@ export type ClassifiedEvent =
       messageId: string;
       status: string;
       recipientId: string;
+      errors?: Array<{code?: number; title?: string; message?: string}>;
     }
   | {
       kind: "unsupported";
@@ -161,6 +169,7 @@ export function classifyEvents(body: unknown): ClassifiedEvent[] {
           messageId: s.id,
           status: s.status,
           recipientId: s.recipient_id,
+          errors: s.errors,
         });
       }
 

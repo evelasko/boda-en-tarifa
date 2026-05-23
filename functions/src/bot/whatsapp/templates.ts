@@ -34,10 +34,13 @@ export type TemplateName =
 
 export type TemplateLang = "es" | "en";
 
-/** Meta language code per locale. */
+/** Meta language code per locale. Matches the locales the operator picked
+ * when submitting templates in WhatsApp Manager — bare `es` / `en`, not
+ * regional variants. If you ever resubmit a template under `es_ES` /
+ * `en_US`, update this map (or the specific template's `metaName`). */
 const META_LANG: Record<TemplateLang, string> = {
-  es: "es_ES",
-  en: "en_US",
+  es: "es",
+  en: "en",
 };
 
 /** Meta template-payload primitives. */
@@ -51,11 +54,20 @@ export interface MetaTemplateButtonParam {
   text: string;
 }
 
+export interface MetaTemplateHeaderImageParam {
+  type: "image";
+  image: {link: string};
+}
+
 export interface MetaTemplateComponent {
   type: "body" | "header" | "button";
   sub_type?: "url" | "quick_reply";
   index?: string;
-  parameters?: Array<MetaTemplateBodyParam | MetaTemplateButtonParam>;
+  parameters?: Array<
+    MetaTemplateBodyParam
+    | MetaTemplateButtonParam
+    | MetaTemplateHeaderImageParam
+  >;
 }
 
 export interface MetaTemplatePayload {
@@ -212,8 +224,26 @@ export const TEMPLATES: {
     name: "welcome_onboarding",
     metaName: () => "welcome_onboarding",
     vars: FirstNameVars,
-    buildPayload: (lang, vars) =>
-      bodyOnlyPayload("welcome_onboarding", lang, [vars.firstName]),
+    buildPayload: (lang, vars) => {
+      // Approved on Meta as `en` (single locale, Spanish content) with an
+      // IMAGE header — we must supply the header image with every send,
+      // Meta does not reuse the example uploaded at approval time.
+      const base = bodyOnlyPayload(
+        "welcome_onboarding", "en", [vars.firstName]
+      );
+      base.components.unshift({
+        type: "header",
+        parameters: [
+          {
+            type: "image",
+            image: {
+              link: "https://www.bodaentarifa.com/images/bot/thora-welcome.jpg",
+            },
+          },
+        ],
+      });
+      return base;
+    },
     preview: (lang, vars) => WELCOME_BODY[lang](vars),
   },
   event_reminder_generic: {
