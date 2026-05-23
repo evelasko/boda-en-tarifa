@@ -22,8 +22,8 @@ import {fromMetaWaId, maskPhone} from "../lib/phone.js";
 import {
   ALLOWLIST_REFUSAL,
   AUDIO_ACK,
-  DOCUMENT_ACK,
   DEFAULT_RATE_LIMIT_NOTICE,
+  DOCUMENT_ACK,
   PHOTO_ACK_DECLINED,
   PHOTO_ACK_GRANTED,
   PHOTO_ACK_PENDING,
@@ -61,7 +61,11 @@ export interface MediaInbound {
   phone: E164;
   requestId: string;
   inboundMetaMessageId: string;
-  mediaType: "image" | "video" | "audio" | "document" | "sticker";
+  /**
+   * Audio is routed to `handlers/voice.ts` since E1, so the media
+   * handler only sees the remaining inbound kinds.
+   */
+  mediaType: "image" | "video" | "document" | "sticker";
   mediaId: string;
   /** From `image.caption` etc. when present. */
   caption?: string;
@@ -380,8 +384,6 @@ function pickNonImageAck(
   lang: Language
 ): string {
   switch (mediaType) {
-  case "audio":
-    return pick(AUDIO_ACK, lang);
   case "video":
     // Video isn't called out separately in §9 yet — mirror audio for
     // Phase 3; revisit when the operator decides to accept video.

@@ -23,6 +23,7 @@ export {botEventReminderTick} from "./scheduled/event-reminder.js";
 export {botContentUnlockTick} from "./scheduled/content-unlock.js";
 export {botFilmDeveloped} from "./scheduled/film-developed.js";
 export {botKeepKbWarm} from "./scheduled/keep-kb-warm.js";
+export {botPreEventWarmup} from "./scheduled/pre-event-warmup.js";
 
 // Callables (launch-readiness plan §5 Phase B — admin UI back-ends)
 export {botSetConfig} from "./callables/set-config.js";

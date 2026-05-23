@@ -98,11 +98,20 @@ export type ClassifiedEvent =
       phoneNumberId?: string;
     }
   | {
+      kind: "audio";
+      messageId: string;
+      from: string;
+      profileName?: string;
+      mediaId: string;
+      mimeType?: string;
+      phoneNumberId?: string;
+    }
+  | {
       kind: "media";
       messageId: string;
       from: string;
       profileName?: string;
-      mediaType: "image" | "video" | "audio" | "document" | "sticker";
+      mediaType: "image" | "video" | "document" | "sticker";
       raw: unknown;
       phoneNumberId?: string;
     }
@@ -206,6 +215,31 @@ function classifyMessage(
 
   const media = MediaMessageSchema.safeParse(raw);
   if (media.success) {
+    // Audio gets surfaced as a first-class kind (launch-readiness E1)
+    // so the webhook can route it to the Whisper-backed voice handler
+    // rather than the image-only media pipeline.
+    if (media.data.type === "audio") {
+      const node = (raw as Record<string, unknown>)["audio"];
+      const audio = (typeof node === "object" && node !== null) ?
+        (node as Record<string, unknown>) :
+        {};
+      const mediaId = typeof audio.id === "string" ? audio.id : "";
+      const mimeType = typeof audio.mime_type === "string" ?
+        audio.mime_type :
+        undefined;
+      if (!mediaId) {
+        return {kind: "unsupported", reason: "audio_missing_id", raw};
+      }
+      return {
+        kind: "audio",
+        messageId: media.data.id,
+        from: media.data.from,
+        profileName: contactsByWaId.get(media.data.from),
+        mediaId,
+        mimeType,
+        phoneNumberId,
+      };
+    }
     return {
       kind: "media",
       messageId: media.data.id,

@@ -72,7 +72,7 @@ describe("classifyEvents", () => {
     });
   });
 
-  test.each(["image", "video", "audio", "document", "sticker"])(
+  test.each(["image", "video", "document", "sticker"])(
     "classifies media kind %s",
     (mediaType) => {
       const events = classifyEvents(
@@ -89,6 +89,46 @@ describe("classifyEvents", () => {
       expect(events[0]).toMatchObject({kind: "media", mediaType});
     }
   );
+
+  test("classifies audio as a first-class kind with mediaId + mimeType", () => {
+    const events = classifyEvents(
+      envelope([
+        {
+          from: "34612345678",
+          id: "wamid.AUDIO1",
+          timestamp: "1700000000",
+          type: "audio",
+          audio: {id: "audio-media-id", mime_type: "audio/ogg; codecs=opus"},
+        },
+      ])
+    );
+    expect(events).toHaveLength(1);
+    expect(events[0]).toMatchObject({
+      kind: "audio",
+      messageId: "wamid.AUDIO1",
+      from: "34612345678",
+      mediaId: "audio-media-id",
+      mimeType: "audio/ogg; codecs=opus",
+    });
+  });
+
+  test("marks audio without an id as unsupported", () => {
+    const events = classifyEvents(
+      envelope([
+        {
+          from: "34612345678",
+          id: "wamid.AUDIO_BAD",
+          timestamp: "1700000000",
+          type: "audio",
+          audio: {},
+        },
+      ])
+    );
+    expect(events[0]).toMatchObject({
+      kind: "unsupported",
+      reason: "audio_missing_id",
+    });
+  });
 
   test("classifies a delivery status", () => {
     const events = classifyEvents(

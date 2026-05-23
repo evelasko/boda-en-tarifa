@@ -8,6 +8,7 @@ import {
   BOT_REGION,
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_UPLOAD_PRESET,
+  OPENAI_API_KEY,
   SENTRY_DSN,
   WEBHOOK_SECRETS,
   WHATSAPP_ACCESS_TOKEN,
@@ -24,6 +25,7 @@ import {
   extractMediaPayload,
   handleInboundMedia,
 } from "../handlers/media.js";
+import {handleInboundAudio} from "../handlers/voice.js";
 import {handleStatusEvent} from "./status.js";
 import {captureWithContext, ensureSentry} from "../../lib/sentry.js";
 
@@ -290,6 +292,11 @@ async function dispatchEvent(
     return;
   }
 
+  if (event.kind === "audio") {
+    await dispatchAudio(event, fromE164, requestId, baseLog);
+    return;
+  }
+
   if (event.kind !== "text") {
     logger.info("bot.webhook.skip_non_text_phase1", baseLog);
     await markProcessed(event.messageId);
@@ -334,6 +341,59 @@ async function dispatchEvent(
       kind: "webhook.text",
     });
     logger.error("bot.webhook.handler_failed", {
+      ...baseLog,
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+/**
+ * Audio dispatcher (launch-readiness E1). Whisper-backed voice handler
+ * downloads the audio, transcribes it, and routes the resulting text
+ * through the shared conversational pipeline. Failures here are logged,
+ * never thrown — early-ack in `handlePost` already returned 200 to Meta.
+ */
+async function dispatchAudio(
+  event: Extract<ClassifiedEvent, {kind: "audio"}>,
+  fromE164: string,
+  requestId: string,
+  baseLog: Record<string, unknown>
+): Promise<void> {
+  logger.info("bot.webhook.audio_inbound", {
+    ...baseLog,
+    hasMimeType: Boolean(event.mimeType),
+  });
+
+  try {
+    const result = await handleInboundAudio(
+      {
+        phone: fromE164,
+        requestId,
+        inboundMetaMessageId: event.messageId,
+        mediaId: event.mediaId,
+        mimeType: event.mimeType,
+      },
+      {
+        whatsappPhoneNumberId: WHATSAPP_PHONE_NUMBER_ID.value(),
+        whatsappAccessToken: WHATSAPP_ACCESS_TOKEN.value(),
+        anthropicApiKey: ANTHROPIC_API_KEY.value(),
+        openaiApiKey: OPENAI_API_KEY.value(),
+      }
+    );
+    logger.info("bot.webhook.audio_handled", {
+      ...baseLog,
+      outcome: result.outcome,
+    });
+    if (result.outcome !== "error") {
+      await markProcessed(event.messageId);
+    }
+  } catch (err) {
+    captureWithContext(err, {
+      requestId,
+      phone: fromE164,
+      kind: "webhook.audio",
+    });
+    logger.error("bot.webhook.audio_handler_failed", {
       ...baseLog,
       err: err instanceof Error ? err.message : String(err),
     });

@@ -37,6 +37,7 @@ export {
   botContentUnlockTick,
   botFilmDeveloped,
   botKeepKbWarm,
+  botPreEventWarmup,
   botSetConfig,
   botReplyToEscalation,
   botSendBroadcast,

@@ -25,6 +25,9 @@ export const ANTHROPIC_API_KEY = defineSecret("ANTHROPIC_API_KEY");
 // ── Sentry (Phase C5 — error tracking + handler-level capture) ────────────
 export const SENTRY_DSN = defineSecret("SENTRY_DSN");
 
+// ── OpenAI (Phase E1 — Whisper voice-note transcription) ──────────────────
+export const OPENAI_API_KEY = defineSecret("OPENAI_API_KEY");
+
 // ── Cloudinary (unsigned upload preset per `08-integration-contract.md` §6)
 /** Public config — set in `functions/.env`, not Secret Manager. */
 export const CLOUDINARY_CLOUD_NAME = defineString("CLOUDINARY_CLOUD_NAME");
@@ -47,6 +50,7 @@ export const WEBHOOK_SECRETS = [
   ANTHROPIC_API_KEY,
   CLOUDINARY_UPLOAD_PRESET,
   SENTRY_DSN,
+  OPENAI_API_KEY,
 ];
 
 // ── Constants ──────────────────────────────────────────────────────────────
@@ -69,6 +73,8 @@ export const RATE_BUCKET_TTL_MS = 65 * 60 * 1000;
 /** Anthropic model IDs. */
 export const CLAUDE_SONNET_MODEL = "claude-sonnet-4-6";
 export const CLAUDE_HAIKU_MODEL = "claude-haiku-4-5-20251001";
+/** Opus 4.7 — used for inbound photo turns (launch-readiness E3). */
+export const CLAUDE_OPUS_MODEL = "claude-opus-4-7";
 
 /** Display timezone for all wall-clock formatting. */
 export const WEDDING_TIMEZONE = "Europe/Madrid";

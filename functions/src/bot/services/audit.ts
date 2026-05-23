@@ -57,7 +57,7 @@ export interface AppendMessageArgs {
   /** Cloudinary public id once uploaded (inbound or outbound). */
   cloudinaryPublicId?: string;
   toolCalls?: ToolCall[];
-  claudeModel?: "sonnet-4-6" | "haiku-4-5";
+  claudeModel?: "sonnet-4-6" | "haiku-4-5" | "opus-4-7";
   claudeUsage?: ClaudeUsage;
   latencyMs?: number;
   outcome?: "replied" | "escalated" | "refused" | "rate_limited" | "error";
