@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
-  Messages,
+  MessageSquare,
   AlertTriangle,
   Send,
   Settings,
@@ -29,7 +29,7 @@ interface KbVersionSnapshot {
 }
 
 const subNav = [
-  { href: '/admin/bot/messages', label: 'Mensajes', icon: Messages },
+  { href: '/admin/bot/messages', label: 'Mensajes', icon: MessageSquare },
   { href: '/admin/bot/escalations', label: 'Escalaciones', icon: AlertTriangle },
   { href: '/admin/bot/broadcasts', label: 'Difusiones', icon: Send },
   { href: '/admin/bot/unknown-inbound', label: 'Desconocidos', icon: PhoneIncoming },
