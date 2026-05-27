@@ -1,0 +1,68 @@
+# Guest Dossier - Noel Darío Sánchez
+#
+# Authored: 2026-05-22 (generated from resumen.md)
+# Path: bot/data/guest-dossiers/noel-dario-noel-dario-snchez/dossier.yaml
+# Target Firestore doc: guest_dossier/noel-dario-noel-dario-snchez  (identity carried by folder name; matches guests/noel-dario-noel-dario-snchez doc ID)
+#
+# Schema reference: bot/specs/guest-dossier-schema.md §3
+# Disclosure ethics: §9 - content is internal to Thora; safe_jokes pre-authorized only.
+
+# -----------------------------------------------
+# Identity
+# -----------------------------------------------
+name: "Noel Darío Sánchez"
+preferred_name: "Dari"
+
+# -----------------------------------------------
+# Recognition (face matching in inbound photos)
+# -----------------------------------------------
+# TODO: upload 1-3 frontal, well-lit, recent photos to Cloudinary
+#       (bot/reference/noel-dario-noel-dario-snchez-{1..3}.jpg, signed access)
+#       and paste the URLs into reference_photos.
+reference_photos: []
+recognizable_for: "reservado al principio, pero cuando entra en confianza se vuelve muy fiestero"
+recognition_confidence_floor: 0.85
+
+# -----------------------------------------------
+# Relationship to the couple
+# -----------------------------------------------
+relationship: "primo de Enrique; familia cubana del lado del novio"
+hometown: "Cuba; vive en Miami"
+language: es
+
+# -----------------------------------------------
+# Open facts Thora may reference naturally
+# -----------------------------------------------
+safe_facts:
+  - "cubano, como gran parte de la familia del novio"
+  - "vive en Miami"
+  - "ha viajado muchas veces a Madrid para ver a los novios"
+  - "le gusta mucho la musica"
+  - "antes era mas de reggaeton pero ahora se ha pasado al techno y al house, como los novios"
+  - "la ultima vez que salio con Enrique y Manuel en Madrid lo dio todo en una discoteca de house"
+  - "es tranquilo y reservado al principio"
+  - "cuando entra en confianza se vuelve muy divertido y mas hablador"
+
+# -----------------------------------------------
+# Pre-authorized roast / inside-joke material
+# -----------------------------------------------
+safe_jokes:
+  - "parece callado hasta que aparece el techno y se desbloquea el modo fiesta"
+  - "hay que darle un rato, pero cuando Dari arranca ya no hay quien lo pare"
+
+# -----------------------------------------------
+# Hard exclusions
+# -----------------------------------------------
+do_not_mention: []
+
+# -----------------------------------------------
+# Personal-intro mode (Tarifa concierge personal-connection path)
+# -----------------------------------------------
+personal_intro_for: []
+personal_intro_blurb: null
+
+# -----------------------------------------------
+# Metadata
+# -----------------------------------------------
+active: true
+updatedAt: "2026-05-22T00:00:00Z"

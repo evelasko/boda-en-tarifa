@@ -8,12 +8,12 @@
 # Synced by: bot/scripts/sync-kb.mjs.
 
 venues:
-  - id: "surfin-tarifa"
+  - id: "surfin_tarifa"
     name: "Surfin' Tarifa"
     type: "beach"
     address: "C. Milano Negro, 11380 Tarifa, Cádiz"
-    lat: 36.02426177843076
-    lng: -5.616323145388206
+    lat: 36.0240362
+    lng: -5.6163446
     maps_link: "https://www.google.com/maps/place/Surfin'+Tarifa+Surf+and+Kitesurfi\
       ng+School/@36.0240405,-5.6189195,17z/data=!3m1!4b1!4m6!3m5!1s0xd0c8f66b95\
       8fd3f:0x6556901bcc48de69!8m2!3d36.0240362!4d-5.6163446!16s%2Fg%2F11h75k0r\

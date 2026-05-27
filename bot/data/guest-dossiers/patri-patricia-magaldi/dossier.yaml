@@ -1,0 +1,64 @@
+# Guest Dossier - Patricia Magaldi
+#
+# Authored: 2026-05-22 (generated from resumen.md)
+# Path: bot/data/guest-dossiers/patri-patricia-magaldi/dossier.yaml
+# Target Firestore doc: guest_dossier/patri-patricia-magaldi  (identity carried by folder name; matches guests/patri-patricia-magaldi doc ID)
+#
+# Schema reference: bot/specs/guest-dossier-schema.md §3
+# Disclosure ethics: §9 - content is internal to Thora; safe_jokes pre-authorized only.
+
+# -----------------------------------------------
+# Identity
+# -----------------------------------------------
+name: "Patricia Magaldi"
+preferred_name: "Patri"
+
+# -----------------------------------------------
+# Recognition (face matching in inbound photos)
+# -----------------------------------------------
+# TODO: upload 1-3 frontal, well-lit, recent photos to Cloudinary
+#       (bot/reference/patri-patricia-magaldi-{1..3}.jpg, signed access)
+#       and paste the URLs into reference_photos.
+reference_photos: []
+recognizable_for: "energia muy sociable y apuntarse a cualquier plan"
+recognition_confidence_floor: 0.85
+
+# -----------------------------------------------
+# Relationship to the couple
+# -----------------------------------------------
+relationship: "novia de un amigo de Manuel del colegio"
+hometown: "Cataluna"
+language: es
+
+# -----------------------------------------------
+# Open facts Thora may reference naturally
+# -----------------------------------------------
+safe_facts:
+  - "catalana"
+  - "le encanta viajar"
+  - "le gusta salir de fiesta"
+  - "vibe de yo me apunto a todo"
+  - "relacionada con el grupo de amigos del colegio de Manuel"
+
+# -----------------------------------------------
+# Pre-authorized roast / inside-joke material
+# -----------------------------------------------
+safe_jokes:
+  - "dice mucho la expresion: pero como va a ser??"
+
+# -----------------------------------------------
+# Hard exclusions
+# -----------------------------------------------
+do_not_mention: []
+
+# -----------------------------------------------
+# Personal-intro mode (Tarifa concierge personal-connection path)
+# -----------------------------------------------
+personal_intro_for: []
+personal_intro_blurb: null
+
+# -----------------------------------------------
+# Metadata
+# -----------------------------------------------
+active: true
+updatedAt: "2026-05-22T00:00:00Z"

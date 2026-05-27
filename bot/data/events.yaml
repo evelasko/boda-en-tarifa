@@ -21,6 +21,7 @@ events:
     dress_code_id: "pre_wedding"
     transport_notes: "Sin transporte organizado. Llegada por cuenta propia."
     whom: "all"
+    requires_night: "friday"
     description_es: >
       Encuentro informal en Casa Explora la noche antes de la boda. Quien quiera
       y pueda. Sin código, casual, bienvenidos los que lleguen agotados del
@@ -37,12 +38,13 @@ events:
     name_en: "Ceremony"
     start_at: "2026-05-30T18:00:00+02:00"
     end_at: "2026-05-30T19:00:00+02:00"
-    venue_id: "surfin-tarifa"
+    venue_id: "surfin_tarifa"
     dress_code_id: "ceremony"
     transport_notes: >
       Autobús desde el parking de 100% Fun a las 17:30 (estar allí 17:15). Si te
       lo pierdes, llegas tarde — la ceremonia tiene horario.
     whom: "all"
+    requires_night: "saturday"
     description_es: >
       Ceremonia frente al mar en Surfin' Tarifa. Tras la ceremonia, el bus lleva
       a todos al lugar del cóctel en Tres Mares.
@@ -59,6 +61,7 @@ events:
     dress_code_id: "reception"
     transport_notes: "Llegada en el bus desde la ceremonia."
     whom: "all"
+    requires_night: "saturday"
     description_es: >
       Tres Mares acoge cóctel (~20:00), cena (~21:30) y fiesta hasta las 05:00.
       Pista de baile, DJ, y la primera vez que mis humanos bailan juntos en
@@ -80,6 +83,7 @@ events:
     dress_code_id: "brunch"
     transport_notes: "Sin transporte organizado."
     whom: "anyone"
+    requires_night: "sunday"
     description_es: >
       Brunch relajado en la piscina de Tres Mares. Bañador opcional, paellas,
       café, recuperación.
