@@ -16,6 +16,7 @@ import {
   Utensils,
   LayoutGrid,
   Bot,
+  Messages,
   X,
 } from 'lucide-react';
 
@@ -32,6 +33,7 @@ const navItems = [
   { href: '/admin/moderation', label: 'Moderación', icon: Shield },
   { href: '/admin/notifications', label: 'Notificaciones', icon: Bell },
   { href: '/admin/bot', label: 'Thora (bot)', icon: Bot },
+  { href: '/admin/bot/messages', label: 'Mensajes Thora', icon: Messages, nested: true },
   { href: '/admin/config', label: 'Configuración', icon: Settings },
 ];
 

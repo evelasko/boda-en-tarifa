@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import {
-  MessageSquare,
+  Messages,
   AlertTriangle,
   Send,
   Settings,
@@ -12,11 +12,11 @@ import {
 
 const cards = [
   {
-    href: '/admin/bot/conversations',
-    title: 'Conversaciones',
+    href: '/admin/bot/messages',
+    title: 'Mensajes',
     description:
-      'Hilos con cada invitado. Lectura sin posibilidad de responder — para responder usa Escalaciones.',
-    icon: MessageSquare,
+      'Interacciones de invitados con Thora por WhatsApp. Búsqueda, filtros por volumen y paginación para hilos largos.',
+    icon: Messages,
   },
   {
     href: '/admin/bot/escalations',

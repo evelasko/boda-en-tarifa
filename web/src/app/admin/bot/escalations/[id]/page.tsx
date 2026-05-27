@@ -184,7 +184,7 @@ export default function EscalationDetailPage({
                   <span>{formatWhen(escalation.createdAt)}</span>
                   {phone && (
                     <Link
-                      href={`/admin/bot/conversations/${encodeURIComponent(phone)}`}
+                      href={`/admin/bot/messages/${encodeURIComponent(phone)}`}
                       className="text-ocean hover:underline"
                     >
                       Ver hilo completo →
