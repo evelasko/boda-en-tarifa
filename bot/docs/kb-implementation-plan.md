@@ -3,6 +3,8 @@
 > Focused sub-plan for the bot's knowledge-base authoring + build pipeline. Sits underneath the broader `bot/docs/implementation-plan.md` (which covers Phases 1–11 end-to-end) and replaces the half-finished Phase-3 KB scope described there.
 >
 > **Authored**: 2026-05-22 (Friday). **First broadcast**: 2026-05-23 (Saturday, T-7). **Wedding**: 2026-05-30. **Owner**: implementer (Claude) + operator (Enrique) review.
+>
+> **2026-05-26 update — G3 dropped.** No time to gather reference photos before the event. Text-only dossiers ship as final; vision-based face recognition is shelved. §1, §2, and §5 have been amended accordingly. `bot/specs/guest-dossier-schema.md` still documents the `reference_photos` slot for future reuse.
 
 ---
 
@@ -10,15 +12,15 @@
 
 Ship a complete, version-controlled, AI-authorable knowledge base that drives Thora's conversational quality. The KB must be **pristine on Saturday May 23** for the first guest broadcast — every wedding fact a guest could reasonably ask Thora about is in the system prompt and answered correctly.
 
-Three sub-goals, each with a hard date:
+Two sub-goals, each with a hard date:
 
 | # | Goal | Target |
 |---|---|---|
 | **G1** | All non-dossier KB sources authored in `bot/data/`, synced to Firestore, and rendered into Block B as cached text. | **Sat May 23, EOD launch** |
 | **G2** | Existing guest dossiers (~19, more in progress) rendered as text in Block B; the bot riffs on `safe_facts` / `safe_jokes` and respects `do_not_mention`. Un-dossier'd guests handled gracefully (scene-level commentary only). | **Sat May 23, EOD launch** (same ship; partial dossiers are fine) |
-| **G3** | Reference photos embedded as `image` content blocks in Block B; vision-based face recognition active per spec §11. | **Tue May 26** |
+| ~~G3~~ | ~~Reference photos embedded as `image` content blocks in Block B; vision-based face recognition active per spec §11.~~ | **Dropped 2026-05-26** — see §5. |
 
-G1+G2 ship together as one deploy on May 23. G3 is an additive deploy a few days later.
+G1+G2 ship together as one deploy on May 23.
 
 ---
 
@@ -30,7 +32,7 @@ G1+G2 ship together as one deploy on May 23. G3 is an additive deploy a few days
 | **Sat May 23** | T-7 | **G1+G2 ship.** First guest broadcast goes out (per `pre-implementation-checklist.md` §5.1–5.2). KB is text-only, dossier-partial. |
 | **Sun May 24** | T-6 | Remaining dossier YAMLs completed by operator; one re-sync brings them into the cached KB on the next turn. |
 | **Mon May 25** | T-5 | Operator + implementer review of conversations to date; KB tweaks via PR. |
-| **Tue May 26** | T-4 | **G3 ships.** Reference photos uploaded, Block B switches to mixed text+image content, vision recognition live. |
+| **Tue May 26** | T-4 | ~~G3 ships.~~ **G3 dropped** (see §5). Op-7 keep-warm + pre-event-warmup deployed and cache-hit-rate verified (`keep-warm-sanity-check.md`). |
 | **Wed May 27 – Fri May 29** | T-3 to T-1 | Iteration, eval passes, polish. |
 | **Sat May 30** | T-day | Wedding. |
 
@@ -61,7 +63,7 @@ All new files go in `bot/data/`. **Convention**: snake_case in YAML / JSON; sync
 | File | Format | Target Firestore | Notes |
 |---|---|---|---|
 | `bot/data/events.yaml` | YAML (list of events) | `events/{id}` (overwrite) | One-time export from current Firestore as seed, then YAML is canonical. |
-| `bot/data/venues.yaml` | YAML (list of venues) | `venues/{id}` (overwrite) | Same one-time export. Must include `surfin-tarifa`, `casa_explora`, `chiringuito_bora`, `100_fun` per pre-implementation-checklist §1.5. |
+| `bot/data/venues.yaml` | YAML (list of venues) | `venues/{id}` (overwrite) | Same one-time export. Must include `surfin_tarifa`, `casa_explora`, `chiringuito_bora`, `100_fun` per pre-implementation-checklist §1.5. |
 | `bot/data/accommodations.yaml` | YAML (list) | `accommodations/{id}` | Partner hotels w/ approximate prices. |
 | `bot/data/faq.yaml` | YAML (list, ES+EN) | `faq/{id}` | Replaces `bot/data/qa.json` (delete that stub). Seed entries per `pre-implementation-checklist.md` §1.10. |
 | `bot/data/couple-dossier.yaml` | YAML | `config/couple` | Mirror of facts in `bot/specs/couple-dossier.md` §1 + disclosure rules from §2. |
@@ -89,7 +91,7 @@ events:
     name_en: "Ceremony"
     start_at: "2026-05-30T18:00:00+02:00"
     end_at: "2026-05-30T19:00:00+02:00"
-    venue_id: surfin-tarifa
+    venue_id: surfin_tarifa
     dress_code_id: ceremony_dress
     transport_notes: "Autobús desde 100% Fun, 17:30 Sat (estar allí 17:15)."
     whom: all
@@ -394,73 +396,21 @@ The May 23 deploy is green when **all** of:
 
 ---
 
-## 5. Stage 3 — Multimodal Block B (Tue May 26)
+## 5. Stage 3 — Multimodal Block B — **DROPPED 2026-05-26**
 
-Additive deploy on top of G1+G2. Photos may slip; if they do, Stage 3 ships without them and recognition stays text-hint-only. The bot does not regress.
+**Status:** Shelved. Will not ship for the 2026-05-30 wedding.
 
-### 5.1 `system-prompt.ts` refactor
+**Why dropped:** Insufficient time to gather, curate, and consent-clear reference photos for each dossier'd guest before the event. The operator (Enrique) made the call on T-4. Per K9, this was always insulated as additive — the bot does not regress: text-only dossiers remain in effect, and inbound photos continue to be handled by the existing intake pipeline (`functions/src/bot/handlers/media.ts`) without face recognition.
 
-**Change return type:**
+**What this means for guests:** Thora will thank a guest for the photo they send, push it into the moderation queue (`feed_posts/{auto}`), and carry on the conversation. She will *not* name people in photos. Scene-level commentary only.
 
-```ts
-// before
-export function buildSystem(args): Anthropic.Messages.TextBlockParam[]
+**What was preserved for a possible future run:**
 
-// after
-export function buildSystem(args): Anthropic.Messages.ContentBlockParam[]
-```
+- The `reference_photos` slot in `bot/specs/guest-dossier-schema.md` — left in the schema for future weddings or a post-event retrofit.
+- The `recognitionConfidenceFloor` field is still rendered as a text hint inside the dossier block (`kb.ts:464-465`). Harmless without vision, zero meaningful tokens. Left in place to avoid churn this close to the freeze.
+- This section's prior content (system-prompt.ts refactor, kb-photos.ts fetch design, token-budget script, acceptance criteria) is preserved in git history at commit `412e6f44` and earlier, should anyone want to revive G3 post-event.
 
-**Change Block B from a single text block to a sequence:**
-
-```ts
-// args.kbBlock becomes args.kbContent: Anthropic.Messages.ContentBlockParam[]
-// produced by kb.ts (see §5.2).
-return [
-  { type: "text", text: BLOCK_A, cache_control: { type: "ephemeral" } },
-  ...args.kbContent,   // many text + image blocks; LAST one carries cache_control
-  { type: "text", text: BLOCK_C, cache_control: { type: "ephemeral" } },
-];
-```
-
-**`kb.ts` change:**
-
-Replace `getKb(): { text, version, hash }` with `getKbContent(): { content: ContentBlockParam[], version, hash }`. Internal rendering composes the section markdown as one text block, then for each dossier'd guest appends 1–3 image blocks (base64 inline) right after that guest's text. The LAST content item gets `cache_control: { type: "ephemeral" }`.
-
-Section ordering preserved. Only the dossier section grows.
-
-### 5.2 Reference photo fetch + transform
-
-New file: `functions/src/bot/claude/kb-photos.ts`.
-
-```ts
-async function fetchAndEncodePhotos(urls: string[]): Promise<
-  Anthropic.Messages.ImageBlockParam[]
->
-```
-
-Steps:
-1. For each Cloudinary URL in `reference_photos`, append the transform suffix `w_512,c_limit,f_jpg,q_75` (per `bot/data/guest-dossiers/README.md`).
-2. Fetch the binary with axios; timeout 5s per photo; retry once.
-3. Convert to base64; wrap as `{ type: "image", source: { type: "base64", media_type: "image/jpeg", data: <base64> } }`.
-4. **Cache the encoded payload in module-level memory** keyed by `(url, transform)` so repeat KB rebuilds on the same function instance don't re-fetch.
-5. Cold start re-fetches; ~30 dossiers × 2 photos × 5s timeout = worst-case 5 min cold-start KB build, but with parallel `Promise.all` it's well under 30s. Pre-warming via the keep-warm function handles this.
-
-### 5.3 Token-budget verification
-
-Before deploy, write a tiny script `bot/scripts/measure-kb-tokens.mjs` that:
-1. Runs `renderKbContent()` against staging.
-2. Calls Anthropic's `messages.count_tokens` endpoint with the full system content.
-3. Prints token counts per block and total.
-4. Fails the deploy if total > 90k tokens (the budget from spec §3.2 KQ7).
-
-### 5.4 Acceptance criteria for G3 ship (Tue May 26)
-
-1. `bot/data/guest-dossiers/*/dossier.yaml` `reference_photos` arrays are populated for ≥10 dossiered guests.
-2. `measure-kb-tokens.mjs` reports total system-prompt size < 90k tokens.
-3. A test inbound photo of a dossier'd guest produces a Thora reply that names them (when confidence ≥ floor) or uses soft phrasing (when borderline). Reproduced for ≥3 different dossier'd guests.
-4. A test inbound photo of an un-dossier'd guest produces a scene-level reply with no name.
-5. Cache hit rate on Block B remains > 70% across a 10-turn conversation post-deploy.
-6. Total response latency (p50) under 6s with photos in cache; under 12s on cold start.
+**Replaced today's slot with:** Op-7 keep-warm + pre-event-warmup deploy + cache-hit-rate verification. See `bot/docs/keep-warm-sanity-check.md`.
 
 ---
 

@@ -8,11 +8,13 @@
  * Spec: `bot/specs/07-knowledge-base.md` §2-§3, §7 (caching strategy).
  * Plan: `bot/docs/kb-implementation-plan.md` §4.4.
  *
- * Stage 2 scope (G1+G2 ship — text-only KB with partial dossiers):
+ * Scope — text-only KB (G1+G2 shipped 2026-05-23; G3 dropped 2026-05-26):
  *   - All sections from spec §3.1 are rendered as TEXT, in canonical order.
- *   - Guest dossiers render text fields only — reference photos arrive in
- *     Stage 3 (G3) as `image` content blocks via a refactored
- *     `system-prompt.ts`. See `kb-implementation-plan.md` §5.
+ *   - Guest dossiers render text fields only. The Stage 3 multimodal path
+ *     (reference photos as `image` content blocks + vision recognition)
+ *     was dropped — see `kb-implementation-plan.md` §5 for the postmortem.
+ *     The `recognitionConfidenceFloor` text hint below remains as a no-op
+ *     placeholder in case G3 is ever revived post-event.
  *   - "Today's situation" is NOT rendered here — it's per-turn (see
  *     `claude/today.ts`).
  *

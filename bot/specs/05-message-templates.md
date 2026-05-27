@@ -2,6 +2,26 @@
 
 > Every Meta-approved template Thora sends. Templates are required for any business-initiated message and for re-engaging guests outside the 24-hour Customer Service Window. All templates speak in **Thora's voice** per `02-conversation-design.md`. Implementer: register all of these in `bot/whatsapp/templates.ts`. Operator: submit each via Meta Business Manager → WhatsApp → Templates as documented.
 
+## 1a. Meta submission status (2026-05-23)
+
+> **Naming convention update (operator, 2026-05-23):** templates are submitted with a single name (no `_es` / `_en` suffix). Meta supports the same `name` with multiple `language.code` variants under it; `language.code` selects ES vs EN at send time. The runtime registry in `functions/src/bot/whatsapp/templates.ts` `metaName()` returns the bare name; `META_LANG` maps to `es_ES` / `en_US` in the payload's `language.code` field. Keep this table in sync whenever a template is added or renamed on the Meta side.
+
+| Logical name (code) | Meta name | ES `es_ES` | EN `en_US` | Last verified |
+|---|---|---|---|---|
+| `welcome_onboarding` | `welcome_onboarding` | ✅ approved | ✅ approved | 2026-05-23 |
+| `event_reminder_generic` | `event_reminder_30min` | ✅ approved | ✅ approved | 2026-05-23 |
+| `seating_unlocked` | `seating_unlock` | ✅ approved | ✅ approved | 2026-05-23 |
+| `film_developed` | `film_developed` | ✅ approved | ✅ approved | 2026-05-23 |
+| `farewell_thanks` | `farewell_thanks` | ✅ approved | ✅ approved | 2026-05-23 |
+| _(not in registry)_ | `manual_announcement` | ✅ approved | ✅ approved | 2026-05-23 |
+| _(not in registry)_ | `weather_morning_brief` | ✅ approved | ✅ approved | 2026-05-23 |
+| _(not in registry)_ | `bus_pickup_early` | ✅ approved | ✅ approved | 2026-05-23 |
+| _(not in registry)_ | `bus_pickup_last` | ✅ approved | ✅ approved | 2026-05-23 |
+| _(not in registry)_ | `pre_wedding_drinks` | ✅ approved | ✅ approved | 2026-05-23 |
+| _(not in registry)_ | `arrival_day_nudge` | ✅ approved | ✅ approved | 2026-05-23 |
+
+"Not in registry" templates are Meta-approved but not yet exposed via the runtime template registry. They'd be needed for future scheduled sends (`bus_pickup_*`, `pre_wedding_drinks`, `arrival_day_nudge`, `weather_morning_brief`) or operator-driven broadcasts (`manual_announcement`). Adding any of them is a small registry-only PR: new `TemplateName` literal, new Zod var schema, new `metaName()`, new `buildPayload` + `preview`.
+
 ## 1. Quick reference
 
 | Logical name | Meta name (es / en) | Category | Variables | Triggered by | Audience |
