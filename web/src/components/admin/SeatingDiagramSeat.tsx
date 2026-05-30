@@ -28,6 +28,8 @@ interface Props {
   hideDietary?: boolean;
   /** When true, omits the child gift badge on the seat disc (e.g. /mesas). */
   hideGiftBadge?: boolean;
+  /** When true, omits the table-captain crown on the seat disc (e.g. /mesas). */
+  hideCaptainBadge?: boolean;
 }
 
 // ── SVG geometry constants (NOT in CSS — these feed seat-position math) ─────
@@ -50,6 +52,7 @@ export default function SeatingDiagramSeat({
   ringRadius,
   hideDietary = false,
   hideGiftBadge = false,
+  hideCaptainBadge = false,
 }: Props) {
   // Compute the seat's position on the table ring (compass-convention angle
   // → SVG x/y). See web/src/lib/seating-geometry.ts for the math.
@@ -161,7 +164,7 @@ export default function SeatingDiagramSeat({
 
       {/* Captain crown — sits above the disc. Decorative only; the actual
        *  protocol caption is in the legend. */}
-      {guest?.isCaptain && (
+      {guest?.isCaptain && !hideCaptainBadge && (
         <text
           className="seat-captain"
           textAnchor="middle"

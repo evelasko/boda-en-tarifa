@@ -28,7 +28,7 @@ export default function SeatingDiagramSingleTable({ payload, tableNumber }: Prop
         Mesa {tableNumber} · {tableName}
       </h1>
 
-      <SeatingDiagramLegend captainCaption="Capitán de Mesa" showGift={false} />
+      <SeatingDiagramLegend showCaptain={false} showGift={false} />
 
       <div className="seating-table-focus">
         <div className="seating-table-slot w-full">
@@ -38,6 +38,7 @@ export default function SeatingDiagramSingleTable({ payload, tableNumber }: Prop
             seats={seats}
             hideDietary
             hideGiftBadge
+            hideCaptainBadge
           />
         </div>
       </div>

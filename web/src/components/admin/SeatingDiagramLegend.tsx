@@ -14,13 +14,17 @@ const CATEGORIES: FoodCategory[] = ['meat', 'fish', 'vegetarian', 'child', 'unkn
 
 interface Props {
   captainCaption?: string;
+  showCaptain?: boolean;
   showGift?: boolean;
 }
 
 export default function SeatingDiagramLegend({
   captainCaption = CAPTAIN_BADGE_CAPTION,
+  showCaptain = true,
   showGift = true,
 }: Props) {
+  const showBadges = showCaptain || showGift;
+
   return (
     <div className="seating-legend bg-white border border-charcoal/10 rounded-lg p-3 flex flex-wrap items-center gap-4 text-sm">
       {CATEGORIES.map((cat) => (
@@ -45,11 +49,13 @@ export default function SeatingDiagramLegend({
           <span className="text-charcoal/80">{FOOD_LABELS[cat]}</span>
         </div>
       ))}
-      <div className="h-6 w-px bg-charcoal/15" aria-hidden />
-      <div className="flex items-center gap-2 text-charcoal/80">
-        <span className="text-base leading-none">{CAPTAIN_BADGE}</span>
-        <span>{captainCaption}</span>
-      </div>
+      {showBadges && <div className="h-6 w-px bg-charcoal/15" aria-hidden />}
+      {showCaptain && (
+        <div className="flex items-center gap-2 text-charcoal/80">
+          <span className="text-base leading-none">{CAPTAIN_BADGE}</span>
+          <span>{captainCaption}</span>
+        </div>
+      )}
       {showGift && (
         <div className="flex items-center gap-2 text-charcoal/80">
           <span className="text-base leading-none">{GIFT_BADGE}</span>
