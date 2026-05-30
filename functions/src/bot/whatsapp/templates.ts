@@ -108,7 +108,12 @@ type EventReminderVars = z.infer<typeof EventReminderVars>;
 const SeatingVars = z.object({
   firstName: z.string().min(1),
   tableLabel: z.string().min(1),
-  /** Signed token used to compose the per-guest seating URL button. */
+  /**
+   * URL-button parameter for the approved template's `{{1}}` placeholder.
+   * Set to `String(tableNumber)` — matches Meta's submitted example
+   * (`https://bodaentarifa.com/mi-mesa/42`). Resolved per-recipient in
+   * `dispatch.ts` from `seating/{guestId}.tableNumber`.
+   */
   seatingToken: z.string().min(1),
 });
 type SeatingVars = z.infer<typeof SeatingVars>;
@@ -152,13 +157,19 @@ const EVENT_REMINDER_BODY: Record<
     "See you there!",
 };
 
+// Mirrors the Meta-approved `seating_unlock` body (es-only, verified
+// against WABA on 2026-05-30). The template was edited at submission to
+// prepend "El banquete comienza en breve, " — keep this preview in lockstep
+// so the admin dry-run shows what guests will actually receive.
 const SEATING_BODY: Record<TemplateLang, (v: SeatingVars) => string> = {
   es: ({firstName, tableLabel}) =>
-    `🐾 Te he buscado sitio yo misma, ${firstName}.\n\n` +
+    `🐾 El banquete comienza en breve, te he buscado sitio yo misma, ${firstName}.\n\n` +
     `Estás en *${tableLabel}*. Con quién más? dale al botón.`,
+  // Meta only approved this template in `es`. EN-only guests still see the
+  // Spanish body — same preview keeps the operator UI honest about that.
   en: ({firstName, tableLabel}) =>
-    `🐾 I picked your seat myself, ${firstName}.\n\n` +
-    `You're at *${tableLabel}*. For who else is at your table, tap below.`,
+    `🐾 El banquete comienza en breve, te he buscado sitio yo misma, ${firstName}.\n\n` +
+    `Estás en *${tableLabel}*. Con quién más? dale al botón.`,
 };
 
 const FILM_BODY: Record<TemplateLang, (v: FirstNameVars) => string> = {
@@ -262,15 +273,20 @@ export const TEMPLATES: {
     name: "seating_unlocked",
     metaName: () => "seating_unlock",
     vars: SeatingVars,
-    buildPayload: (lang, vars) => {
-      const base = bodyOnlyPayload("seating_unlock", lang, [
+    buildPayload: (_lang, vars) => {
+      // Meta only approved this template in `es` (verified 2026-05-30).
+      // Hardcode the language code so we never request a non-existent
+      // `seating_unlock/en` variant for English-preferring guests.
+      const base = bodyOnlyPayload("seating_unlock", "es", [
         vars.firstName,
         vars.tableLabel,
       ]);
-      // URL button takes the signed token as `{{1}}` per §T4. Operator
-      // submitted the template with this button — keep it until the
-      // operator either removes it on the Meta side or wires a real
-      // per-guest seating page on the web.
+      // Approved URL: `https://bodaentarifa.com/mi-mesa/%7B%7B3%7D%7D{{1}}`.
+      // Despite the `{{3}}` look-alike, only `{{1}}` is a live placeholder
+      // (the `%7B%7B3%7D%7D` is URL-encoded literal text, not a variable).
+      // So this button takes exactly one parameter, the URL suffix —
+      // `seatingToken`, which we set to `String(tableNumber)` to match
+      // Meta's submitted example (`https://bodaentarifa.com/mi-mesa/42`).
       base.components.push({
         type: "button",
         sub_type: "url",

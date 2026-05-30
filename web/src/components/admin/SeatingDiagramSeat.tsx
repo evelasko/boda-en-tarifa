@@ -24,6 +24,10 @@ interface Props {
   cx: number;
   cy: number;
   ringRadius: number;
+  /** When true, omits dietary text and the red in-disc flag (e.g. /mesas). */
+  hideDietary?: boolean;
+  /** When true, omits the child gift badge on the seat disc (e.g. /mesas). */
+  hideGiftBadge?: boolean;
 }
 
 // ── SVG geometry constants (NOT in CSS — these feed seat-position math) ─────
@@ -44,6 +48,8 @@ export default function SeatingDiagramSeat({
   cx,
   cy,
   ringRadius,
+  hideDietary = false,
+  hideGiftBadge = false,
 }: Props) {
   // Compute the seat's position on the table ring (compass-convention angle
   // → SVG x/y). See web/src/lib/seating-geometry.ts for the math.
@@ -79,6 +85,7 @@ export default function SeatingDiagramSeat({
   // below the disc. Children always have `dietaryRestrictions === ''` per
   // seating-render-core (their menu is uniform), so this never fires for N.
   const hasDietaryFlag =
+    !hideDietary &&
     !isOrphanSeat &&
     !!guest?.dietaryRestrictions &&
     guest.dietaryRestrictions.trim().length > 0;
@@ -164,7 +171,7 @@ export default function SeatingDiagramSeat({
         </text>
       )}
       {/* Child gift parcel — sits at top-right of the disc. */}
-      {guest?.isChild && (
+      {guest?.isChild && !hideGiftBadge && (
         <text
           className="seat-gift"
           x={SEAT_DISC_RADIUS - 2}

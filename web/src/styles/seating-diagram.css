@@ -2,9 +2,9 @@
  * Seating diagram theme & layout
  * ----------------------------------------------------------------------------
  * Single source of truth for the visual styling of the round-table SVG
- * diagram rendered at /admin/seating and /staff/tables. Both routes mount
- * the same <SeatingDiagram> React tree, so any change here is reflected in
- * both views automatically.
+ * diagram rendered at /admin/seating, /staff/tables, and /mesas/[n].
+ * All routes share the same SVG table/seat components, so any change here
+ * is reflected in every view automatically.
  *
  * What lives here:
  *   - Colours    (food fills/strokes, table fill/stroke, label text)
@@ -220,6 +220,27 @@
   flex-basis: var(--seating-table-min-width);
   flex-grow: 1;
   max-width: var(--seating-table-max-width);
+}
+
+/* ── Single-table fullscreen (/mesas/[n]) ─────────────────────────────── */
+.seating-diagram--single {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+.seating-diagram--single .seating-table-focus {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 0.5rem 0 1rem;
+}
+.seating-diagram--single .seating-table-slot {
+  flex-basis: auto;
+  flex-grow: 0;
+  width: 100%;
+  max-width: min(100%, 56rem);
 }
 
 /* ============================================================================

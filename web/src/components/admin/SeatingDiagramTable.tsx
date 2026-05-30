@@ -8,6 +8,8 @@ interface Props {
   tableName: string;
   /** Already sorted by seatNumber. */
   seats: SeatRender[];
+  hideDietary?: boolean;
+  hideGiftBadge?: boolean;
 }
 
 // ── SVG geometry (NOT in CSS — these feed the seat-position math). ──────────
@@ -47,6 +49,8 @@ export default function SeatingDiagramTable({
   tableNumber,
   tableName,
   seats,
+  hideDietary = false,
+  hideGiftBadge = false,
 }: Props) {
   // `totalSeats` for the angle math is the count of ASSIGNED seats — empty
   // seats are never drawn (plan §1 / §9.3). A table with 8 assignments draws
@@ -104,6 +108,8 @@ export default function SeatingDiagramTable({
             cx={CENTER}
             cy={CENTER}
             ringRadius={SEAT_RING_RADIUS}
+            hideDietary={hideDietary}
+            hideGiftBadge={hideGiftBadge}
           />
         ))}
 

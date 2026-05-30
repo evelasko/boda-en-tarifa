@@ -70,6 +70,13 @@ export interface ResolveResult {
     missingPhone: number;
     notMatched: number;
     nightMismatch: number;
+    /**
+     * Populated by the dispatcher (not `resolveAudience`) for templates that
+     * require per-guest data lookups before send — currently only
+     * `seating_unlocked`. Each entry here is a recipient who would have
+     * been audience-eligible but lacks a usable `seating/{guestId}` row.
+     */
+    missingSeating?: number;
   };
 }
 

@@ -9,6 +9,7 @@ import {
   Send,
   Loader2,
   AlertCircle,
+  Info,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -47,10 +48,18 @@ export default function NewBroadcastPage() {
     .map((p) => p.trim())
     .filter((p) => p.startsWith('+') && p.length > 6);
 
+  // T4 (`seating_unlocked`) is the only Meta-approved es-only template
+  // we send; force the audience language filter so we don't accidentally
+  // narrow to en-only guests with no recipients.
+  const isSeatingTemplate = template === 'seating_unlocked';
+  const effectiveLanguage = isSeatingTemplate ? 'es' : language;
+
   const buildInput = (dryRun: boolean): SendBroadcastInput => ({
     templateName: template,
     audience: {
-      ...(phones.length > 0 ? { phones } : { language, rsvpStatus }),
+      ...(phones.length > 0
+        ? { phones }
+        : { language: effectiveLanguage, rsvpStatus }),
     },
     dryRun,
     perMinuteCap,
@@ -127,6 +136,40 @@ export default function NewBroadcastPage() {
                 </option>
               ))}
             </select>
+            {isSeatingTemplate && (
+              <div className="mt-2 flex items-start gap-2 rounded-md border border-ocean/30 bg-ocean/5 p-3 text-xs text-charcoal/80">
+                <Info size={14} className="mt-0.5 text-ocean shrink-0" />
+                <div className="space-y-1">
+                  <p>
+                    <strong>T4 Seating Unlock:</strong>{' '}
+                    las variables{' '}
+                    <code className="rounded bg-charcoal/5 px-1">tableLabel</code>{' '}
+                    y{' '}
+                    <code className="rounded bg-charcoal/5 px-1">seatingToken</code>{' '}
+                    se resuelven automáticamente desde{' '}
+                    <code className="rounded bg-charcoal/5 px-1">
+                      seating/{'{guestId}'}
+                    </code>{' '}
+                    y{' '}
+                    <code className="rounded bg-charcoal/5 px-1">
+                      app_config/seating_layout
+                    </code>.
+                  </p>
+                  <p>
+                    Plantilla aprobada solo en{' '}
+                    <strong>español</strong>; el idioma se fuerza a{' '}
+                    <code className="rounded bg-charcoal/5 px-1">es</code> para todos los destinatarios.
+                  </p>
+                  <p>
+                    Invitados sin asignación de mesa serán bloqueados antes
+                    de enviar (sin coste de plantilla) y marcados como{' '}
+                    <code className="rounded bg-charcoal/5 px-1">
+                      missing_seating_assignment
+                    </code>.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -135,17 +178,23 @@ export default function NewBroadcastPage() {
                 Idioma
               </label>
               <select
-                value={language}
+                value={isSeatingTemplate ? 'es' : language}
                 onChange={(e) =>
                   setLanguage(e.target.value as typeof language)
                 }
-                disabled={phones.length > 0}
-                className="w-full border border-charcoal/15 rounded-md p-2 text-sm"
+                disabled={phones.length > 0 || isSeatingTemplate}
+                className="w-full border border-charcoal/15 rounded-md p-2 text-sm disabled:bg-charcoal/5 disabled:cursor-not-allowed"
               >
                 <option value="both">Ambos (ES + EN)</option>
                 <option value="es">Solo ES</option>
                 <option value="en">Solo EN</option>
               </select>
+              {isSeatingTemplate && (
+                <p className="mt-1 text-xs text-charcoal/50">
+                  T4 está aprobada solo en{' '}
+                  <code className="rounded bg-charcoal/5 px-1">es</code>.
+                </p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-charcoal/70 mb-1">
@@ -230,6 +279,111 @@ export default function NewBroadcastPage() {
                 filtros: {preview.excluded.notMatched ?? 0}.
               </p>
             )}
+            {isSeatingTemplate &&
+              (preview.excluded?.missingSeating ?? 0) > 0 && (
+                <div className="mt-2 space-y-2 rounded-md border border-coral/30 bg-coral/5 p-2 text-xs text-charcoal">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle size={14} className="mt-0.5 text-coral shrink-0" />
+                    <span>
+                      <strong>{preview.excluded?.missingSeating}</strong>{' '}
+                      invitado
+                      {preview.excluded?.missingSeating === 1 ? '' : 's'}{' '}
+                      sin asignación de mesa resoluble. Se bloquearán antes
+                      de enviar y aparecerán como{' '}
+                      <code className="rounded bg-charcoal/5 px-1">
+                        missing_seating_assignment
+                      </code>{' '}
+                      en la difusión.
+                    </span>
+                  </div>
+                  {preview.missingSeatingReasonHist &&
+                    Object.keys(preview.missingSeatingReasonHist).length > 0 && (
+                      <div className="ml-6">
+                        <div className="font-medium text-charcoal/80 mb-1">
+                          Motivos:
+                        </div>
+                        <ul className="space-y-0.5">
+                          {Object.entries(preview.missingSeatingReasonHist)
+                            .sort((a, b) => b[1] - a[1])
+                            .map(([reason, count]) => (
+                              <li
+                                key={reason}
+                                className="font-mono text-[11px] text-charcoal/70"
+                              >
+                                <strong className="text-charcoal">
+                                  {count}
+                                </strong>
+                                {' × '}
+                                {reason}
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                    )}
+                  {preview.missingSeatingSamples &&
+                    preview.missingSeatingSamples.length > 0 && (
+                      <details className="ml-6">
+                        <summary className="cursor-pointer text-charcoal/70 hover:text-charcoal">
+                          Ver invitados afectados (primeros{' '}
+                          {preview.missingSeatingSamples.length})
+                        </summary>
+                        <ul className="mt-1 space-y-0.5">
+                          {preview.missingSeatingSamples.map(
+                            ([guestId, reason]) => (
+                              <li
+                                key={guestId}
+                                className="font-mono text-[11px] text-charcoal/60"
+                              >
+                                <code className="text-charcoal/80">
+                                  {guestId}
+                                </code>
+                                {' — '}
+                                {reason}
+                              </li>
+                            )
+                          )}
+                        </ul>
+                      </details>
+                    )}
+                  <div className="ml-6 text-charcoal/70">
+                    Diagnóstico:
+                    <ul className="list-disc ml-4 mt-0.5 space-y-0.5">
+                      <li>
+                        <code className="bg-charcoal/5 px-1 rounded">
+                          no_seating_doc
+                        </code>
+                        : el invitado no tiene fila en{' '}
+                        <code className="bg-charcoal/5 px-1 rounded">
+                          seating/
+                        </code>.
+                      </li>
+                      <li>
+                        <code className="bg-charcoal/5 px-1 rounded">
+                          layout_unseeded
+                        </code>
+                        : falta{' '}
+                        <code className="bg-charcoal/5 px-1 rounded">
+                          app_config/seating_layout
+                        </code>
+                        . Corre{' '}
+                        <code className="bg-charcoal/5 px-1 rounded">
+                          scripts/seed-seating-layout.ts
+                        </code>.
+                      </li>
+                      <li>
+                        <code className="bg-charcoal/5 px-1 rounded">
+                          unresolvable_table:&lt;valor&gt;
+                        </code>
+                        : el valor en{' '}
+                        <code className="bg-charcoal/5 px-1 rounded">
+                          tableName
+                        </code>{' '}
+                        no es un número de mesa válido ni un nombre del layout.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              )}
           </div>
 
           {preview.samples && preview.samples.length > 0 ? (

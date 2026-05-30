@@ -72,13 +72,34 @@ export interface SendBroadcastInput {
 export interface SendBroadcastResult {
   broadcastId?: string;
   audienceCount: number;
-  excluded?: Record<string, number>;
+  /**
+   * Mirrors `functions/src/bot/broadcast/audience.ts` `ResolveResult.excluded`.
+   * The base counters always exist; `missingSeating` is only present for the
+   * `seating_unlocked` (T4) template, populated by the dispatcher's seating
+   * resolver.
+   */
+  excluded?: {
+    notEnrolled?: number;
+    hardOptOut?: number;
+    missingPhone?: number;
+    notMatched?: number;
+    nightMismatch?: number;
+    missingSeating?: number;
+  };
   samples?: Array<{
     guestId: string;
     phoneMasked: string;
     language: 'es' | 'en';
     rendered: string;
   }>;
+  /**
+   * T4-only: histogram of why recipients were blocked from the seating
+   * resolver (e.g., `no_seating_doc: 3, layout_unseeded: 41, unresolvable_table:Mesa 7: 2`).
+   * The UI renders this so the operator can fix the underlying data
+   * problem without diving into Functions logs.
+   */
+  missingSeatingReasonHist?: Record<string, number>;
+  missingSeatingSamples?: Array<[string, string]>;
 }
 
 export async function callBotSendBroadcast(

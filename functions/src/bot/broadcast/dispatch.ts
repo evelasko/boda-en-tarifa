@@ -111,6 +111,19 @@ export interface DryRunResult {
     language: TemplateLang;
     rendered: string;
   }>;
+  /**
+   * For T4 (`seating_unlocked`) only: a histogram of per-guest seating
+   * resolution reasons for the rows that ended up in `excluded.missingSeating`.
+   * Empty/omitted for other templates. Used by the admin UI to tell the
+   * operator *why* recipients are being blocked (e.g., `layout_unseeded`,
+   * `no_seating_doc`, `unresolvable_table:foo`).
+   */
+  missingSeatingReasonHist?: Record<string, number>;
+  /**
+   * Up to 10 sample `[guestId, reason]` pairs for missing-seating recipients
+   * so an operator can spot-check from the UI without diving into logs.
+   */
+  missingSeatingSamples?: Array<[string, string]>;
 }
 
 export interface RunResult {
@@ -132,9 +145,40 @@ export async function dryRunBroadcast(
   const tmpl = requireTemplate(input.templateName);
   const audience = await resolveAudience(input.audience);
 
-  const samples = audience.members.slice(0, 3).map((m) => {
+  // T4 (`seating_unlocked`) requires per-guest `tableLabel` + `seatingToken`
+  // resolved from `seating/{guestId}`. Compute them here so the preview
+  // reflects what `runBroadcast` will actually send (and so the preview
+  // count surfaces recipients who would be blocked for missing seating).
+  const seatingEnrichment = input.templateName === "seating_unlocked" ?
+    await resolveSeatingVars(audience.members.map((m) => m.guestId)) :
+    {perGuest: {}, missing: new Set<string>(), missingReasons: {}};
+
+  // Render samples preferring members WITH a resolvable seating row so the
+  // operator sees a real rendered body, not three "(no seating row)" rows.
+  const orderedForSample = [
+    ...audience.members.filter((m) => !seatingEnrichment.missing.has(m.guestId)),
+    ...audience.members.filter((m) => seatingEnrichment.missing.has(m.guestId)),
+  ];
+
+  const dispatchVars: DispatchVars = {
+    ...input.vars,
+    perGuest: {
+      ...(input.vars?.perGuest ?? {}),
+      ...seatingEnrichment.perGuest,
+    },
+  };
+
+  const samples = orderedForSample.slice(0, 3).map((m) => {
     const lang = m.language as TemplateLang;
-    const merged = mergeVars(m, input.vars);
+    if (seatingEnrichment.missing.has(m.guestId)) {
+      return {
+        guestId: m.guestId,
+        phoneMasked: maskPhone(m.phone),
+        language: lang,
+        rendered: "(no seating row — would be blocked at send time)",
+      };
+    }
+    const merged = mergeVars(m, dispatchVars);
     const parsed = tmpl.vars.safeParse(merged);
     const rendered = parsed.success ?
       tmpl.preview(lang, parsed.data) :
@@ -147,10 +191,31 @@ export async function dryRunBroadcast(
     };
   });
 
+  const excluded = {
+    ...audience.excluded,
+    ...(input.templateName === "seating_unlocked" ?
+      {missingSeating: seatingEnrichment.missing.size} :
+      {}),
+  };
+
+  const isSeatingTemplate = input.templateName === "seating_unlocked";
+  const missingSeatingReasonHist: Record<string, number> = {};
+  if (isSeatingTemplate) {
+    for (const r of Object.values(seatingEnrichment.missingReasons)) {
+      missingSeatingReasonHist[r] = (missingSeatingReasonHist[r] ?? 0) + 1;
+    }
+  }
+  const missingSeatingSamples: Array<[string, string]> = isSeatingTemplate ?
+    Object.entries(seatingEnrichment.missingReasons).slice(0, 10) :
+    [];
+
   return {
     audienceCount: audience.members.length,
-    excluded: audience.excluded,
+    excluded,
     samples,
+    ...(isSeatingTemplate ?
+      {missingSeatingReasonHist, missingSeatingSamples} :
+      {}),
   };
 }
 
@@ -277,6 +342,43 @@ export async function runBroadcast(
     .get();
   const total = recipientsSnap.size;
 
+  // T4: enrich per-guest vars from `seating/{guestId}` for every
+  // not-yet-terminal recipient. Done once up-front (1 layout read + 1
+  // batched getAll) so the per-recipient loop below stays fast and we can
+  // pre-fail any recipient missing seating data before the Meta call.
+  let seatingMissing = new Set<string>();
+  if (broadcast.templateName === "seating_unlocked") {
+    const liveGuestIds = recipientsSnap.docs
+      .filter((d) => {
+        const s = (d.data() as {status?: RecipientStatus}).status;
+        return s !== "sent" && s !== "delivered" && s !== "read";
+      })
+      .map((d) => (d.data() as {guestId: string}).guestId);
+    const seating = await resolveSeatingVars(liveGuestIds);
+    seatingMissing = seating.missing;
+    vars.perGuest = {
+      ...(vars.perGuest ?? {}),
+      ...seating.perGuest,
+    };
+    if (seatingMissing.size > 0) {
+      // Roll up missing reasons into a histogram so the log is grep-able
+      // without paging through one-line-per-guest noise.
+      const reasonHist: Record<string, number> = {};
+      for (const r of Object.values(seating.missingReasons)) {
+        reasonHist[r] = (reasonHist[r] ?? 0) + 1;
+      }
+      logger.warn("bot.broadcast.seating_missing", {
+        broadcastId,
+        missingCount: seatingMissing.size,
+        resolvedCount: liveGuestIds.length - seatingMissing.size,
+        reasonHist,
+        // First 10 guestIds for spot-checking — enough to diagnose without
+        // flooding logs on large audiences.
+        sampleMissing: Object.entries(seating.missingReasons).slice(0, 10),
+      });
+    }
+  }
+
   for (const recipDoc of recipientsSnap.docs) {
     // Mid-run cancellation check.
     const stateSnap = await broadcastRef.get();
@@ -301,6 +403,19 @@ export async function runBroadcast(
       recip.status === "read";
     if (terminal) {
       stats.skipped += 1;
+      continue;
+    }
+
+    // T4 pre-send guard: if this recipient has no usable seating row,
+    // mark them failed before any Meta call. Operator can fix the seating
+    // doc and re-run the broadcast — the send-log claim makes the re-run
+    // idempotent for everyone already sent.
+    if (seatingMissing.has(recip.guestId)) {
+      const reason = "missing_seating_assignment";
+      await markRecipientFailed(recipDoc.ref, reason);
+      // No send-log claim here — leaving the slot unclaimed so a re-run
+      // after the seating data is fixed can retry this recipient.
+      stats.failed += 1;
       continue;
     }
 
@@ -498,6 +613,150 @@ function generateBroadcastId(): string {
   const ss = String(d.getUTCSeconds()).padStart(2, "0");
   const suffix = Math.random().toString(36).slice(2, 6);
   return `bcst-${yyyy}${mm}${dd}-${hh}${mi}${ss}-${suffix}`;
+}
+
+/**
+ * Per-recipient seating-data resolver for the `seating_unlocked` (T4)
+ * template. Reads `seating/{guestId}` rows for the given guest ids and
+ * `app_config/seating_layout` once, then derives the two missing template
+ * vars (`tableLabel`, `seatingToken`) per guest.
+ *
+ * Resolution mirrors `web/src/lib/seating-render-core.ts` because the
+ * production data shape is heterogeneous:
+ *   - Sheet-sync writes set `tableNumber` IF the layout name resolved.
+ *     Unresolved rows get `tableNumber: null` (with a warn log).
+ *   - The admin guest editor (`/api/admin/guests/{uid}` route) only writes
+ *     `{tableName, seatNumber}` — it does NOT write `tableNumber`. Any
+ *     guest edited through the admin UI after seating-layout seeding has
+ *     `tableNumber` undefined.
+ *   - The existing production data has `tableName` storing the table
+ *     NUMBER as a string (e.g. "1") for some rows and the human-readable
+ *     name (e.g. "Valdevaqueros") for others.
+ *
+ * So we try three resolution paths in order:
+ *   1. `data.tableNumber` is a number AND present in the layout.
+ *   2. `data.tableName` parses as a positive integer key of the layout.
+ *   3. `data.tableName` matches a layout name (case-insensitive).
+ *
+ * The final `tableLabel` always uses the layout's human-readable name
+ * (`names[String(n)]`) so the message is consistent regardless of how
+ * the seating doc was authored. `seatingToken` is the resolved table
+ * number as a string — matches Meta's submitted example URL.
+ *
+ * Returns:
+ *   - `perGuest`: `{ guestId: { tableLabel, seatingToken } }` for every
+ *      guest with a usable seating row.
+ *   - `missing`: `{ guestId: reason }` for every guest that couldn't be
+ *      resolved — surfaced in admin-side warnings + dispatcher logs so the
+ *      operator can fix the data and re-run.
+ *
+ * Read pattern: 1 `seating_layout` read + 1 batched `getAll` against
+ * `seating/`. Linear in audience size.
+ */
+async function resolveSeatingVars(
+  guestIds: readonly string[]
+): Promise<{
+  perGuest: Record<string, {tableLabel: string; seatingToken: string}>;
+  missing: Set<string>;
+  /** Diagnostic per-guest reason for missing — same keys as `missing`. */
+  missingReasons: Record<string, string>;
+}> {
+  const perGuest: Record<string, {tableLabel: string; seatingToken: string}> = {};
+  const missing = new Set<string>();
+  const missingReasons: Record<string, string> = {};
+  if (guestIds.length === 0) return {perGuest, missing, missingReasons};
+
+  const db = getFirestore();
+  const layoutSnap = await db.collection("app_config").doc("seating_layout").get();
+  const layoutData = layoutSnap.data() as
+    | {names?: Record<string, string>; rows?: Array<{tables: number[]}>}
+    | undefined;
+  const names = layoutData?.names ?? {};
+  const layoutNumbers = new Set<number>();
+  for (const k of Object.keys(names)) {
+    const n = Number(k);
+    if (Number.isInteger(n)) layoutNumbers.add(n);
+  }
+
+  if (layoutNumbers.size === 0) {
+    logger.warn("bot.broadcast.seating_layout_missing", {
+      hint: "app_config/seating_layout has no `names` map — every recipient " +
+        "will be blocked. Run scripts/seed-seating-layout.ts.",
+    });
+  }
+
+  const refs = guestIds.map((id) => db.collection("seating").doc(id));
+  const snaps = await db.getAll(...refs);
+
+  for (let i = 0; i < snaps.length; i++) {
+    const snap = snaps[i];
+    const guestId = guestIds[i];
+    if (!snap.exists) {
+      missing.add(guestId);
+      missingReasons[guestId] = "no_seating_doc";
+      continue;
+    }
+    const data = snap.data() as {
+      tableName?: string;
+      tableNumber?: number | null;
+    };
+
+    // Pass 1: trust an explicit numeric `tableNumber` if it's in the layout.
+    let resolved: number | null = null;
+    if (
+      typeof data.tableNumber === "number" &&
+      Number.isInteger(data.tableNumber) &&
+      layoutNumbers.has(data.tableNumber)
+    ) {
+      resolved = data.tableNumber;
+    }
+
+    // Pass 2 + 3: derive from `tableName` (numeric-string OR name match).
+    if (resolved === null) {
+      const raw = (data.tableName ?? "").trim();
+      if (raw && /^\d+$/.test(raw)) {
+        const n = Number(raw);
+        if (Number.isInteger(n) && layoutNumbers.has(n)) resolved = n;
+      }
+      if (resolved === null && raw) {
+        const lowered = raw.toLowerCase();
+        for (const [key, value] of Object.entries(names)) {
+          if (
+            typeof value === "string" &&
+            value.trim().toLowerCase() === lowered
+          ) {
+            const n = Number(key);
+            if (Number.isInteger(n) && layoutNumbers.has(n)) {
+              resolved = n;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    if (resolved === null) {
+      missing.add(guestId);
+      missingReasons[guestId] = layoutNumbers.size === 0 ?
+        "layout_unseeded" :
+        `unresolvable_table:${data.tableName ?? "<empty>"}`;
+      continue;
+    }
+
+    const tableName = names[String(resolved)] ?? "";
+    if (!tableName) {
+      // Resolved a number but the layout has no name for it — shouldn't
+      // happen given the layoutNumbers guard above, but be defensive.
+      missing.add(guestId);
+      missingReasons[guestId] = `layout_no_name_for_${resolved}`;
+      continue;
+    }
+    perGuest[guestId] = {
+      tableLabel: `Mesa ${resolved}: ${tableName}`,
+      seatingToken: String(resolved),
+    };
+  }
+  return {perGuest, missing, missingReasons};
 }
 
 function sleep(ms: number): Promise<void> {
