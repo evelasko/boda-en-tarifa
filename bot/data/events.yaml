@@ -45,6 +45,11 @@ events:
       lo pierdes, llegas tarde — la ceremonia tiene horario.
     whom: "all"
     requires_night: "saturday"
+    # T3 (event_reminder_generic) suppressed for ceremony — T12/T13
+    # (bus_pickup_early / bus_pickup_last) handle the 17:15/17:30 bus
+    # cadence instead. T3's "starts in 30 minutes" copy would arrive at
+    # 17:30 (while guests should already be on the bus) and 17:45.
+    reminders: []
     description_es: >
       Ceremonia frente al mar en Surfin' Tarifa. Tras la ceremonia, el bus lleva
       a todos al lugar del cóctel en Tres Mares.

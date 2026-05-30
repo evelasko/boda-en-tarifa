@@ -35,6 +35,7 @@ import {
   type TemplateName,
 } from "../whatsapp/templates.js";
 import {maskPhone} from "../lib/phone.js";
+import {WEDDING_TIMEZONE} from "../lib/config.js";
 import {
   claimSendLog,
   makeSendLogId,
@@ -124,6 +125,13 @@ export interface DryRunResult {
    * so an operator can spot-check from the UI without diving into logs.
    */
   missingSeatingSamples?: Array<[string, string]>;
+  /**
+   * For T3 (`event_reminder_generic`) only: when the caller passed an
+   * `eventId` that the dispatcher couldn't resolve, this carries the
+   * specific reason so the admin UI can tell the operator what to fix.
+   * `null`/omitted if the event resolved (or the template doesn't care).
+   */
+  eventReminderError?: string | null;
 }
 
 export interface RunResult {
@@ -145,6 +153,34 @@ export async function dryRunBroadcast(
   const tmpl = requireTemplate(input.templateName);
   const audience = await resolveAudience(input.audience);
 
+  // T3 (`event_reminder_generic`) static-vars enrichment. When the caller
+  // supplies `vars.static.eventId` we resolve eventName/venue/time from
+  // `event_schedule/{eventId}` + `config/venues` and merge into static
+  // vars so the preview renders the actual approved body. If resolution
+  // fails, surface a clear reason in the preview rather than rendering
+  // gibberish.
+  let effectiveInput = input;
+  let eventReminderError: string | null = null;
+  const isEventReminder = input.templateName === "event_reminder_generic";
+  const suppliedEventId = input.vars?.static?.eventId;
+  if (isEventReminder && suppliedEventId) {
+    const r = await resolveEventReminderVars(suppliedEventId);
+    if (r.ok) {
+      effectiveInput = {
+        ...input,
+        vars: {
+          ...input.vars,
+          static: {
+            ...(input.vars?.static ?? {}),
+            ...r.vars,
+          },
+        },
+      };
+    } else {
+      eventReminderError = r.reason;
+    }
+  }
+
   // T4 (`seating_unlocked`) requires per-guest `tableLabel` + `seatingToken`
   // resolved from `seating/{guestId}`. Compute them here so the preview
   // reflects what `runBroadcast` will actually send (and so the preview
@@ -161,9 +197,9 @@ export async function dryRunBroadcast(
   ];
 
   const dispatchVars: DispatchVars = {
-    ...input.vars,
+    ...effectiveInput.vars,
     perGuest: {
-      ...(input.vars?.perGuest ?? {}),
+      ...(effectiveInput.vars?.perGuest ?? {}),
       ...seatingEnrichment.perGuest,
     },
   };
@@ -176,6 +212,14 @@ export async function dryRunBroadcast(
         phoneMasked: maskPhone(m.phone),
         language: lang,
         rendered: "(no seating row — would be blocked at send time)",
+      };
+    }
+    if (eventReminderError) {
+      return {
+        guestId: m.guestId,
+        phoneMasked: maskPhone(m.phone),
+        language: lang,
+        rendered: `(event data unresolved: ${eventReminderError} — would be blocked at send time)`,
       };
     }
     const merged = mergeVars(m, dispatchVars);
@@ -195,6 +239,9 @@ export async function dryRunBroadcast(
     ...audience.excluded,
     ...(input.templateName === "seating_unlocked" ?
       {missingSeating: seatingEnrichment.missing.size} :
+      {}),
+    ...(isEventReminder && eventReminderError ?
+      {missingEventData: audience.members.length} :
       {}),
   };
 
@@ -216,6 +263,7 @@ export async function dryRunBroadcast(
     ...(isSeatingTemplate ?
       {missingSeatingReasonHist, missingSeatingSamples} :
       {}),
+    ...(isEventReminder ? {eventReminderError} : {}),
   };
 }
 
@@ -379,6 +427,36 @@ export async function runBroadcast(
     }
   }
 
+  // T3: if the broadcast was created with `eventId` in static vars,
+  // resolve the event data once and inject eventName/venue/time. If it
+  // fails, pre-fail every non-terminal recipient before any Meta call —
+  // the broadcast is idempotent on retry once the operator fixes the
+  // underlying event doc.
+  let eventReminderBlocked = false;
+  let eventReminderError: string | null = null;
+  if (broadcast.templateName === "event_reminder_generic") {
+    const eventId = vars.static?.eventId;
+    if (eventId) {
+      const r = await resolveEventReminderVars(eventId);
+      if (r.ok) {
+        vars.static = {
+          ...(vars.static ?? {}),
+          ...r.vars,
+        };
+      } else {
+        eventReminderBlocked = true;
+        eventReminderError = r.reason;
+        logger.warn("bot.broadcast.event_reminder_unresolved", {
+          broadcastId,
+          eventId,
+          reason: r.reason,
+        });
+      }
+    }
+    // If no eventId was supplied, we assume the caller already pre-resolved
+    // the vars (e.g., scheduled event-reminder.ts path). Leave vars alone.
+  }
+
   for (const recipDoc of recipientsSnap.docs) {
     // Mid-run cancellation check.
     const stateSnap = await broadcastRef.get();
@@ -415,6 +493,16 @@ export async function runBroadcast(
       await markRecipientFailed(recipDoc.ref, reason);
       // No send-log claim here — leaving the slot unclaimed so a re-run
       // after the seating data is fixed can retry this recipient.
+      stats.failed += 1;
+      continue;
+    }
+
+    // T3 pre-send guard: if the eventId couldn't resolve, every recipient
+    // is blocked with the same reason. No Meta call, no send-log claim —
+    // a re-run after fixing the event_schedule doc replays cleanly.
+    if (eventReminderBlocked) {
+      const reason = `missing_event_data:${eventReminderError ?? "unknown"}`;
+      await markRecipientFailed(recipDoc.ref, reason);
       stats.failed += 1;
       continue;
     }
@@ -613,6 +701,90 @@ function generateBroadcastId(): string {
   const ss = String(d.getUTCSeconds()).padStart(2, "0");
   const suffix = Math.random().toString(36).slice(2, 6);
   return `bcst-${yyyy}${mm}${dd}-${hh}${mi}${ss}-${suffix}`;
+}
+
+/**
+ * T3 (`event_reminder_generic`) static-vars resolver. Reads the bot's
+ * canonical event/venue collections (synced from `bot/data/events.yaml` +
+ * `bot/data/venues.yaml` via `bot/scripts/sync-kb.mjs`) and derives the
+ * three body vars Meta needs:
+ *   - `eventName` ← `events/{id}.nameEs`
+ *   - `venue`     ← `venues/{venueId}.name`
+ *                  (fallback to eventName if the venue can't be resolved —
+ *                  mirrors `scheduled/event-reminder.ts`)
+ *   - `time`      ← formatted "HH:mm" from `startAt` in Europe/Madrid
+ *
+ * Why these collections (and not `event_schedule/` or `config/venues`):
+ *   The bot reads from `events/` + `venues/` everywhere (KB build,
+ *   scheduled reminders, `today.ts`). Using the same source for the
+ *   admin-triggered T3 ensures admin and scheduled paths produce
+ *   identical messages, and avoids the empty `event_schedule/` collection
+ *   that the admin timeline page uses (not connected to the bot).
+ *
+ * Returns `{ok: true, vars}` on success, `{ok: false, reason}` if the
+ * event doc is missing or has bad `startAt`. Callers should pre-block
+ * the broadcast (dry-run: surface the reason; runBroadcast: mark all
+ * recipients failed before any Meta call).
+ *
+ * Note: the dispatcher resolves these vars ONCE per broadcast and shoves
+ * them into `vars.static`, so every recipient gets the same eventName/
+ * venue/time. The scheduler (`event-reminder.ts`) keeps pre-resolving
+ * its own vars; it doesn't pass `eventId`, so this resolver is admin-path
+ * only.
+ */
+async function resolveEventReminderVars(eventId: string): Promise<
+  | {ok: true; vars: {eventName: string; venue: string; time: string}}
+  | {ok: false; reason: string}
+> {
+  if (!eventId || !eventId.trim()) {
+    return {ok: false, reason: "empty_event_id"};
+  }
+  const db = getFirestore();
+  const eventSnap = await db.collection("events").doc(eventId).get();
+  if (!eventSnap.exists) {
+    return {ok: false, reason: `event_not_found:${eventId}`};
+  }
+  const event = eventSnap.data() as {
+    nameEs?: string;
+    nameEn?: string;
+    startAt?: string;
+    venueId?: string;
+  };
+  const eventName = (event.nameEs ?? event.nameEn ?? "").trim();
+  if (!eventName) {
+    return {ok: false, reason: `event_missing_name:${eventId}`};
+  }
+  const startMs = event.startAt ? Date.parse(event.startAt) : NaN;
+  if (Number.isNaN(startMs)) {
+    return {
+      ok: false,
+      reason: `event_bad_start_at:${event.startAt ?? "<empty>"}`,
+    };
+  }
+  const time = new Intl.DateTimeFormat("es-ES", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: WEDDING_TIMEZONE,
+  }).format(new Date(startMs));
+
+  // Resolve venue name from `venues/{venueId}.name`. Fall back to the
+  // event name if the venueId is missing or the doc doesn't exist —
+  // matches the scheduled `event-reminder.ts` fallback semantics
+  // (`venue?.name ?? evt.nameEs`).
+  let venueName = eventName;
+  if (event.venueId) {
+    const venueSnap = await db.collection("venues").doc(event.venueId).get();
+    if (venueSnap.exists) {
+      const venueData = venueSnap.data() as {name?: string};
+      const name = (venueData.name ?? "").trim();
+      if (name) venueName = name;
+    }
+  }
+
+  return {
+    ok: true,
+    vars: {eventName, venue: venueName, time},
+  };
 }
 
 /**

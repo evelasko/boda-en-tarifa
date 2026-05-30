@@ -8,8 +8,9 @@
  * Scope: launch-readiness plan A1 — minimum set needed for the initial
  * broadcast (`welcome_onboarding`, `farewell_thanks`) and the wedding-day
  * scheduled sends (`event_reminder_generic` for A2, `seating_unlocked` for A3,
- * `film_developed` for A4). Other templates from §05 (bus_pickup_*, weather,
- * pre_wedding_drinks, arrival_day_nudge, song_request_party_open,
+ * `film_developed` for A4) plus the Saturday bus-pickup beats
+ * (`bus_pickup_early` T12, `bus_pickup_last` T13). Other templates from §05
+ * (weather, pre_wedding_drinks, arrival_day_nudge, song_request_party_open,
  * manual_announcement, escalation_followup) are intentionally omitted — they
  * are not on the launch critical path and can be added in their own PRs.
  *
@@ -30,7 +31,9 @@ export type TemplateName =
   | "event_reminder_generic"
   | "seating_unlocked"
   | "film_developed"
-  | "farewell_thanks";
+  | "farewell_thanks"
+  | "bus_pickup_early"
+  | "bus_pickup_last";
 
 export type TemplateLang = "es" | "en";
 
@@ -105,6 +108,9 @@ const EventReminderVars = z.object({
 });
 type EventReminderVars = z.infer<typeof EventReminderVars>;
 
+const EmptyVars = z.object({});
+type EmptyVars = z.infer<typeof EmptyVars>;
+
 const SeatingVars = z.object({
   firstName: z.string().min(1),
   tableLabel: z.string().min(1),
@@ -143,6 +149,11 @@ const WELCOME_BODY: Record<TemplateLang, (v: FirstNameVars) => string> = {
     "wear. Just send me a message to start.",
 };
 
+// Mirrors the Meta-approved `event_reminder_30min` body (es-only, verified
+// against WABA on 2026-05-30). Note: the operator edited the copy at
+// submission — "¡Te esperamos!" (singular) NOT "¡Os esperamos!" (plural).
+// Keep this preview in lockstep so the admin dry-run reflects what guests
+// actually receive.
 const EVENT_REMINDER_BODY: Record<
   TemplateLang,
   (v: EventReminderVars) => string
@@ -150,11 +161,13 @@ const EVENT_REMINDER_BODY: Record<
   es: ({eventName, venue, time}) =>
     `🐾 *${eventName}* empieza en 30 minutos.\n\n` +
     `📍 ${venue}\n🕐 ${time}\n\n` +
-    "¡Os esperamos!",
+    "¡Te esperamos!",
+  // Meta only approved this template in `es`. EN-only guests still see the
+  // Spanish body — keep the preview honest about that.
   en: ({eventName, venue, time}) =>
-    `🐾 *${eventName}* starts in 30 minutes.\n\n` +
+    `🐾 *${eventName}* empieza en 30 minutos.\n\n` +
     `📍 ${venue}\n🕐 ${time}\n\n` +
-    "See you there!",
+    "¡Te esperamos!",
 };
 
 // Mirrors the Meta-approved `seating_unlock` body (es-only, verified
@@ -200,6 +213,40 @@ const FAREWELL_BODY: Record<TemplateLang, (v: FirstNameVars) => string> = {
     "See you soon 🐾",
 };
 
+// Mirrors the Meta-approved `bus_pickup_early` body (es-only, verified
+// against WABA on 2026-05-30). No body variables; the static FOOTER
+// ("Thora al habla") is rendered by Meta from the approved template and
+// MUST NOT be sent as a component parameter.
+const BUS_PICKUP_EARLY_BODY: Record<TemplateLang, (v: EmptyVars) => string> = {
+  es: () =>
+    "🐾 llegó el gran día!\n\n" +
+    "Recordad: los autobuses para la ceremonia salen del parking del hotel " +
+    "*100% Fun* a las *17:30*. Mejor estad allí a las *17:15*.\n\n" +
+    "Aún queda tiempo para un bañito 🌊",
+  // Meta only approved this template in `es`. EN-only guests still see the
+  // Spanish body — keep the preview honest about that.
+  en: () =>
+    "🐾 llegó el gran día!\n\n" +
+    "Recordad: los autobuses para la ceremonia salen del parking del hotel " +
+    "*100% Fun* a las *17:30*. Mejor estad allí a las *17:15*.\n\n" +
+    "Aún queda tiempo para un bañito 🌊",
+};
+
+// Mirrors the Meta-approved `bus_pickup_last` body (es-only, verified
+// against WABA on 2026-05-30). No body variables; static FOOTER same as T12.
+const BUS_PICKUP_LAST_BODY: Record<TemplateLang, (v: EmptyVars) => string> = {
+  es: () =>
+    "🐾 *30 minutos* para que salgan los autobuses.\n\n" +
+    "Parking del hotel *100% Fun*, salida a las *17:30*. Los novios están " +
+    "al caer 🌊\n\n" +
+    "¡Id yendo! Sed puntuales que los autobuseros no esperan…",
+  en: () =>
+    "🐾 *30 minutos* para que salgan los autobuses.\n\n" +
+    "Parking del hotel *100% Fun*, salida a las *17:30*. Los novios están " +
+    "al caer 🌊\n\n" +
+    "¡Id yendo! Sed puntuales que los autobuseros no esperan…",
+};
+
 // ── Payload builders ───────────────────────────────────────────────────────
 
 function bodyOnlyPayload(
@@ -230,6 +277,8 @@ export const TEMPLATES: {
   seating_unlocked: TemplateDef<SeatingVars>;
   film_developed: TemplateDef<FirstNameVars>;
   farewell_thanks: TemplateDef<FirstNameVars>;
+  bus_pickup_early: TemplateDef<EmptyVars>;
+  bus_pickup_last: TemplateDef<EmptyVars>;
 } = {
   welcome_onboarding: {
     name: "welcome_onboarding",
@@ -261,8 +310,11 @@ export const TEMPLATES: {
     name: "event_reminder_generic",
     metaName: () => "event_reminder_30min",
     vars: EventReminderVars,
-    buildPayload: (lang, vars) =>
-      bodyOnlyPayload("event_reminder_30min", lang, [
+    // Meta only approved this template in `es` (verified 2026-05-30).
+    // Hardcode the language code so we never request a non-existent
+    // `event_reminder_30min/en` variant for English-preferring guests.
+    buildPayload: (_lang, vars) =>
+      bodyOnlyPayload("event_reminder_30min", "es", [
         vars.eventName,
         vars.venue,
         vars.time,
@@ -312,6 +364,35 @@ export const TEMPLATES: {
     buildPayload: (lang, vars) =>
       bodyOnlyPayload("farewell_thanks", lang, [vars.firstName]),
     preview: (lang, vars) => FAREWELL_BODY[lang](vars),
+  },
+  bus_pickup_early: {
+    name: "bus_pickup_early",
+    metaName: () => "bus_pickup_early",
+    vars: EmptyVars,
+    // Meta only approved this template in `es` (verified 2026-05-30).
+    // Body has no `{{n}}` placeholders and the static FOOTER
+    // ("Thora al habla") is rendered by Meta from the approved template
+    // — we send `components: []` so we don't trip a 132012-series error
+    // by attaching empty parameters or a footer we don't own.
+    buildPayload: () => ({
+      name: "bus_pickup_early",
+      language: {code: "es"},
+      components: [],
+    }),
+    preview: (lang, vars) => BUS_PICKUP_EARLY_BODY[lang](vars),
+  },
+  bus_pickup_last: {
+    name: "bus_pickup_last",
+    metaName: () => "bus_pickup_last",
+    vars: EmptyVars,
+    // Same shape as `bus_pickup_early`: es-only, no body params, static
+    // FOOTER rendered by Meta. See note above.
+    buildPayload: () => ({
+      name: "bus_pickup_last",
+      language: {code: "es"},
+      components: [],
+    }),
+    preview: (lang, vars) => BUS_PICKUP_LAST_BODY[lang](vars),
   },
 };
 

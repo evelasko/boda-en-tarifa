@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -17,6 +17,8 @@ import {
   type SendBroadcastInput,
   type SendBroadcastResult,
 } from '@/lib/bot-callable';
+import { useAuth } from '@/contexts/AuthContext';
+import type { BotEventSummary } from '@/app/api/admin/bot/events/route';
 
 // Mirrors `functions/src/bot/whatsapp/templates.ts`. Keep in sync.
 const TEMPLATE_OPTIONS = [
@@ -25,12 +27,15 @@ const TEMPLATE_OPTIONS = [
   { value: 'seating_unlocked', label: 'Seating unlock (T4)' },
   { value: 'film_developed', label: 'Film developed (T6)' },
   { value: 'farewell_thanks', label: 'Farewell (T8)' },
+  { value: 'bus_pickup_early', label: 'Bus pickup early (T12)' },
+  { value: 'bus_pickup_last', label: 'Bus pickup last (T13)' },
 ] as const;
 
 type Step = 'compose' | 'preview' | 'confirm';
 
 export default function NewBroadcastPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [step, setStep] = useState<Step>('compose');
   const [template, setTemplate] = useState<string>('welcome_onboarding');
   const [language, setLanguage] = useState<'es' | 'en' | 'both'>('both');
@@ -42,17 +47,59 @@ export default function NewBroadcastPage() {
   const [preview, setPreview] = useState<SendBroadcastResult | null>(null);
   const [confirmText, setConfirmText] = useState('');
   const [busy, setBusy] = useState(false);
+  const [events, setEvents] = useState<BotEventSummary[]>([]);
+  const [eventsLoading, setEventsLoading] = useState(false);
+  const [eventId, setEventId] = useState<string>('');
 
   const phones = phonesText
     .split(/[\s,]+/)
     .map((p) => p.trim())
     .filter((p) => p.startsWith('+') && p.length > 6);
 
-  // T4 (`seating_unlocked`) is the only Meta-approved es-only template
-  // we send; force the audience language filter so we don't accidentally
-  // narrow to en-only guests with no recipients.
+  // T3 (`event_reminder_generic`), T4 (`seating_unlocked`), and T12/T13
+  // (`bus_pickup_early`/`bus_pickup_last`) are all Meta-approved es-only
+  // templates. Force the audience language filter so we don't accidentally
+  // narrow to en-only guests with no recipients, and ensure the dispatcher's
+  // hardcoded language.code "es" payload aligns with the audience.
   const isSeatingTemplate = template === 'seating_unlocked';
-  const effectiveLanguage = isSeatingTemplate ? 'es' : language;
+  const isEventReminderTemplate = template === 'event_reminder_generic';
+  const isBusPickupTemplate =
+    template === 'bus_pickup_early' || template === 'bus_pickup_last';
+  const isEsOnlyTemplate =
+    isSeatingTemplate || isEventReminderTemplate || isBusPickupTemplate;
+  const effectiveLanguage = isEsOnlyTemplate ? 'es' : language;
+
+  // Fetch events when T3 is selected. Reads from `/api/admin/bot/events`
+  // which lists the bot's canonical `events/` collection (synced from
+  // `bot/data/events.yaml`). Same source the scheduled T3 fire uses.
+  // Cached after first load.
+  useEffect(() => {
+    if (!isEventReminderTemplate || !user || events.length > 0) return;
+    let cancelled = false;
+    setEventsLoading(true);
+    (async () => {
+      try {
+        const token = await user.getIdToken();
+        const res = await fetch('/api/admin/bot/events', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error('Error fetching events');
+        const data: BotEventSummary[] = await res.json();
+        if (cancelled) return;
+        setEvents(data); // route returns events sorted by startAt
+      } catch (err) {
+        if (cancelled) return;
+        const msg =
+          err instanceof Error ? err.message : 'Error cargando eventos.';
+        toast.error(msg);
+      } finally {
+        if (!cancelled) setEventsLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isEventReminderTemplate, user, events.length]);
 
   const buildInput = (dryRun: boolean): SendBroadcastInput => ({
     templateName: template,
@@ -63,9 +110,16 @@ export default function NewBroadcastPage() {
     },
     dryRun,
     perMinuteCap,
+    ...(isEventReminderTemplate && eventId.trim()
+      ? { varsStatic: { eventId: eventId.trim() } }
+      : {}),
   });
 
   const runDryRun = async () => {
+    if (isEventReminderTemplate && !eventId.trim()) {
+      toast.error('Selecciona un evento antes de previsualizar.');
+      return;
+    }
     setBusy(true);
     try {
       const result = await callBotSendBroadcast(buildInput(true));
@@ -170,7 +224,117 @@ export default function NewBroadcastPage() {
                 </div>
               </div>
             )}
+            {isEventReminderTemplate && (
+              <div className="mt-2 flex items-start gap-2 rounded-md border border-ocean/30 bg-ocean/5 p-3 text-xs text-charcoal/80">
+                <Info size={14} className="mt-0.5 text-ocean shrink-0" />
+                <div className="space-y-1">
+                  <p>
+                    <strong>T3 Event Reminder:</strong>{' '}
+                    las variables{' '}
+                    <code className="rounded bg-charcoal/5 px-1">eventName</code>,{' '}
+                    <code className="rounded bg-charcoal/5 px-1">venue</code>{' '}y{' '}
+                    <code className="rounded bg-charcoal/5 px-1">time</code>{' '}
+                    se derivan del evento seleccionado: nombre y hora desde{' '}
+                    <code className="rounded bg-charcoal/5 px-1">
+                      events/{'{eventId}'}
+                    </code>{' '}
+                    + venue desde{' '}
+                    <code className="rounded bg-charcoal/5 px-1">
+                      venues/{'{venueId}'}
+                    </code>{' '}
+                    (sincronizados desde{' '}
+                    <code className="rounded bg-charcoal/5 px-1">
+                      bot/data/*.yaml
+                    </code>
+                    ).
+                  </p>
+                  <p>
+                    Plantilla aprobada solo en{' '}
+                    <strong>español</strong>; el idioma se fuerza a{' '}
+                    <code className="rounded bg-charcoal/5 px-1">es</code>.
+                    El cuerpo dice <em>“empieza en 30 minutos”</em> — lanza la
+                    difusión 30 minutos antes del inicio del evento.
+                  </p>
+                  <p>
+                    Los eventos marcados{' '}
+                    <em>[suprimida]</em> tienen{' '}
+                    <code className="rounded bg-charcoal/5 px-1">reminders: []</code>{' '}
+                    en{' '}
+                    <code className="rounded bg-charcoal/5 px-1">
+                      bot/data/events.yaml
+                    </code>{' '}
+                    porque suelen usar una plantilla dedicada (ej. ceremonia →
+                    T12/T13 bus pickup, aún no en el registry).
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
+
+          {isEventReminderTemplate && (
+            <div>
+              <label className="block text-sm font-medium text-charcoal/70 mb-1">
+                Evento
+              </label>
+              <select
+                value={eventId}
+                onChange={(e) => setEventId(e.target.value)}
+                disabled={eventsLoading || events.length === 0}
+                className="w-full border border-charcoal/15 rounded-md p-2 text-sm disabled:bg-charcoal/5 disabled:cursor-not-allowed"
+              >
+                <option value="">
+                  {eventsLoading
+                    ? 'Cargando eventos…'
+                    : events.length === 0
+                      ? 'No hay eventos disponibles'
+                      : '— Selecciona un evento —'}
+                </option>
+                {events.map((ev) => {
+                  const t = ev.startAt
+                    ? new Intl.DateTimeFormat('es-ES', {
+                        weekday: 'short',
+                        day: '2-digit',
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        timeZone: 'Europe/Madrid',
+                      }).format(new Date(ev.startAt))
+                    : '';
+                  // Flag events configured with `reminders: []` — those
+                  // explicitly suppress the generic T3 fire in favor of a
+                  // dedicated template (e.g., ceremony uses bus_pickup_*).
+                  const suppressed =
+                    Array.isArray(ev.reminders) && ev.reminders.length === 0;
+                  const suffix = suppressed ? ' [suprimida — usa T12/T13]' : '';
+                  return (
+                    <option key={ev.id} value={ev.id}>
+                      {(t ? `${t} — ${ev.nameEs}` : ev.nameEs) + suffix}
+                    </option>
+                  );
+                })}
+              </select>
+              {events.length === 0 && !eventsLoading && (
+                <p className="mt-1 text-xs text-coral">
+                  La colección{' '}
+                  <code className="rounded bg-charcoal/5 px-1">events/</code>{' '}
+                  está vacía. Sincroniza desde{' '}
+                  <code className="rounded bg-charcoal/5 px-1">
+                    bot/data/events.yaml
+                  </code>
+                  :{' '}
+                  <code className="rounded bg-charcoal/5 px-1">
+                    node bot/scripts/sync-kb.mjs events venues
+                  </code>
+                </p>
+              )}
+              {eventId && (
+                <p className="mt-1 text-xs text-charcoal/50">
+                  ID:{' '}
+                  <code className="rounded bg-charcoal/5 px-1">{eventId}</code>
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
@@ -178,20 +342,20 @@ export default function NewBroadcastPage() {
                 Idioma
               </label>
               <select
-                value={isSeatingTemplate ? 'es' : language}
+                value={isEsOnlyTemplate ? 'es' : language}
                 onChange={(e) =>
                   setLanguage(e.target.value as typeof language)
                 }
-                disabled={phones.length > 0 || isSeatingTemplate}
+                disabled={phones.length > 0 || isEsOnlyTemplate}
                 className="w-full border border-charcoal/15 rounded-md p-2 text-sm disabled:bg-charcoal/5 disabled:cursor-not-allowed"
               >
                 <option value="both">Ambos (ES + EN)</option>
                 <option value="es">Solo ES</option>
                 <option value="en">Solo EN</option>
               </select>
-              {isSeatingTemplate && (
+              {isEsOnlyTemplate && (
                 <p className="mt-1 text-xs text-charcoal/50">
-                  T4 está aprobada solo en{' '}
+                  Esta plantilla está aprobada solo en{' '}
                   <code className="rounded bg-charcoal/5 px-1">es</code>.
                 </p>
               )}
@@ -278,6 +442,38 @@ export default function NewBroadcastPage() {
                 sin teléfono: {preview.excluded.missingPhone ?? 0},
                 filtros: {preview.excluded.notMatched ?? 0}.
               </p>
+            )}
+            {isEventReminderTemplate && preview.eventReminderError && (
+              <div className="mt-2 flex items-start gap-2 rounded-md border border-coral/30 bg-coral/5 p-2 text-xs text-charcoal">
+                <AlertCircle size={14} className="mt-0.5 text-coral shrink-0" />
+                <div className="space-y-1">
+                  <p>
+                    <strong>Datos del evento no resueltos:</strong>{' '}
+                    <code className="rounded bg-charcoal/5 px-1">
+                      {preview.eventReminderError}
+                    </code>
+                  </p>
+                  <p>
+                    La difusión se bloqueará y todos los destinatarios
+                    aparecerán como{' '}
+                    <code className="rounded bg-charcoal/5 px-1">
+                      missing_event_data
+                    </code>. Verifica que el evento existe en{' '}
+                    <code className="rounded bg-charcoal/5 px-1">
+                      events/{'{eventId}'}
+                    </code>{' '}
+                    con{' '}
+                    <code className="rounded bg-charcoal/5 px-1">nameEs</code>{' '}
+                    y{' '}
+                    <code className="rounded bg-charcoal/5 px-1">startAt</code>{' '}
+                    válidos (re-sincroniza desde{' '}
+                    <code className="rounded bg-charcoal/5 px-1">
+                      bot/data/events.yaml
+                    </code>{' '}
+                    si hace falta).
+                  </p>
+                </div>
+              </div>
             )}
             {isSeatingTemplate &&
               (preview.excluded?.missingSeating ?? 0) > 0 && (
@@ -423,8 +619,13 @@ export default function NewBroadcastPage() {
             </button>
             <button
               onClick={() => setStep('confirm')}
-              disabled={preview.audienceCount === 0}
-              className="inline-flex items-center gap-2 bg-ocean text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-ocean/90 disabled:opacity-50"
+              disabled={
+                preview.audienceCount === 0 ||
+                Boolean(
+                  isEventReminderTemplate && preview.eventReminderError
+                )
+              }
+              className="inline-flex items-center gap-2 bg-ocean text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-ocean/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Confirmar y enviar <ArrowRight size={14} />
             </button>

@@ -67,6 +67,15 @@ export interface SendBroadcastInput {
   };
   dryRun?: boolean;
   perMinuteCap?: number;
+  /**
+   * Optional static vars merged into every recipient's template payload.
+   * Currently used for T3 (`event_reminder_generic`) where the operator
+   * picks an event in the admin UI and we pass `{ eventId: "<id>" }` —
+   * the dispatcher resolves eventName/venue/time from the bot's canonical
+   * `events/{id}` + `venues/{venueId}` collections server-side (same
+   * source the scheduled `botEventReminderTick` uses).
+   */
+  varsStatic?: Record<string, string>;
 }
 
 export interface SendBroadcastResult {
@@ -85,6 +94,13 @@ export interface SendBroadcastResult {
     notMatched?: number;
     nightMismatch?: number;
     missingSeating?: number;
+    /**
+     * T3 only: equals the audience size when the supplied `eventId`
+     * couldn't be resolved against `events/` + `venues/`, meaning the
+     * whole broadcast is blocked. See `eventReminderError` for the
+     * specific reason.
+     */
+    missingEventData?: number;
   };
   samples?: Array<{
     guestId: string;
@@ -100,6 +116,13 @@ export interface SendBroadcastResult {
    */
   missingSeatingReasonHist?: Record<string, number>;
   missingSeatingSamples?: Array<[string, string]>;
+  /**
+   * T3 only: when the dispatcher couldn't resolve the supplied `eventId`,
+   * this carries the specific failure code (e.g. `event_not_found:foo`,
+   * `event_missing_name:foo`, `event_bad_start_at:...`). `null` or
+   * omitted means the event resolved (or no eventId was supplied).
+   */
+  eventReminderError?: string | null;
 }
 
 export async function callBotSendBroadcast(

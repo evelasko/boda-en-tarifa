@@ -77,6 +77,13 @@ export interface ResolveResult {
      * been audience-eligible but lacks a usable `seating/{guestId}` row.
      */
     missingSeating?: number;
+    /**
+     * Populated by the dispatcher for `event_reminder_generic` when the
+     * supplied `eventId` doesn't resolve against `event_schedule/{id}` or
+     * `config/venues.items[]`. Either zero (data resolved) or `audience.length`
+     * (the whole broadcast is blocked because event vars couldn't be derived).
+     */
+    missingEventData?: number;
   };
 }
 
