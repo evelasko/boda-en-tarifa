@@ -199,18 +199,29 @@ const FILM_BODY: Record<TemplateLang, (v: FirstNameVars) => string> = {
     "Pour yourself a drink. Take it in 💛",
 };
 
+// Mirrors the Meta-submitted `farewell_thanks` body (es-only; resubmitted
+// 2026-06-01 to add an IMAGE header and rewrite the album-photos line —
+// PENDING approval at time of edit). Body changes vs. the prior approved
+// version: "Gracias por venir —" → "Gracias por venir!", "nada" → "Nada",
+// new album-photos sentence ("Por fa enviadme las fotos... HD..."), and
+// the trailing 🐾 moved up so the final line is bare "Hasta pronto!".
+// Preserve any quirks exactly ("ponerlen", "sino") — that's what Meta has.
 const FAREWELL_BODY: Record<TemplateLang, (v: FirstNameVars) => string> = {
   es: ({firstName}) =>
-    `${firstName}, ya estoy camino a casa con mis humanos derrotados.\n\n` +
-    "Gracias por venir — no habría sido lo mismo sin vosotros 🌅 Si " +
-    "subís alguna foto más estos días, mandádmela y la añado al álbum.\n\n" +
-    "Hasta pronto 🐾",
+    `Bueno ${firstName}, ya estoy camino a casa con mis humanos derrotados.\n\n` +
+    "Gracias por venir! Nada de esto habría sido lo mismo sin vosotros 🌅 " +
+    "Por fa enviadme las fotos para ponerlen el álbum (no olvidéis ponerlas " +
+    "en HD que sino mis ojos no la ven). 🐾\n\n" +
+    "Hasta pronto!",
+  // Meta only approved this template in `es`. EN-only guests reached via
+  // explicit phone list still see the Spanish body — keep the preview
+  // honest about that.
   en: ({firstName}) =>
-    `${firstName}, I'm on the sofa now with my exhausted humans.\n\n` +
-    "Thank you for being there — wouldn't have been the same without " +
-    "you all 🌅 If you take any more photos in the next few days, send " +
-    "them my way and I'll add them.\n\n" +
-    "See you soon 🐾",
+    `Bueno ${firstName}, ya estoy camino a casa con mis humanos derrotados.\n\n` +
+    "Gracias por venir! Nada de esto habría sido lo mismo sin vosotros 🌅 " +
+    "Por fa enviadme las fotos para ponerlen el álbum (no olvidéis ponerlas " +
+    "en HD que sino mis ojos no la ven). 🐾\n\n" +
+    "Hasta pronto!",
 };
 
 // Mirrors the Meta-approved `bus_pickup_early` body (es-only, verified
@@ -361,8 +372,29 @@ export const TEMPLATES: {
     name: "farewell_thanks",
     metaName: () => "farewell_thanks",
     vars: FirstNameVars,
-    buildPayload: (lang, vars) =>
-      bodyOnlyPayload("farewell_thanks", lang, [vars.firstName]),
+    // Meta only approved this template in `es` (verified 2026-06-01).
+    // Hardcode the language code so we never request a non-existent
+    // `farewell_thanks/en` variant for English-preferring guests
+    // (Meta would reject with 132001).
+    //
+    // Resubmitted 2026-06-01 with an IMAGE header — we must supply the
+    // header image with every send (Meta does not reuse the example
+    // uploaded at approval time). Same pattern as `welcome_onboarding`.
+    buildPayload: (_lang, vars) => {
+      const base = bodyOnlyPayload("farewell_thanks", "es", [vars.firstName]);
+      base.components.unshift({
+        type: "header",
+        parameters: [
+          {
+            type: "image",
+            image: {
+              link: "https://www.bodaentarifa.com/images/bot/thora-farewell.jpg",
+            },
+          },
+        ],
+      });
+      return base;
+    },
     preview: (lang, vars) => FAREWELL_BODY[lang](vars),
   },
   bus_pickup_early: {

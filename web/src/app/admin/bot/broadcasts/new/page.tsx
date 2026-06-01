@@ -56,17 +56,22 @@ export default function NewBroadcastPage() {
     .map((p) => p.trim())
     .filter((p) => p.startsWith('+') && p.length > 6);
 
-  // T3 (`event_reminder_generic`), T4 (`seating_unlocked`), and T12/T13
-  // (`bus_pickup_early`/`bus_pickup_last`) are all Meta-approved es-only
-  // templates. Force the audience language filter so we don't accidentally
-  // narrow to en-only guests with no recipients, and ensure the dispatcher's
-  // hardcoded language.code "es" payload aligns with the audience.
+  // T3 (`event_reminder_generic`), T4 (`seating_unlocked`), T8
+  // (`farewell_thanks`), and T12/T13 (`bus_pickup_early`/`bus_pickup_last`)
+  // are all Meta-approved es-only templates. Force the audience language
+  // filter so we don't accidentally narrow to en-only guests with no
+  // recipients, and ensure the dispatcher's hardcoded language.code "es"
+  // payload aligns with the audience.
   const isSeatingTemplate = template === 'seating_unlocked';
   const isEventReminderTemplate = template === 'event_reminder_generic';
+  const isFarewellTemplate = template === 'farewell_thanks';
   const isBusPickupTemplate =
     template === 'bus_pickup_early' || template === 'bus_pickup_last';
   const isEsOnlyTemplate =
-    isSeatingTemplate || isEventReminderTemplate || isBusPickupTemplate;
+    isSeatingTemplate ||
+    isEventReminderTemplate ||
+    isFarewellTemplate ||
+    isBusPickupTemplate;
   const effectiveLanguage = isEsOnlyTemplate ? 'es' : language;
 
   // Fetch events when T3 is selected. Reads from `/api/admin/bot/events`
